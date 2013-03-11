@@ -2,15 +2,53 @@
  * A layer houses a set of entities to be updated/drawn on each frame
  *
  * @param {Number} id   Unique identifier given by the World
+ * @param {Element}  container
  * @constructor
  */
-Psykick.Layer = function(id) {
+Psykick.Layer = function(id, container) {
     this.ID = id;
     this.Entities = {};
     this.RenderSystems = [];
     this.BehaviorSystems = [];
     this.Visible = true;
     this.Active = true;
+    this.container = container;
+
+    // Create a new canvas to draw on
+    var canvas = document.createElement("canvas");
+    canvas.width = parseInt(container.style.width);
+    canvas.height = parseInt(container.style.height);
+    canvas.setAttribute("id", "psykick-layer-" + id);
+    canvas.style.position = "absolute";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
+    canvas.style.zIndex = 0;
+
+    this.c = canvas.getContext("2d");
+};
+
+/**
+ * Removes the canvas to ensure no additional drawing is done
+ */
+Psykick.Layer.prototype.removeCanvas = function() {
+    this.c.canvas.parentNode.removeChild(this.c.canvas);
+};
+
+/**
+ * Puts the layers canvas back in the container if it was removed
+ */
+Psykick.Layer.prototype.restoreCanvas = function() {
+    if (document.getElementById("psykick-layer-" + this.ID) === null) {
+        this.container.appendChild(this.c.canvas);
+    }
+};
+
+/**
+ * Set the depth layer index
+ * @param {Number} zIndex
+ */
+Psykick.Layer.prototype.setZIndex = function(zIndex) {
+    this.c.canvas.style.zIndex = zIndex;
 };
 
 /**
@@ -41,25 +79,37 @@ Psykick.Layer.prototype.removeEntity = function(entityID) {
     }
 };
 
+/**
+ * Add a new system to the layer
+ *
+ * @param {Psykick.System} system
+ */
 Psykick.Layer.prototype.addSystem = function(system) {
     if (!(system instanceof Psykick.System)) {
         throw "Invalid argument: 'system' must be an instance of Psykick.System";
     }
 
-    if (system instanceof Psykick.BehaviorSystem) {
-
+    if (system instanceof Psykick.BehaviorSystem && this.BehaviorSystems.indexOf(system) === -1) {
+        this.BehaviorSystems.push(system);
+    } else if (system instanceof Psykick.RenderSystem && this.RenderSystems.indexOf(system) === -1) {
+        this.RenderSystems.push(system);
     }
-}
+};
 
 /**
  * Draw the layer
- *
- * @param {CanvasRenderingContext2D} c
  */
-Psykick.Layer.prototype.draw = function(c) {
+Psykick.Layer.prototype.draw = function() {
+    // If the node doesn't exist, don't even try to draw
+    if (this.c.canvas.parentNode === null) {
+        return;
+    }
+
+    // Only draw if "visible" and have some kind of system for rendering
     if (this.Visible && this.RenderSystems.length > 0) {
+
         for (var i = 0, len = this.RenderSystems.length; i < len; i++) {
-            this.RenderSystems[i].draw(c);
+            this.RenderSystems[i].draw(this.c);
         }
     }
 };
@@ -70,6 +120,7 @@ Psykick.Layer.prototype.draw = function(c) {
  * @param {Number} delta    Amount of time since the last update
  */
 Psykick.Layer.prototype.update = function(delta) {
+    // Only update if the layer is active and we have some systems for doing behavior
     if (this.Active && this.BehaviorSystems.length > 0) {
         for (var i = 0, len = this.BehaviorSystems.length; i < len; i++) {
             this.BehaviorSystems[i].update(delta);

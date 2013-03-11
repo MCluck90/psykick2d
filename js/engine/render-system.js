@@ -1,24 +1,55 @@
-Psykick.RenderSystem = function(id) {
-    Psykick.System.call(this, id);
-    this.DrawOrder = [];
-};
+(function() {
+    "use strict";
 
-// Inherit from Psykick.System
-Psykick.RenderSystem.prototype = new Psykick.System();
-Psykick.RenderSystem.constructor = Psykick.RenderSystem;
+    /**
+     * Controls how Entities are displayed.
+     * Called during the "draw" stage of a frame
+     *
+     * @param {Number} id   Unique ID given by the World
+     * @constructor
+     */
+    Psykick.RenderSystem = function(id) {
+        Psykick.System.call(this, id);
+        this.DrawOrder = [];
+    };
 
-Psykick.RenderSystem.prototype.addEntity = function(entity) {
-    Psykick.System.prototype.addEntity.call(this, entity);
+    // Inherit from Psykick.System
+    Psykick.RenderSystem.prototype = new Psykick.System();
+    Psykick.RenderSystem.constructor = Psykick.RenderSystem;
 
-    if (this.DrawOrder.indexOf(entity) === -1) {
-        this.DrawOrder.push(entity);
-    }
-};
+    /**
+     * Add a new Entity to the collection and make it the last one to be drawn
+     *
+     * @param {Psykick.Entity} entity
+     */
+    Psykick.RenderSystem.prototype.addEntity = function(entity) {
+        Psykick.System.prototype.addEntity.call(this, entity);
 
-/**
- * Draw all of the entities.
- * Should be defined for every RenderSystem
- *
- * @param {CanvasRenderingContext2D} c
- */
-Psykick.RenderSystem.prototype.draw = function(c) {};
+        if (this.DrawOrder.indexOf(entity) === -1) {
+            this.DrawOrder.push(entity);
+        }
+    };
+
+    /**
+     * Removes an Entity
+     *
+     * @param {Psykick.Entity} entity
+     */
+    Psykick.RenderSystem.prototype.removeEntity = function(entity) {
+        Psykick.System.prototype.removeEntity.call(this, entity);
+
+        var index = this.DrawOrder.indexOf(entity);
+        if (index !== -1) {
+            this.DrawOrder.splice(index, 1);
+        }
+    };
+
+    /**
+     * Draw all of the entities.
+     * Should be defined for every RenderSystem
+     *
+     * @param {CanvasRenderingContext2D} c
+     */
+    Psykick.RenderSystem.prototype.draw = function(c) {};
+
+})();
