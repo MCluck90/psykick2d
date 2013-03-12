@@ -107,10 +107,11 @@ Psykick.Layer.prototype.draw = function() {
 
     // Only draw if "visible" and have some kind of system for rendering
     if (this.Visible && this.RenderSystems.length > 0) {
-
+        this.c.save();
         for (var i = 0, len = this.RenderSystems.length; i < len; i++) {
             this.RenderSystems[i].draw(this.c);
         }
+        this.c.restore();
     }
 };
 
@@ -122,6 +123,7 @@ Psykick.Layer.prototype.draw = function() {
 Psykick.Layer.prototype.update = function(delta) {
     // Only update if the layer is active and we have some systems for doing behavior
     if (this.Active && this.BehaviorSystems.length > 0) {
+
         for (var i = 0, len = this.BehaviorSystems.length; i < len; i++) {
             this.BehaviorSystems[i].update(delta);
         }

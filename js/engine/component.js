@@ -1,4 +1,6 @@
-// Create the namespace which other base Component will attach to
+/**
+ * @namespace   Contains all default Psykick Components
+ */
 Psykick.Components = {};
 
 /**

@@ -13,6 +13,7 @@
      * @param {Number} [options.xOffset=0]      Initial x offset
      * @param {Number} [options.yOffset=0]      Initial y offset
      * @constructor
+     * @inherit Psykick.Component
      */
     Psykick.Components.SpriteSheet = function(options) {
         // Unique name for reference in Entities

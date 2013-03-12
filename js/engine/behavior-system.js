@@ -7,6 +7,7 @@
      *
      * @param {Number} id   Unique ID given by the World
      * @constructor
+     * @inherit Psykick.System
      */
     Psykick.BehaviorSystem = function(id) {
         Psykick.System.call(this, id);

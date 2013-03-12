@@ -14,7 +14,7 @@
  * Systems act upon Entities with certain Components to either display something or perform some logic
  */
 var Psykick = {};
-Psykick.World = (function(undefined) {
+(function(undefined) {
     "use strict";
 
     var
@@ -37,7 +37,7 @@ Psykick.World = (function(undefined) {
         layers = {},
 
         // Layers in the order they will be drawn/updated
-        layersInDrawOrder = [],
+        layersInDrawOrder = [];
 
         /**
          * Generates the World instance
@@ -49,8 +49,9 @@ Psykick.World = (function(undefined) {
          * @param {String}  [options.backgroundColor="#000"]    Base background color
          * @param {Number}  [options.fps=40]                    Frame per second
          * @constructor
+         * @namespace       The core of all interactions
          */
-        World = function(options) {
+        Psykick.World = function(options) {
             var self = this,
                 baseCanvas = document.createElement("canvas"),
                 gameTime = new Date(),
@@ -99,7 +100,7 @@ Psykick.World = (function(undefined) {
      *
      * @return {Psykick.Entity}
      */
-    World.prototype.createEntity = function() {
+    Psykick.World.prototype.createEntity = function() {
         var entity = new Psykick.Entity(nextEntityID++);
         entities[entity.ID] = entity;
         return entity;
@@ -110,7 +111,7 @@ Psykick.World = (function(undefined) {
      *
      * @return {Psykick.Layer}
      */
-    World.prototype.createLayer = function() {
+    Psykick.World.prototype.createLayer = function() {
         var layer = new Psykick.Layer(nextLayerID++, canvasContainer);
         layers[layer.ID] = layer;
         return layer;
@@ -121,7 +122,7 @@ Psykick.World = (function(undefined) {
      *
      * @param {Psykick.Layer} layer
      */
-    World.prototype.pushLayer = function(layer) {
+    Psykick.World.prototype.pushLayer = function(layer) {
         if (!(layer instanceof Psykick.Layer)) {
             throw "Invalid argument: 'layer' must be instance of Psykick.Layer";
         }
@@ -138,7 +139,7 @@ Psykick.World = (function(undefined) {
      *
      * @return {Psykick.Layer|null}
      */
-    World.prototype.popLayer = function() {
+    Psykick.World.prototype.popLayer = function() {
         if (layersInDrawOrder.length == 0) {
             return null;
         }
@@ -154,7 +155,7 @@ Psykick.World = (function(undefined) {
      *
      * @param {Psykick.Entity} entity
      */
-    World.prototype.removeEntity = function(entity) {
+    Psykick.World.prototype.removeEntity = function(entity) {
         if (typeof entity === "number") {
             if (typeof entities[entity] === "undefined") {
                 throw "Invalid entity ID";
@@ -173,7 +174,7 @@ Psykick.World = (function(undefined) {
     /**
      * Draws the world
      */
-    World.prototype.draw = function() {
+    Psykick.World.prototype.draw = function() {
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].draw(this.context);
         }
@@ -184,15 +185,13 @@ Psykick.World = (function(undefined) {
      *
      * @param {Number} delta    Time since last update
      */
-    World.prototype.update = function(delta) {
+    Psykick.World.prototype.update = function(delta) {
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].update(delta);
         }
     };
 
 
-    World.prototype.getLayers = function() { return layersInDrawOrder; };
-
-    return World;
+    Psykick.World.prototype.getLayers = function() { return layersInDrawOrder; };
 
 })();

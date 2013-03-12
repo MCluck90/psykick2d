@@ -1,7 +1,8 @@
 /**
- * A collection of helper functions
+ * @namespace   Contains a collection of helper function
  */
-Psykick.Helper = (function(undefined) {
+Psykick.Helper = {};
+(function(undefined) {
     "use strict";
 
     var
@@ -20,10 +21,7 @@ Psykick.Helper = (function(undefined) {
         hasOwnProperty      = ObjProto.hasOwnProperty,
 
         // Native ECMAScript 5 functions, which are hopefully available
-        nativeForEach       = ArrayProto.forEach,
-
-        // The actual object containing the helper methods
-        Helper              = {};
+        nativeForEach       = ArrayProto.forEach;
 
     /**
      * Checks to see if an object has a given property (not on the prototype)
@@ -32,7 +30,7 @@ Psykick.Helper = (function(undefined) {
      * @param {Number|String} key
      * @return {Boolean}
      */
-    Helper.has = function(obj, key) {
+    Psykick.Helper.has = function(obj, key) {
         return hasOwnProperty.call(obj, key);
     };
 
@@ -44,7 +42,7 @@ Psykick.Helper = (function(undefined) {
      * @param {Function} iterator
      * @param {Object} context
      */
-    Helper.forEach = function(obj, iterator, context) {
+    Psykick.Helper.forEach = function(obj, iterator, context) {
         if (obj === null || obj === undefined) {
             return;
         }
@@ -76,7 +74,7 @@ Psykick.Helper = (function(undefined) {
      *
      * @param obj
      */
-    Helper.defaults = function(obj) {
+    Psykick.Helper.defaults = function(obj) {
         Helper.forEach(slice.call(arguments, 1), function(source) {
             if (source) {
                 for (var prop in source) {
@@ -89,7 +87,5 @@ Psykick.Helper = (function(undefined) {
 
         return obj;
     };
-
-    return Helper;
 
 })();
