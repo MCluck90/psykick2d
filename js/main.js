@@ -8,18 +8,15 @@
         height: 480
     });
 
-    var component = new Psykick.Component();
-    component.Name = "Box";
-    component.X = 0;
-    component.Y = 100;
-    component.Width = 240;
-    component.Height = 480;
     var entity = world.createEntity();
-    entity.addComponent(component);
-    var layer1 = world.createLayer();
-    layer1.addEntity(entity);
-    world.pushLayer(layer1);
+    entity.addComponent(new Psykick.Components.SpriteSheet());
+    entity.addComponent(new Psykick.Components.Animation());
+    var layer = world.createLayer();
+    layer.addEntity(entity);
+    var system = new Psykick.Systems.Sprite();
+    system.addEntity(entity);
+    layer.addSystem(system);
 
-    console.log(world.getLayers());
+    console.log(layer);
 
 })();

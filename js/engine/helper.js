@@ -25,10 +25,9 @@ Psykick.Helper = {};
 
     /**
      * Checks to see if an object has a given property (not on the prototype)
-     *
-     * @param {Object} obj
-     * @param {Number|String} key
-     * @return {Boolean}
+     * @param   {Object}          obj
+     * @param   {Number|String}   key
+     * @return  {Boolean}
      */
     Psykick.Helper.has = function(obj, key) {
         return hasOwnProperty.call(obj, key);
@@ -37,10 +36,9 @@ Psykick.Helper = {};
     /**
      * Iterates and acts upon arrays and objects.
      * Largely taken from Underscore.js
-     *
-     * @param {Object} obj
-     * @param {Function} iterator
-     * @param {Object} context
+     * @param {Object}      obj
+     * @param {Function}    iterator
+     * @param {Object}      context
      */
     Psykick.Helper.forEach = function(obj, iterator, context) {
         if (obj === null || obj === undefined) {
@@ -71,11 +69,11 @@ Psykick.Helper = {};
 
     /**
      * Fill in a given object with default properties
-     *
-     * @param obj
+     * @param {Object} obj
      */
     Psykick.Helper.defaults = function(obj) {
-        Helper.forEach(slice.call(arguments, 1), function(source) {
+        obj = obj || {};
+        Psykick.Helper.forEach(slice.call(arguments, 1), function(source) {
             if (source) {
                 for (var prop in source) {
                     if (obj[prop] === void 0) {
@@ -86,6 +84,16 @@ Psykick.Helper = {};
         });
 
         return obj;
+    };
+
+    /**
+     * Shortcut for extremely simple prototypical inheritance
+     * @param {Function} derived    Derived class constructor
+     * @param {Function} base       Base class constructor
+     */
+    Psykick.Helper.extend = function(derived, base) {
+        derived.prototype = new base();
+        derived.constructor = derived;
     };
 
 })();

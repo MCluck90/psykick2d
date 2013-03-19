@@ -1,9 +1,8 @@
 /**
  * A layer houses a set of entities to be updated/drawn on each frame
- *
- * @param {Number} id   Unique identifier given by the World
- * @param {Element}  container
  * @constructor
+ * @param {Number}  id          Unique identifier given by the World
+ * @param {Element} container   Layer container
  */
 Psykick.Layer = function(id, container) {
     this.ID = id;
@@ -53,7 +52,6 @@ Psykick.Layer.prototype.setZIndex = function(zIndex) {
 
 /**
  * Add an entity to the layer
- *
  * @param {Psykick.Entity} entity
  */
 Psykick.Layer.prototype.addEntity = function(entity) {
@@ -63,7 +61,6 @@ Psykick.Layer.prototype.addEntity = function(entity) {
 
 /**
  * Removes an entity from the layer
- *
  * @param {Number|Psykick.Entity} entityID
  */
 Psykick.Layer.prototype.removeEntity = function(entityID) {
@@ -81,13 +78,14 @@ Psykick.Layer.prototype.removeEntity = function(entityID) {
 
 /**
  * Add a new system to the layer
- *
  * @param {Psykick.System} system
  */
 Psykick.Layer.prototype.addSystem = function(system) {
     if (!(system instanceof Psykick.System)) {
         throw "Invalid argument: 'system' must be an instance of Psykick.System";
     }
+
+    system.setParentLayer(this);
 
     if (system instanceof Psykick.BehaviorSystem && this.BehaviorSystems.indexOf(system) === -1) {
         this.BehaviorSystems.push(system);
@@ -109,7 +107,10 @@ Psykick.Layer.prototype.draw = function() {
     if (this.Visible && this.RenderSystems.length > 0) {
         this.c.save();
         for (var i = 0, len = this.RenderSystems.length; i < len; i++) {
-            this.RenderSystems[i].draw(this.c);
+            var system = this.RenderSystems[i];
+            if (system.Active) {
+                system.draw(this.c);
+            }
         }
         this.c.restore();
     }
@@ -117,7 +118,6 @@ Psykick.Layer.prototype.draw = function() {
 
 /**
  * Update the layer
- *
  * @param {Number} delta    Amount of time since the last update
  */
 Psykick.Layer.prototype.update = function(delta) {
@@ -125,7 +125,10 @@ Psykick.Layer.prototype.update = function(delta) {
     if (this.Active && this.BehaviorSystems.length > 0) {
 
         for (var i = 0, len = this.BehaviorSystems.length; i < len; i++) {
-            this.BehaviorSystems[i].update(delta);
+            var system = this.BehaviorSystems[i];
+            if (system.Active) {
+                system.update(delta);
+            }
         }
     }
 };

@@ -3,9 +3,8 @@
 
     /**
      * A collection of Components which make up an object in the world
-     *
-     * @param {Number} id   Unique ID assigned by the World
      * @constructor
+     * @param {Number} id   Unique ID assigned by the World
      */
     Psykick.Entity = function(id) {
         this.ID = id;
@@ -16,7 +15,6 @@
     /**
      * Tells the Entity which Layer owns it.
      * Should only be used by the World
-     *
      * @param {Psykick.Layer} layer
      */
     Psykick.Entity.prototype.setParentLayer = function(layer) {
@@ -29,7 +27,6 @@
 
     /**
      * Add a new Component to the Entity
-     *
      * @param {Psykick.Component} component
      */
     Psykick.Entity.prototype.addComponent = function(component) {
@@ -40,7 +37,6 @@
 
     /**
      * Removes a Component from the Entity
-     *
      * @param {Psykick.Component} componentName
      */
     Psykick.Entity.prototype.removeComponent = function(componentName) {
@@ -49,6 +45,19 @@
         }
 
         delete this.Components[componentName];
+    };
+
+    /**
+     * Returns the component with the matching name
+     * @param {String} componentName
+     * @return {Psykick.Component|null}
+     */
+    Psykick.Entity.prototype.getComponent = function(componentName) {
+        if (componentName in this.Components) {
+            return this.Components[componentName];
+        } else {
+            return null;
+        }
     };
 
 })();

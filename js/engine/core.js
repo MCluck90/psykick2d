@@ -1,17 +1,5 @@
 /**
- * Setup the Psykick game engine
- *
- * Psykick is made up of:
- *      A World
- *      Components
- *      Entities
- *      Layers
- *      Systems
- *
- * Everything resides in one World instance.
- * Layers house all of the Entities and Systems which make the game work
- * Entities are containers for Components
- * Systems act upon Entities with certain Components to either display something or perform some logic
+ * @namespace   The Psykick framework
  */
 var Psykick = {};
 (function(undefined) {
@@ -41,15 +29,13 @@ var Psykick = {};
 
         /**
          * Generates the World instance
-         *
+         * @constructor
          * @param {Object}  options                             Initialization options
          * @param {Element} options.canvasContainer             A div for the canvases to reside in
          * @param {Number}  [options.width=640]                 Width of the container
          * @param {Number}  [options.height=480]                Height of the container
          * @param {String}  [options.backgroundColor="#000"]    Base background color
          * @param {Number}  [options.fps=40]                    Frame per second
-         * @constructor
-         * @namespace       The core of all interactions
          */
         Psykick.World = function(options) {
             var self = this,
@@ -64,7 +50,7 @@ var Psykick = {};
                 };
             options = Psykick.Helper.defaults(options, defaults);
 
-            // Setup the canvas container (each layer is a canvas)
+            // Setup the canvas container (each layer is a new canvas)
             canvasContainer = options.canvasContainer;
             canvasContainer.style.position = "relative";
             canvasContainer.style.width = options.width + "px";
@@ -97,7 +83,6 @@ var Psykick = {};
 
     /**
      * Generates a new Entity
-     *
      * @return {Psykick.Entity}
      */
     Psykick.World.prototype.createEntity = function() {
@@ -108,7 +93,6 @@ var Psykick = {};
 
     /**
      * Generates a new Layer
-     *
      * @return {Psykick.Layer}
      */
     Psykick.World.prototype.createLayer = function() {
@@ -119,7 +103,6 @@ var Psykick = {};
 
     /**
      * Pushes a layer on to the draw stack
-     *
      * @param {Psykick.Layer} layer
      */
     Psykick.World.prototype.pushLayer = function(layer) {
@@ -136,7 +119,6 @@ var Psykick = {};
 
     /**
      * Removes and returns the top layer
-     *
      * @return {Psykick.Layer|null}
      */
     Psykick.World.prototype.popLayer = function() {
@@ -152,7 +134,6 @@ var Psykick = {};
 
     /**
      * Removes an Entity from the world
-     *
      * @param {Psykick.Entity} entity
      */
     Psykick.World.prototype.removeEntity = function(entity) {
@@ -182,16 +163,12 @@ var Psykick = {};
 
     /**
      * Updates the world
-     *
-     * @param {Number} delta    Time since last update
+     * @param {Number}  delta   Time since last update
      */
     Psykick.World.prototype.update = function(delta) {
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].update(delta);
         }
     };
-
-
-    Psykick.World.prototype.getLayers = function() { return layersInDrawOrder; };
 
 })();
