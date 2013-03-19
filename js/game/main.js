@@ -26,4 +26,8 @@
     layer.addEntity(entity);
     world.pushLayer(layer);
 
+    var moveSys = new Game.MoveRectSystem();
+    moveSys.addEntity(entity);
+    layer.addSystem(moveSys);
+
 })();

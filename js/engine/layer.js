@@ -103,6 +103,8 @@ Psykick.Layer.prototype.draw = function() {
         return;
     }
 
+    this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);
+
     // Only draw if "visible" and have some kind of system for rendering
     if (this.Visible && this.RenderSystems.length > 0) {
         this.c.save();
