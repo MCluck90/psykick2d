@@ -68,12 +68,17 @@ Psykick.Layer.prototype.removeEntity = function(entityID) {
         entityID = entityID.ID;
     }
 
-    delete this.Entities[entityID];
-
     // Delete the entity from any systems
     for (var i = 0, len = this.Systems.length; i < len; i++) {
+        var system = this.Systems[i];
+        if (typeof system.Entities[entityID] === 'undefined') {
+            continue;
+        }
 
+        delete system.Entities[entityID];
     }
+
+    delete this.Entities[entityID];
 };
 
 /**

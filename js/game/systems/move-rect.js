@@ -3,17 +3,13 @@
  * @constructor
  * @inherit Psykick.BehaviorSystem
  */
-Game.MoveRectSystem = function() {
+Game.Systems.MoveRect = function() {
     this.RequiredComponents = ["Rectangle"];
 };
 
-Psykick.Helper.extend(Game.MoveRectSystem, Psykick.BehaviorSystem);
+Psykick.Helper.extend(Game.Systems.MoveRect, Psykick.BehaviorSystem);
 
-Game.MoveRectSystem.prototype.update = function(delta) {
-    if (this.ActionOrder.length === 0) {
-        return;
-    }
-
+Game.Systems.MoveRect.prototype.update = function(delta) {
     for (var i = 0, len = this.ActionOrder.length; i < len; i++) {
         var entity = this.ActionOrder[i],
             rectComponent = entity.getComponent("Rectangle"),

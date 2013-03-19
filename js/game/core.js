@@ -1,4 +1,10 @@
 /**
  * @namespace
  */
-var Game = {};
+var Game = {
+    /** @namespace */
+    Components: {},
+
+    /** @namespace */
+    Systems: {}
+};

@@ -3,17 +3,17 @@
  * @constructor
  * @inherit Psykick.RenderSystem
  */
-Game.DrawRectSystem = function() {
+Game.Systems.DrawRect = function() {
     this.RequiredComponents = ["Rectangle", "Color"];
 };
 
-Psykick.Helper.extend(Game.DrawRectSystem, Psykick.RenderSystem);
+Psykick.Helper.extend(Game.Systems.DrawRect, Psykick.RenderSystem);
 
 /**
  * Draws rectangles to the canvas
  * @param {CanvasRenderingContext2D} c
  */
-Game.DrawRectSystem.prototype.draw = function(c) {
+Game.Systems.DrawRect.prototype.draw = function(c) {
     for (var i = 0, len = this.DrawOrder.length; i < len; i++) {
         var entity = this.DrawOrder[i],
             colorComponent = entity.getComponent("Color"),

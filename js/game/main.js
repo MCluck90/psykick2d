@@ -7,8 +7,8 @@
         });
 
     var rectComponent = new Psykick.Components.Rectangle({
-            x: 50,
-            y: 50,
+            x: 80,
+            y: 20,
             w: 100,
             h: 100
         }),
@@ -17,7 +17,7 @@
         }),
         entity = world.createEntity(),
         layer = world.createLayer(),
-        drawSystem = new Game.DrawRectSystem();
+        drawSystem = new Game.Systems.DrawRect();
 
     entity.addComponent(rectComponent);
     entity.addComponent(colorComponent);
@@ -26,7 +26,7 @@
     layer.addEntity(entity);
     world.pushLayer(layer);
 
-    var moveSys = new Game.MoveRectSystem();
+    var moveSys = new Game.Systems.MoveInvaders();
     moveSys.addEntity(entity);
     layer.addSystem(moveSys);
 
