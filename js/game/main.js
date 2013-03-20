@@ -6,28 +6,37 @@
             height: 600
         });
 
-    var rectComponent = new Psykick.Components.Rectangle({
-            x: 80,
-            y: 20,
-            w: 100,
-            h: 100
-        }),
-        colorComponent = new Psykick.Components.Color({
-            colors: ["#FFF"]
-        }),
-        entity = world.createEntity(),
-        layer = world.createLayer(),
-        drawSystem = new Game.Systems.DrawRect();
+    var layer = world.createLayer(),
+        drawSys = new Game.Systems.DrawRect(),
+        moveSys = new Game.Systems.MoveInvaders();
 
-    entity.addComponent(rectComponent);
-    entity.addComponent(colorComponent);
-    drawSystem.addEntity(entity);
-    layer.addSystem(drawSystem);
-    layer.addEntity(entity);
-    world.pushLayer(layer);
-
-    var moveSys = new Game.Systems.MoveInvaders();
-    moveSys.addEntity(entity);
+    layer.addSystem(drawSys);
     layer.addSystem(moveSys);
+
+    // Generate "invaders"
+    for (var i = 0; i < 11; i++) {
+        for (var j = 0; j < 6; j++) {
+            var color = (j % 3 === 0) ? "#F00" :
+                        (j % 3 === 1) ? "#0F0" : "#00F",
+                entity = world.createEntity(),
+                rect = new Psykick.Components.Rectangle({
+                    x: 80 + (24 * i),
+                    y: 20 + (24 * j),
+                    w: 20,
+                    h: 20
+                }),
+                color = new Psykick.Components.Color({
+                    colors: [color]
+                });
+
+            entity.addComponent(rect);
+            entity.addComponent(color);
+            drawSys.addEntity(entity);
+            moveSys.addEntity(entity);
+            layer.addEntity(entity);
+        }
+    }
+
+    world.pushLayer(layer);
 
 })();
