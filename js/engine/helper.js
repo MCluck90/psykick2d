@@ -21,7 +21,26 @@ Psykick.Helper = {};
         hasOwnProperty      = ObjProto.hasOwnProperty,
 
         // Native ECMAScript 5 functions, which are hopefully available
-        nativeForEach       = ArrayProto.forEach;
+        nativeForEach       = ArrayProto.forEach,
+
+        // Store the currently pressed keys
+        keysDown = {};
+
+    // Capture keyboard events
+    window.onkeydown = function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
+    };
+
+    window.onkeyup = function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    };
 
     /**
      * Checks to see if an object has a given property (not on the prototype)
@@ -94,6 +113,30 @@ Psykick.Helper = {};
     Psykick.Helper.extend = function(derived, base) {
         derived.prototype = new base();
         derived.constructor = derived;
+    };
+
+    /**
+     * Returns if a given key is pressed
+     * @param {Number}  keyCode                 Key code. Usually obtained from Psykick.Keys
+     * @param {Object}  modifiers
+     * @param {Boolean} [modifiers.shift=false] If true, will check if shift was held at the time
+     * @param {Boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
+     * @param {Boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
+     * @return {Boolean}
+     */
+    Psykick.Helper.keyDown = function(keyCode, modifiers) {
+        modifiers = modifiers || {};
+        var defaultModifiers = {
+            shift: false,
+            ctrl: false,
+            alt: false
+        };
+        modifiers = Psykick.Helper.defaults(modifiers, defaultModifiers);
+        return (keysDown.hasOwnProperty(keyCode) &&
+                keysDown[keyCode].pressed &&
+                !(modifiers.shift && !keysDown[keyCode].shift) &&
+                !(modifiers.ctrl && !keysDown[keyCode].ctrl) &&
+                !(modifiers.alt && !keysDown[keyCode].alt));
     };
 
 })();
