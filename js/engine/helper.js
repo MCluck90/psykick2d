@@ -139,4 +139,18 @@ Psykick.Helper = {};
                 !(modifiers.alt && !keysDown[keyCode].alt));
     };
 
+    /**
+     * Returns all of the keys currently pressed
+     * @return {Array}
+     */
+    Psykick.Helper.getKeysDown = function() {
+        var keys = [];
+        for (var keyCode in keysDown) {
+            if (keysDown.hasOwnProperty(keyCode) && keysDown[keyCode].pressed) {
+                keys.push(keyCode);
+            }
+        }
+        return keys;
+    };
+
 })();
