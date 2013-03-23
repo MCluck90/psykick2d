@@ -20,10 +20,10 @@
                         (j % 3 === 1) ? "#0F0" : "#00F",
                 entity = world.createEntity(),
                 rect = new Psykick.Components.Rectangle({
-                    x: 80 + (24 * i),
-                    y: 20 + (24 * j),
-                    w: 20,
-                    h: 20
+                    x: 80 + (40 * i),
+                    y: 20 + (36 * j),
+                    w: 30,
+                    h: 30
                 }),
                 color = new Psykick.Components.Color({
                     colors: [color]

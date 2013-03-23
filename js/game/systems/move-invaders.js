@@ -4,7 +4,7 @@
  * @inherit Psykick.BehaviorSystem
  */
 Game.Systems.MoveInvaders = function() {
-    this.Speed = 100;
+    this.Speed = 50;
     this.MoveRight = true;
     this.Margin = 48;
     this.RequiredComponents = ["Rectangle"];
@@ -69,8 +69,16 @@ Game.Systems.MoveInvaders.prototype.update = function(delta) {
 
         for (var j = 0, len = row.length; j < len; j++) {
             row[j].x += rowChange;
+
+            // Whenever we "bounce" off the wall, move down as well
+            if (this.MoveRight === moveRightNext) {
+                row[j].y += row[j].h;
+            }
         }
     }
 
+    if (this.MoveRight === moveRightNext) {
+        this.Speed += 10;
+    }
     this.MoveRight = !moveRightNext;
 };
