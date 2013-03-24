@@ -54,12 +54,19 @@ Psykick.Systems = {};
     /**
      * Remove an Entity from the collection
      * @param {Psykick.Entity} entity
+     * @return {Boolean}    True if the entity was removed
      */
     Psykick.System.prototype.removeEntity = function(entity) {
+        var entityID = entity;
         if (entity instanceof Psykick.Entity) {
-            delete this.Entities[entity.ID];
+            entityID = entity.ID;
+        }
+
+        if (this.Entities.hasOwnProperty(entityID)) {
+            delete this.Entities[entityID];
+            return true;
         } else {
-            throw "Invalid Argument: 'entity' must be an instance of Psykick.Entity";
+            return false;
         }
     };
 

@@ -69,13 +69,14 @@ Psykick.Layer.prototype.removeEntity = function(entityID) {
     }
 
     // Delete the entity from any systems
-    for (var i = 0, len = this.Systems.length; i < len; i++) {
-        var system = this.Systems[i];
-        if (typeof system.Entities[entityID] === 'undefined') {
-            continue;
+    for (var i = 0, bLen = this.BehaviorSystems.length, rLen = this.RenderSystems.length; i < bLen || i < rLen; i++) {
+        if (i < bLen) {
+            this.BehaviorSystems[i].removeEntity(entityID);
         }
 
-        delete system.Entities[entityID];
+        if (i < rLen) {
+            this.RenderSystems[i].removeEntity(entityID);
+        }
     }
 
     delete this.Entities[entityID];
@@ -97,6 +98,10 @@ Psykick.Layer.prototype.addSystem = function(system) {
     } else if (system instanceof Psykick.RenderSystem && this.RenderSystems.indexOf(system) === -1) {
         this.RenderSystems.push(system);
     }
+};
+
+Psykick.Layer.prototype.getEntities = function() {
+    return this.Entities;
 };
 
 /**

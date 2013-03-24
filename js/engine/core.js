@@ -13,7 +13,7 @@ var Psykick = {};
         gameLoop,
 
         // Entity ID counter
-        nextEntityID = -Number.MAX_VALUE,
+        nextEntityID = Number.MIN_VALUE,
 
         // Layer ID counter
         nextLayerID = 0,
@@ -30,12 +30,13 @@ var Psykick = {};
         /**
          * Generates the World instance
          * @constructor
-         * @param {Object}  options                             Initialization options
-         * @param {Element} options.canvasContainer             A div for the canvases to reside in
-         * @param {Number}  [options.width=640]                 Width of the container
-         * @param {Number}  [options.height=480]                Height of the container
-         * @param {String}  [options.backgroundColor="#000"]    Base background color
-         * @param {Number}  [options.fps=40]                    Frame per second
+         * @param {Object}   options                             Initialization options
+         * @param {Element}  options.canvasContainer             A div for the canvases to reside in
+         * @param {Number}   [options.width=640]                 Width of the container
+         * @param {Number}   [options.height=480]                Height of the container
+         * @param {String}   [options.backgroundColor="#000"]    Base background color
+         * @param {Number}   [options.fps=40]                    Frame per second
+         * @param {Function} [options.onUpdate=Function]         Called on every update
          */
         Psykick.World = function(options) {
             var self = this,
@@ -46,7 +47,8 @@ var Psykick = {};
                     width: 640,
                     height: 480,
                     backgroundColor: "#000",
-                    fps: 40
+                    fps: 40,
+                    onUpdate: function() {}
                 };
             options = Psykick.Helper.defaults(options, defaults);
 
@@ -75,6 +77,7 @@ var Psykick = {};
 
             gameLoop = setInterval(function() {
                 var delta = (new Date() - gameTime) / 1000;
+                options.onUpdate(delta);
                 self.update(delta);
                 self.draw();
                 gameTime = new Date();
@@ -168,6 +171,32 @@ var Psykick = {};
     Psykick.World.prototype.update = function(delta) {
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].update(delta);
+        }
+    };
+
+    /**
+     * Get a layer based on ID
+     * @param {Number} layerID
+     * @return {Psykick.Layer|null}
+     */
+    Psykick.World.prototype.getLayer = function(layerID) {
+        if (layers.hasOwnProperty(layerID)) {
+            return layers[layerID];
+        } else {
+            return null;
+        }
+    };
+
+    /**
+     * Get an entity based on ID
+     * @param {Number} entityID
+     * @return {Psykick.Entity|null}
+     */
+    Psykick.World.prototype.getEntity = function(entityID) {
+        if (entities.hasOwnProperty(entityID)) {
+            return entities[entityID];
+        } else {
+            return null;
         }
     };
 

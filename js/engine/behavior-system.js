@@ -30,12 +30,27 @@
     };
 
     Psykick.BehaviorSystem.prototype.removeEntity = function(entity) {
-        Psykick.System.prototype.removeEntity.call(this, entity);
+        if (Psykick.System.prototype.removeEntity.call(this, entity)) {
+            if (entity instanceof Psykick.Entity) {
+                var index = this.ActionOrder.indexOf(entity);
+                if (index !== -1) {
+                    this.ActionOrder.splice(index, 1);
+                }
+            } else {
+                for (var i = 0, len = this.ActionOrder.length; i < len; i++) {
+                    if (this.ActionOrder[i].ID === entity) {
+                        this.ActionOrder.splice(i, 1);
+                        break;
+                    }
+                }
+            }
 
-        var index = this.ActionOrder.indexOf(entity);
-        if (index !== -1) {
-            this.ActionOrder.splice(index, 1);
+            return true;
+        } else {
+            return false;
         }
+
+
     };
 
     /**

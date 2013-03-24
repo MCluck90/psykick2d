@@ -3,7 +3,18 @@
     var world = new Psykick.World({
             canvasContainer: document.getElementById('canvas-container'),
             width: 800,
-            height: 600
+            height: 600,
+            onUpdate: function(delta) {
+                var invaders = layer.getEntities();
+                for (var id in invaders) {
+                    var invader = invaders[id],
+                        rect = invader.getComponent("Rectangle");
+
+                    if (rect.y + rect.h > 300) {
+                        world.removeEntity(invader);
+                    }
+                }
+            }
         });
 
     var layer = world.createLayer(),
@@ -36,6 +47,8 @@
             layer.addEntity(entity);
         }
     }
+
+    console.log(layer);
 
     world.pushLayer(layer);
 
