@@ -22,10 +22,10 @@
      * @param {Psykick.Entity} entity
      */
     Psykick.BehaviorSystem.prototype.addEntity = function(entity) {
-        Psykick.System.prototype.addEntity.call(this, entity);
-
-        if (this.ActionOrder.indexOf(entity) === -1) {
-            this.ActionOrder.push(entity);
+        if (Psykick.System.prototype.addEntity.call(this, entity)) {
+            if (this.ActionOrder.indexOf(entity) === -1) {
+                this.ActionOrder.push(entity);
+            }
         }
     };
 

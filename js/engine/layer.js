@@ -1,23 +1,26 @@
 /**
  * A layer houses a set of entities to be updated/drawn on each frame
  * @constructor
- * @param {Number}  id          Unique identifier given by the World
- * @param {Element} container   Layer container
+ * @param {Object}          options
+ * @param {Number}          options.ID
+ * @param {DOMElement}      options.container
+ * @param {Psykick.World}   options.world
  */
-Psykick.Layer = function(id, container) {
-    this.ID = id;
+Psykick.Layer = function(options) {
+    this.ID = options.ID;
+    this.container = options.container;
+    this.World = options.world;
     this.Entities = {};
     this.RenderSystems = [];
     this.BehaviorSystems = [];
     this.Visible = true;
     this.Active = true;
-    this.container = container;
 
     // Create a new canvas to draw on
     var canvas = document.createElement("canvas");
-    canvas.width = parseInt(container.style.width);
-    canvas.height = parseInt(container.style.height);
-    canvas.setAttribute("id", "psykick-layer-" + id);
+    canvas.width = parseInt(options.container.style.width);
+    canvas.height = parseInt(options.container.style.height);
+    canvas.setAttribute("id", "psykick-layer-" + options.ID);
     canvas.style.position = "absolute";
     canvas.style.top = "0px";
     canvas.style.left = "0px";
@@ -52,11 +55,27 @@ Psykick.Layer.prototype.setZIndex = function(zIndex) {
 
 /**
  * Add an entity to the layer
- * @param {Psykick.Entity} entity
+ * @param {Psykick.Entity}  entity
+ * @param {Boolean}         [addToSystems=false]
  */
-Psykick.Layer.prototype.addEntity = function(entity) {
+Psykick.Layer.prototype.addEntity = function(entity, addToSystems) {
+    addToSystems = addToSystems || false;
     entity.setParentLayer(this);
     this.Entities[entity.ID] = entity;
+
+    if (addToSystems) {
+        var bLen = this.BehaviorSystems.length,
+            rLen = this.RenderSystems.length;
+        for (var i = 0; i < bLen || i < rLen; i++) {
+            if (i < bLen) {
+                this.BehaviorSystems[i].addEntity(entity);
+            }
+
+            if (i < rLen) {
+                this.RenderSystems[i].addEntity(entity);
+            }
+        }
+    }
 };
 
 /**
@@ -100,8 +119,41 @@ Psykick.Layer.prototype.addSystem = function(system) {
     }
 };
 
+/**
+ * Returns the collection of entities
+ * @return {Psykick.Entity[]}
+ */
 Psykick.Layer.prototype.getEntities = function() {
     return this.Entities;
+};
+
+/**
+ * Returns the entities with the given component names
+ * @param {String[]} components
+ * @return {Array}
+ */
+Psykick.Layer.prototype.getEntitiesByComponents = function(components) {
+    var numOfComponents = components.length,
+        entities = [];
+    for (var id in this.Entities) {
+        if (this.Entities.hasOwnProperty(id)) {
+            var entity = this.Entities[id],
+                hasComponents = true;
+
+            for (var i = 0; i < numOfComponents; i++) {
+                if (!entity.hasComponent(components[i])) {
+                    hasComponents = false;
+                    break;
+                }
+            }
+
+            if (hasComponents) {
+                entities.push(entity);
+            }
+        }
+    }
+
+    return entities;
 };
 
 /**
@@ -135,7 +187,6 @@ Psykick.Layer.prototype.draw = function() {
 Psykick.Layer.prototype.update = function(delta) {
     // Only update if the layer is active and we have some systems for doing behavior
     if (this.Active && this.BehaviorSystems.length > 0) {
-
         for (var i = 0, len = this.BehaviorSystems.length; i < len; i++) {
             var system = this.BehaviorSystems[i];
             if (system.Active) {

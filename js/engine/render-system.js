@@ -21,10 +21,10 @@
      * @param {Psykick.Entity} entity
      */
     Psykick.RenderSystem.prototype.addEntity = function(entity) {
-        Psykick.System.prototype.addEntity.call(this, entity);
-
-        if (this.DrawOrder.indexOf(entity) === -1) {
-            this.DrawOrder.push(entity);
+        if (Psykick.System.prototype.addEntity.call(this, entity)) {
+            if (this.DrawOrder.indexOf(entity) === -1) {
+                this.DrawOrder.push(entity);
+            }
         }
     };
 

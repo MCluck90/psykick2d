@@ -27,7 +27,7 @@
 
     /**
      * Add a new Component to the Entity
-     * @param {Psykick.Component} component
+     * @param {Psykick.Component|*} component
      */
     Psykick.Entity.prototype.addComponent = function(component) {
         if (component instanceof Psykick.Component) {
@@ -58,6 +58,15 @@
         } else {
             return null;
         }
+    };
+
+    /**
+     * Determine if an Entity has a given component type
+     * @param {String} componentName
+     * @return {Boolean}
+     */
+    Psykick.Entity.prototype.hasComponent = function(componentName) {
+        return this.getComponent(componentName) !== null;
     };
 
 })();

@@ -17,5 +17,7 @@ Game.Components.Invader = function(options) {
         };
 
     options = Psykick.Helper.defaults(options, defaults);
-    this.score = types[options.type];
+    this.score = types[options.type].score;
 };
+
+Psykick.Helper.extend(Game.Components.Invader, Psykick.Component);

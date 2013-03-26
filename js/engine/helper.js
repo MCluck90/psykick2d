@@ -124,7 +124,7 @@ Psykick.Helper = {};
      * @param {Boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
      * @return {Boolean}
      */
-    Psykick.Helper.keyDown = function(keyCode, modifiers) {
+    Psykick.Helper.isKeyDown = function(keyCode, modifiers) {
         modifiers = modifiers || {};
         var defaultModifiers = {
             shift: false,

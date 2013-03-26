@@ -42,10 +42,11 @@ Psykick.Systems = {};
             // Only add entities with required components
             for (var i = 0, len = this.RequiredComponents.length; i < len; i++) {
                 if (!(this.RequiredComponents[i] in entity.Components)) {
-                    return;
+                    return false;
                 }
             }
             this.Entities[entity.ID] = entity;
+            return true;
         } else {
             throw "Invalid Argument: 'entity' must be an instance of Psykick.Entity";
         }

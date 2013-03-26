@@ -25,64 +25,88 @@ var Psykick = {};
         layers = {},
 
         // Layers in the order they will be drawn/updated
-        layersInDrawOrder = [];
+        layersInDrawOrder = [],
 
-        /**
-         * Generates the World instance
-         * @constructor
-         * @param {Object}   options                             Initialization options
-         * @param {Element}  options.canvasContainer             A div for the canvases to reside in
-         * @param {Number}   [options.width=640]                 Width of the container
-         * @param {Number}   [options.height=480]                Height of the container
-         * @param {String}   [options.backgroundColor="#000"]    Base background color
-         * @param {Number}   [options.fps=40]                    Frame per second
-         * @param {Function} [options.onUpdate=Function]         Called on every update
-         */
-        Psykick.World = function(options) {
-            var self = this,
-                baseCanvas = document.createElement("canvas"),
-                gameTime = new Date(),
-                defaults = {
-                    canvasContainer: document.getElementById('canvas-container'),
-                    width: 640,
-                    height: 480,
-                    backgroundColor: "#000",
-                    fps: 40,
-                    onUpdate: function() {}
-                };
-            options = Psykick.Helper.defaults(options, defaults);
+        // Used to remove entities at the beginning of an update phase
+        entityRemovalQueue = [];
 
-            // Setup the canvas container (each layer is a new canvas)
-            canvasContainer = options.canvasContainer;
-            canvasContainer.style.position = "relative";
-            canvasContainer.style.width = options.width + "px";
-            canvasContainer.style.height = options.height + "px";
-            canvasContainer.style.overflow = "hidden";
+    function privateRemoveEntities() {
+        for (var i = 0, len = entityRemovalQueue.length; i < len; i++) {
+            var entity = entityRemovalQueue[i];
+            if (typeof entity === "number") {
+                if (typeof entities[entity] === "undefined") {
+                    throw "Invalid entity ID";
+                }
 
-            baseCanvas.setAttribute("id", "psykick-layer-base");
-            baseCanvas.style.position = "absolute";
-            baseCanvas.style.top = "0px";
-            baseCanvas.style.left = "0px";
-            baseCanvas.style.zIndex = 0;
-            baseCanvas.width = options.width;
-            baseCanvas.height = options.height;
+                entity = entity[entity];
+            }
 
-            canvasContainer.appendChild(baseCanvas);
+            if (entity.Parent !== null) {
+                entity.Parent.removeEntity(entity);
+            }
 
-            this.context = baseCanvas.getContext("2d");
+            delete entities[entity.ID];
+        }
 
-            // Only fill the background once, each new layer handles it's own clearing
-            this.context.fillStyle = options.backgroundColor;
-            this.context.fillRect(0, 0, baseCanvas.width, baseCanvas.height);
+        entityRemovalQueue = [];
+    }
 
-            gameLoop = setInterval(function() {
-                var delta = (new Date() - gameTime) / 1000;
-                options.onUpdate(delta);
-                self.update(delta);
-                self.draw();
-                gameTime = new Date();
-            }, 1000 / options.fps);
-        };
+    /**
+     * Generates the World instance
+     * @constructor
+     * @param {Object}   options                             Initialization options
+     * @param {Element}  options.canvasContainer             A div for the canvases to reside in
+     * @param {Number}   [options.width=640]                 Width of the container
+     * @param {Number}   [options.height=480]                Height of the container
+     * @param {String}   [options.backgroundColor="#000"]    Base background color
+     * @param {Number}   [options.fps=40]                    Frame per second
+     * @param {Function} [options.onUpdate=Function]         Called on every update
+     */
+    Psykick.World = function(options) {
+        var self = this,
+            baseCanvas = document.createElement("canvas"),
+            gameTime = new Date(),
+            defaults = {
+                canvasContainer: document.getElementById('canvas-container'),
+                width: 640,
+                height: 480,
+                backgroundColor: "#000",
+                fps: 40,
+                onUpdate: function() {}
+            };
+        options = Psykick.Helper.defaults(options, defaults);
+
+        // Setup the canvas container (each layer is a new canvas)
+        canvasContainer = options.canvasContainer;
+        canvasContainer.style.position = "relative";
+        canvasContainer.style.width = options.width + "px";
+        canvasContainer.style.height = options.height + "px";
+        canvasContainer.style.overflow = "hidden";
+
+        baseCanvas.setAttribute("id", "psykick-layer-base");
+        baseCanvas.style.position = "absolute";
+        baseCanvas.style.top = "0px";
+        baseCanvas.style.left = "0px";
+        baseCanvas.style.zIndex = 0;
+        baseCanvas.width = options.width;
+        baseCanvas.height = options.height;
+
+        canvasContainer.appendChild(baseCanvas);
+
+        this.context = baseCanvas.getContext("2d");
+
+        // Only fill the background once, each new layer handles it's own clearing
+        this.context.fillStyle = options.backgroundColor;
+        this.context.fillRect(0, 0, baseCanvas.width, baseCanvas.height);
+
+        gameLoop = setInterval(function() {
+            var delta = (new Date() - gameTime) / 1000;
+            options.onUpdate(delta);
+            self.update(delta);
+            self.draw();
+            gameTime = new Date();
+        }, 1000 / options.fps);
+    };
 
     /**
      * Generates a new Entity
@@ -99,7 +123,12 @@ var Psykick = {};
      * @return {Psykick.Layer}
      */
     Psykick.World.prototype.createLayer = function() {
-        var layer = new Psykick.Layer(nextLayerID++, canvasContainer);
+        var self = this,
+            layer = new Psykick.Layer({
+                ID: nextLayerID++,
+                container: canvasContainer,
+                world: self
+            });
         layers[layer.ID] = layer;
         return layer;
     };
@@ -140,19 +169,7 @@ var Psykick = {};
      * @param {Psykick.Entity} entity
      */
     Psykick.World.prototype.removeEntity = function(entity) {
-        if (typeof entity === "number") {
-            if (typeof entities[entity] === "undefined") {
-                throw "Invalid entity ID";
-            }
-
-            entity = entity[entity];
-        }
-
-        if (entity.Parent !== null) {
-            entity.Parent.removeEntity(entity);
-        }
-
-        delete entities[entity.ID];
+        entityRemovalQueue.push(entity);
     };
 
     /**
@@ -169,6 +186,7 @@ var Psykick = {};
      * @param {Number}  delta   Time since last update
      */
     Psykick.World.prototype.update = function(delta) {
+        privateRemoveEntities();
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].update(delta);
         }

@@ -7,7 +7,7 @@ Game.Systems.MoveInvaders = function() {
     this.Speed = 50;
     this.MoveRight = true;
     this.Margin = 48;
-    this.RequiredComponents = ["Rectangle"];
+    this.RequiredComponents = ["Rectangle", "Invader"];
 };
 
 Psykick.Helper.extend(Game.Systems.MoveInvaders, Psykick.BehaviorSystem);
