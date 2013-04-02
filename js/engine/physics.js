@@ -38,8 +38,6 @@
 
         if (this.enableDebugDraw) {
             this.debugDraw = new b2DebugDraw();
-            this.debugDraw.SetFillAlpha(0.3);
-            this.debugDraw.SetLineThickness(1);
             this.debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
         }
     };
@@ -65,7 +63,7 @@
     };
 
     Psykick.Physics.prototype.draw = function() {
-        if (!this.enableDebugDraw) {
+        if (!this.enableDebugDraw || this.debugDrawContext === null) {
             return;
         }
 
@@ -79,6 +77,7 @@
         this.debugDraw.SetSprite(this.debugDrawContext);
         this.debugDraw.SetDrawScale(this.scale);
         this.World.SetDebugDraw(this.debugDraw);
+        this.World.DrawDebugData();
     };
 
     /**
@@ -113,10 +112,10 @@
     Psykick.Physics.prototype.createBody = function(options) {
         var defaults = {
                 shape: "block",
-                width: 5,
-                height: 5,
-                radius: 2.5,
-                type: "static",
+                width: 10,
+                height: 10,
+                radius: 5,
+                type: "dynamic",
                 position: { x: 0, y: 0 },
                 velocity: { x: 0, y: 0 }
             },
@@ -145,7 +144,7 @@
         for (var key in definitionDefaults) {
             newBody.definition[key] = options.definition[key] || definitionDefaults[key];
         }
-        newBody.definition.position = new b2Vec2(options.position.x, options.position.y);
+        newBody.definition.position = new b2Vec2(options.position.x / this.scale, options.position.y / this.scale);
         newBody.definition.linearVelocity = new b2Vec2(options.velocity.x, options.velocity.y);
         newBody.definition.userData = newBody;
         newBody.definition.type = (options.type === "static") ? b2Body.b2_staticBody :
@@ -160,10 +159,17 @@
 
         switch (options.shape) {
             case "circle":
-                newBody.fixtureDef.shape = new b2CircleShape(options.radius);
+                newBody.fixtureDef.shape = new b2CircleShape(options.radius / this.scale);
                 break;
 
             case "polygon":
+                // Convert the points to match our scale
+                for (var i = 0, len = options.points.length; i < len; i++) {
+                    var point = options.points[i];
+                    point.x /= this.scale;
+                    point.y /= this.scale;
+                    options.points[i] = point;
+                }
                 newBody.fixtureDef.shape = new b2PolygonShape();
                 newBody.fixtureDef.shape.SetAsArray(options.points, options.points.length);
                 break;
@@ -171,7 +177,7 @@
             case "block":
             default:
                 newBody.fixtureDef.shape = new b2PolygonShape();
-                newBody.fixtureDef.shape.SetAsBox(options.width / 2, options.height / 2);
+                newBody.fixtureDef.shape.SetAsBox(options.width / 2 / this.scale, options.height / 2 / this.scale);
                 break;
         }
 

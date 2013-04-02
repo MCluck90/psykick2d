@@ -1,9 +1,12 @@
 (function() {
-
+    var physics = new Psykick.Physics({
+        enableDebugDraw: true
+    });
     var world = new Psykick.World({
             canvasContainer: document.getElementById('canvas-container'),
             width: 800,
             height: 600,
+            physics: physics,
             onUpdate: function(delta) { }
         });
 

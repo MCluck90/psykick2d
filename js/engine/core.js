@@ -54,13 +54,14 @@ var Psykick = {};
     /**
      * Generates the World instance
      * @constructor
-     * @param {Object}   options                             Initialization options
-     * @param {Element}  options.canvasContainer             A div for the canvases to reside in
-     * @param {Number}   [options.width=640]                 Width of the container
-     * @param {Number}   [options.height=480]                Height of the container
-     * @param {String}   [options.backgroundColor="#000"]    Base background color
-     * @param {Number}   [options.fps=40]                    Frame per second
-     * @param {Function} [options.onUpdate=Function]         Called on every update
+     * @param {Object}               options                             Initialization options
+     * @param {Element}              options.canvasContainer             A div for the canvases to reside in
+     * @param {Number}               [options.width=640]                 Width of the container
+     * @param {Number}               [options.height=480]                Height of the container
+     * @param {String}               [options.backgroundColor="#000"]    Base background color
+     * @param {Number}               [options.fps=40]                    Frame per second
+     * @param {Psykick.Physics|null} [options.physics=null]
+     * @param {Function}             [options.onUpdate=Function]         Called on every update
      */
     Psykick.World = function(options) {
         var self = this,
@@ -72,9 +73,13 @@ var Psykick = {};
                 height: 480,
                 backgroundColor: "#000",
                 fps: 40,
+                physics: null,
                 onUpdate: function() {}
             };
         options = Psykick.Helper.defaults(options, defaults);
+
+        this.Physics = options.physics;
+        this.PhysicsDrawLayer = null;
 
         // Setup the canvas container (each layer is a new canvas)
         canvasContainer = options.canvasContainer;
@@ -179,6 +184,18 @@ var Psykick = {};
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].draw(this.context);
         }
+
+        if (this.Physics !== null && this.Physics.enableDebugDraw) {
+            if (this.PhysicsDrawLayer === null) {
+                this.PhysicsDrawLayer = this.createLayer();
+                this.Physics.debugDrawContext = this.PhysicsDrawLayer.c;
+                this.pushLayer(this.PhysicsDrawLayer);
+                this.PhysicsDrawLayer.setZIndex(9999999);
+                this.PhysicsDrawLayer.Visible = false;
+            }
+
+            this.Physics.draw();
+        }
     };
 
     /**
@@ -189,6 +206,10 @@ var Psykick = {};
         privateRemoveEntities();
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             layersInDrawOrder[i].update(delta);
+        }
+
+        if (this.Physics !== null) {
+            this.Physics.update(delta);
         }
     };
 
