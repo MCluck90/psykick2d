@@ -67,5 +67,37 @@
 
     moveSys.Active = false;
     world.pushLayer(layer);
+	
+	physics.createBody({
+		type: "static",
+		width: 800,
+		height: 20,
+		position: { x: 400, y: 590 }
+	});
+	
+	var b2Vec2 = Box2D.Common.Math.b2Vec2,
+        b2BodyDef = Box2D.Dynamics.b2BodyDef,
+        b2Body = Box2D.Dynamics.b2Body,
+        b2FixtureDef = Box2D.Dynamics.b2FixtureDef,
+        b2Fixture = Box2D.Dynamics.b2Fixture,
+        b2World = Box2D.Dynamics.b2World,
+        b2MassData = Box2D.Collision.Shapes.b2MassData,
+        b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
+        b2CircleShape = Box2D.Collision.Shapes.b2CircleShape,
+        b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+	
+	for (var i = 1; i <= 20; i++) {
+		var xSign = (Math.random() > 0.5) ? 1 : -1;
+		var ySign = (Math.random() > 0.5) ? 1 : -1;
+		var force = new b2Vec2(20, 20);
+		var point = new b2Vec2(20, 20);
+		var physicsBody = physics.createBody({
+			width: 100,
+			height: 50,
+			position: { x: i * 10, y: -i * 10 * Math.random() }
+		});
+		
+		physicsBody.body.ApplyForce(force, point);
+	}
 
 })();

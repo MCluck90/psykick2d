@@ -107,12 +107,12 @@ Psykick.Helper = {};
 
     /**
      * Shortcut for extremely simple prototypical inheritance
-     * @param {Function} derived    Derived class constructor
-     * @param {Function} base       Base class constructor
+     * @param {Function} Derived    Derived class constructor
+     * @param {Function} Base       Base class constructor
      */
-    Psykick.Helper.extend = function(derived, base) {
-        derived.prototype = new base();
-        derived.constructor = derived;
+    Psykick.Helper.extend = function(Derived, Base) {
+        Derived.prototype = new Base();
+        Derived.constructor = Derived;
     };
 
     /**

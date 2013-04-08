@@ -19,7 +19,7 @@ Game.Systems.DrawRect.prototype.draw = function(c) {
             colorComponent = entity.getComponent("Color"),
             rectComponent = entity.getComponent("Rectangle");
 
-        if (colorComponent.colors.length == 0) {
+        if (colorComponent.colors.length === 0) {
             continue;
         }
 

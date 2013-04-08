@@ -22,10 +22,11 @@ Game.Systems.MoveInvaders.prototype.update = function(delta) {
         moveRightNext = !this.MoveRight,
         rowContainer = {},
         rowKeys = [],
-        xChange = this.Speed * delta;
+        xChange = this.Speed * delta,
+		i, j, len, numOfKeys;
 
     // Organize by row
-    for (var i = 0, len = this.ActionOrder.length; i < len; i++) {
+    for (i = 0, len = this.ActionOrder.length; i < len; i++) {
         var entity = this.ActionOrder[i],
             rect = entity.getComponent("Rectangle");
 
@@ -48,7 +49,7 @@ Game.Systems.MoveInvaders.prototype.update = function(delta) {
 
     rowKeys.sort();
 
-    for (var i = 0, numOfKeys = rowKeys.length; i < numOfKeys; i++) {
+    for (i = 0, numOfKeys = rowKeys.length; i < numOfKeys; i++) {
         var key = rowKeys[i],
             row = rowContainer[key],
             rowChange = xChange;
@@ -67,7 +68,7 @@ Game.Systems.MoveInvaders.prototype.update = function(delta) {
             }
         }
 
-        for (var j = 0, len = row.length; j < len; j++) {
+        for (j = 0, len = row.length; j < len; j++) {
             row[j].x += rowChange;
 
             // Whenever we "bounce" off the wall, move down as well

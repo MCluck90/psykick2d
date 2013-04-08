@@ -134,14 +134,15 @@
                 bullet: false,
                 fixedRotation: false
             },
-            newBody = {};
+            newBody = {},
+			key;
         options = Psykick.Helper.defaults(options, defaults);
         options.fixture = Psykick.Helper.defaults(options.fixture, fixtureDefaults);
         options.definition = Psykick.Helper.defaults(options.definition, definitionDefaults);
 
         newBody.definition = new b2BodyDef();
 
-        for (var key in definitionDefaults) {
+        for (key in definitionDefaults) {
             newBody.definition[key] = options.definition[key] || definitionDefaults[key];
         }
         newBody.definition.position = new b2Vec2(options.position.x / this.scale, options.position.y / this.scale);
@@ -153,7 +154,7 @@
         newBody.body = this.World.CreateBody(newBody.definition);
 
         newBody.fixtureDef = new b2FixtureDef();
-        for (var key in fixtureDefaults) {
+        for (key in fixtureDefaults) {
             newBody.fixtureDef[key] = options.fixture[key] || fixtureDefaults[key];
         }
 

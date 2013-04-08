@@ -18,8 +18,8 @@ Psykick.Layer = function(options) {
 
     // Create a new canvas to draw on
     var canvas = document.createElement("canvas");
-    canvas.width = parseInt(options.container.style.width);
-    canvas.height = parseInt(options.container.style.height);
+    canvas.width = parseInt(options.container.style.width, 10);
+    canvas.height = parseInt(options.container.style.height, 10);
     canvas.setAttribute("id", "psykick-layer-" + options.ID);
     canvas.style.position = "absolute";
     canvas.style.top = "0px";

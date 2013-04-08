@@ -82,6 +82,9 @@ var Psykick = {};
         this.PhysicsDrawLayer = null;
 
         // Setup the canvas container (each layer is a new canvas)
+        if (typeof options.canvasContainer === 'string') {
+            options.canvasContainer = document.getElementById(options.canvasContainer);
+        }
         canvasContainer = options.canvasContainer;
         canvasContainer.style.position = "relative";
         canvasContainer.style.width = options.width + "px";
@@ -159,7 +162,7 @@ var Psykick = {};
      * @return {Psykick.Layer|null}
      */
     Psykick.World.prototype.popLayer = function() {
-        if (layersInDrawOrder.length == 0) {
+        if (layersInDrawOrder.length === 0) {
             return null;
         }
 
