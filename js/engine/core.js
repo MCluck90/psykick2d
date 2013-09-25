@@ -72,7 +72,6 @@ var Psykick = {};
                 width: 640,
                 height: 480,
                 backgroundColor: "#000",
-                fps: 40,
                 physics: null,
                 onUpdate: function() {}
             };
@@ -107,13 +106,17 @@ var Psykick = {};
         this.context.fillStyle = options.backgroundColor;
         this.context.fillRect(0, 0, baseCanvas.width, baseCanvas.height);
 
-        gameLoop = setInterval(function() {
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+        gameLoop = function() {
             var delta = (new Date() - gameTime) / 1000;
             options.onUpdate(delta);
             self.update(delta);
             self.draw();
             gameTime = new Date();
-        }, 1000 / options.fps);
+            requestAnimationFrame(gameLoop);
+        };
+        requestAnimationFrame(gameLoop);
     };
 
     /**
