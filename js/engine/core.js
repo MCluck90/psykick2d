@@ -65,7 +65,7 @@ var Psykick = {};
      */
     Psykick.World = function(options) {
         var self = this,
-            baseCanvas = document.createElement("canvas"),
+            backgroundEl = document.createElement("div"),
             gameTime = new Date(),
             defaults = {
                 canvasContainer: document.getElementById('canvas-container'),
@@ -90,21 +90,16 @@ var Psykick = {};
         canvasContainer.style.height = options.height + "px";
         canvasContainer.style.overflow = "hidden";
 
-        baseCanvas.setAttribute("id", "psykick-layer-base");
-        baseCanvas.style.position = "absolute";
-        baseCanvas.style.top = "0px";
-        baseCanvas.style.left = "0px";
-        baseCanvas.style.zIndex = 0;
-        baseCanvas.width = options.width;
-        baseCanvas.height = options.height;
+        backgroundEl.setAttribute("id", "psykick-layer-base");
+        backgroundEl.style.position = "absolute";
+        backgroundEl.style.top = "0px";
+        backgroundEl.style.left = "0px";
+        backgroundEl.style.zIndex = 0;
+        backgroundEl.style.width = options.width + "px";
+        backgroundEl.style.height = options.height + "px";
+        backgroundEl.style.backgroundColor = options.backgroundColor;
 
-        canvasContainer.appendChild(baseCanvas);
-
-        this.context = baseCanvas.getContext("2d");
-
-        // Only fill the background once, each new layer handles it's own clearing
-        this.context.fillStyle = options.backgroundColor;
-        this.context.fillRect(0, 0, baseCanvas.width, baseCanvas.height);
+        canvasContainer.appendChild(backgroundEl);
 
         var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
             window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
