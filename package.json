@@ -1,0 +1,33 @@
+{
+  "name": "psykick",
+  "version": "0.1.0",
+  "description": "Psykick 2d game engine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MCluck90/psykick3d"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "2d",
+    "box2d"
+  ],
+  "contributors": [
+    {
+      "name": "Mike Cluck",
+      "email": "mcluck90@gmail.com"
+    },
+    {
+      "name": "Jon Holt",
+      "email": "jonathanholt92@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MCluck90/psykick/issues"
+  },
+  "dependencies": {
+    "box2dweb": "~2.1.0b"
+  },
+  "devDependencies": {}
+}
