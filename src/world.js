@@ -12,7 +12,7 @@ var Entity = require('./entity.js'),
     gameLoop,
 
     // Entity ID counter
-    nextEntityID = number.MIN_VALUE,
+    nextEntityID = Number.MIN_VALUE,
 
     // Layer ID counter
     nextLayerID = 0,
@@ -126,7 +126,7 @@ var World = {
      * @param {Entity|number} entity
      */
     removeEntity: function(entity) {
-        if (typeof entity == 'number') {
+        if (typeof entity === 'number') {
             entity = entities[entity];
         }
 

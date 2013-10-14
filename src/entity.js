@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('./component.js'),
-    Layer = require('./layer.js');
+var Component = require('./component.js');
 
 /**
  * A collection of Components which make up an object in the world
@@ -20,7 +19,7 @@ var Entity = function(id) {
  * @param {Layer} layer
  */
 Entity.prototype.setParentLayer = function(layer) {
-    if (layer instanceof Layer) {
+    if (typeof layer === 'object' && layer.id !== undefined) {
         this.parentLayer = layer;
     } else {
         throw 'Invalid Argument: \'layer\' must be an instance of Layer';

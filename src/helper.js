@@ -7,7 +7,7 @@ var
 
     // Quick references for common core functions
     slice               = ArrayProto.slice,
-    hasOwnProperty      = ObjProto.hasOwnProperty,
+    hasOwnProp          = ObjProto.hasOwnProperty,
 
     // Store the currently pressed keys
     keysDown = {};
@@ -36,7 +36,7 @@ var Helper = {
      * @returns {boolean}
      */
     has: function(obj, key) {
-        return hasOwnProperty.call(obj, key);
+        return hasOwnProp.call(obj, key);
     },
 
     /**

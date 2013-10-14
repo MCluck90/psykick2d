@@ -38,17 +38,17 @@ RenderSystem.prototype.addEntity = function(entity) {
  */
 RenderSystem.prototype.removeEntity = function(entity) {
     if (System.prototype.removeEntity.call(this, entity)) {
-        if (entity instanceof Entity) {
-            var index = this.drawOrder.indexOf(entity);
-            if (index !== -1) {
-                this.drawOrder.splice(index, 1);
-            }
-        } else {
+        if (typeof entity === 'number') {
             for (var i = 0, len = this.drawOrder.length; i < len; i++) {
                 if (this.drawOrder[i].id === entity) {
                     this.drawOrder.splice(i, 1);
                     break;
                 }
+            }
+        } else {
+            var index = this.drawOrder.indexOf(entity);
+            if (index !== -1) {
+                this.drawOrder.splice(index, 1);
             }
         }
 

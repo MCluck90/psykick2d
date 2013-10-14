@@ -1,7 +1,6 @@
 'use strict';
 
 var Entity = require('./entity.js'),
-    Layer = require('./layer.js'),
     Helper = require('./helper.js');
 
 /**
@@ -20,7 +19,7 @@ var System = function() {
  * @param {Layer} layer
  */
 System.prototype.setParentLayer = function(layer) {
-    if (layer instanceof Layer) {
+    if (typeof layer === 'object' && Helper.has(layer, 'id')) {
         this.parentLayer = layer;
     } else {
         throw 'Invalid argument: \'layer\' must be an instance of Layer';

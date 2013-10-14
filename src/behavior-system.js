@@ -43,17 +43,17 @@ BehaviorSystem.prototype.addEntity = function(entity) {
  */
 BehaviorSystem.prototype.removeEntity = function(entity) {
     if (System.prototype.removeEntity.call(this, entity)) {
-        if (entity instanceof Entity) {
-            var index = this.actionOrder.indexOf(entity);
-            if (index !== -1) {
-                this.actionOrder.splice(index, 1);
-            }
-        } else {
+        if (typeof entity === 'number') {
             for (var i = 0, len = this.actionOrder.length; i < len; i++) {
                 if (this.actionOrder[i].id === entity) {
                     this.actionOrder.splice(i, 1);
                     break;
                 }
+            }
+        } else {
+            var index = this.actionOrder.indexOf(entity);
+            if (index !== -1) {
+                this.actionOrder.splice(index, 1);
             }
         }
 

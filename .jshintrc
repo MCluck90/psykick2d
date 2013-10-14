@@ -1,0 +1,16 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": true,
+    "newcap": true,
+    "quotmark": "single",
+    "undef": true,
+    "unused": "vars",
+    "strict": true,
+
+    "globalstrict": true,
+
+    "browser": true,
+    "node": true
+}

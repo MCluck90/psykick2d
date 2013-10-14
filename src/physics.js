@@ -7,9 +7,7 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2BodyDef = Box2D.Dynamics.b2BodyDef,
     b2Body = Box2D.Dynamics.b2Body,
     b2FixtureDef = Box2D.Dynamics.b2FixtureDef,
-    b2Fixture = Box2D.Dynamics.b2Fixture,
     b2World = Box2D.Dynamics.b2World,
-    b2MassData = Box2D.Collision.Shapes.b2MassData,
     b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
     b2CircleShape = Box2D.Collision.Shapes.b2CircleShape,
     b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
@@ -192,10 +190,12 @@ Physics.prototype.createBody = function(options) {
             break;
 
         case 'block':
-        default:
             newBody.fixtureDef.shape = new b2PolygonShape();
             newBody.fixtureDef.shape.SetAsBox(options.width / 2 / this.scale, options.height / 2 / this.scale);
             break;
+
+        default:
+            throw new Error('Invalid fixture type given');
     }
 
     newBody.body.CreateFixture(newBody.fixtureDef);

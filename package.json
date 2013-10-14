@@ -1,10 +1,10 @@
 {
   "name": "psykick",
   "version": "0.1.0",
-  "description": "Psykick 2d game engine",
+  "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MCluck90/psykick3d"
+    "url": "https://github.com/MCluck90/psykick"
   },
   "keywords": [
     "game",
@@ -29,5 +29,12 @@
   "dependencies": {
     "box2dweb": "~2.1.0b"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "browserify": "~2.33.1",
+    "grunt-browserify": "~1.2.8",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "matchdep": "~0.3.0"
+  }
 }
