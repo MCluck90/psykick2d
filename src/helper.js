@@ -33,7 +33,7 @@ var Helper = {
      * Determine if an object has a property (not on the prototype chain)
      * @param {Object} obj
      * @param {*}      key
-     * @returns {Boolean}
+     * @returns {boolean}
      */
     has: function(obj, key) {
         return hasOwnProperty.call(obj, key);
@@ -71,12 +71,12 @@ var Helper = {
 
     /**
      * Returns if a given key is pressed
-     * @param {Number}  keyCode                 Key code. Usually obtained from Keys
+     * @param {number}  keyCode                 Key code. Usually obtained from Keys
      * @param {Object}  modifiers
-     * @param {Boolean} [modifiers.shift=false] If true, will check if shift was held at the time
-     * @param {Boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
-     * @param {Boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
-     * @return {Boolean}
+     * @param {boolean} [modifiers.shift=false] If true, will check if shift was held at the time
+     * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
+     * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
+     * @return {boolean}
      */
     isKeyDown: function(keyCode, modifiers) {
         modifiers = modifiers || {};

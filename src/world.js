@@ -12,7 +12,7 @@ var Entity = require('./entity.js'),
     gameLoop,
 
     // Entity ID counter
-    nextEntityID = Number.MIN_VALUE,
+    nextEntityID = number.MIN_VALUE,
 
     // Layer ID counter
     nextLayerID = 0,
@@ -58,8 +58,8 @@ var World = {
      * Initializes the World
      * @param {Object} options
      * @param {Element|String} options.canvasContainer
-     * @param {Number} [options.width=window.innerWidth]
-     * @param {Number} [options.height=window.innerHeight]
+     * @param {number} [options.width=window.innerWidth]
+     * @param {number} [options.height=window.innerHeight]
      * @param {String} [options.backgroundColor='#000']
      */
     init: function(options) {
@@ -123,7 +123,7 @@ var World = {
 
     /**
      * Removes an Entity from the World
-     * @param {Entity|Number} entity
+     * @param {Entity|number} entity
      */
     removeEntity: function(entity) {
         if (typeof entity == 'number') {
@@ -137,7 +137,7 @@ var World = {
 
     /**
      * Returns an Entity based on it's ID
-     * @param {Number} entityID
+     * @param {number} entityID
      * @returns {Entity|null}
      */
     getEntity: function(entityID) {
@@ -166,7 +166,7 @@ var World = {
     /**
      * Pushes a Layer to the top of the draw stack
      * @param {Layer} layer
-     * @returns {Boolean} True if the push was successful
+     * @returns {boolean} True if the push was successful
      */
     pushLayer: function(layer) {
         if (!(layer instanceof Layer)) {
@@ -200,7 +200,7 @@ var World = {
 
     /**
      * Returns a Layer based on it's ID
-     * @param {Number} layerID
+     * @param {number} layerID
      * @returns {Layer|null}
      */
     getLayer: function(layerID) {
@@ -213,7 +213,7 @@ var World = {
 
     /**
      * Updates the World
-     * @param {Number} delta    Time since previous update
+     * @param {number} delta    Time since previous update
      */
     update: function(delta) {
         removeEntities();

@@ -8,7 +8,7 @@ var Component = require('../../component.js'),
  * @constructor
  * @inherit Component
  * @param   {Object}    coords
- * @param   {Number}    [coords.x]          X coordinate
+ * @param   {number}    [coords.x]          X coordinate
  * @param   {number}    [coords.y]          Y coordinate
  * @param   {number}    [coords.rotation]   Rotation
  */

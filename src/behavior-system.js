@@ -38,8 +38,8 @@ BehaviorSystem.prototype.addEntity = function(entity) {
 
 /**
  * Removes an Entity from the System
- * @param {Entity|Number} entity
- * @returns {Boolean}
+ * @param {Entity|number} entity
+ * @returns {boolean}
  */
 BehaviorSystem.prototype.removeEntity = function(entity) {
     if (System.prototype.removeEntity.call(this, entity)) {
@@ -68,7 +68,7 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 /**
  * Updates all of the entities.
  * Should be redefined in each new instance of a BehaviorSystem
- * @param {Number} delta    Amount of time that's passed since the last update
+ * @param {number} delta    Amount of time that's passed since the last update
  */
 BehaviorSystem.prototype.update = function() {};
 

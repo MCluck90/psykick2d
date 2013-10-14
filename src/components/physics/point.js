@@ -8,8 +8,8 @@ var Component = require('../../component.js'),
  * @constructor
  * @inherit Component
  * @param   {Object}    options
- * @param   {Number}    [options.x=0]   X coordinate
- * @param   {Number}    [options.y=0]   Y coordinate
+ * @param   {number}    [options.x=0]   X coordinate
+ * @param   {number}    [options.y=0]   Y coordinate
  */
 var Point = function(options) {
     this.NAME = 'Point';

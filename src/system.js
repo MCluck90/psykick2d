@@ -30,7 +30,7 @@ System.prototype.setParentLayer = function(layer) {
 /**
  * Add a new Entity to the collection
  * @param {Entity}      entity
- * @returns {Boolean}   Returns true if Entity could be added
+ * @returns {boolean}   Returns true if Entity could be added
  */
 System.prototype.addEntity = function(entity) {
     if (entity instanceof Entity) {
@@ -50,7 +50,7 @@ System.prototype.addEntity = function(entity) {
 /**
  * Remove an Entity from the collection
  * @param {Entity}      entity
- * @return {Boolean}    True if the entity was removed
+ * @return {boolean}    True if the entity was removed
  */
 System.prototype.removeEntity = function(entity) {
     var entityID = entity;

@@ -6,7 +6,7 @@ var Component = require('./component.js'),
 /**
  * A collection of Components which make up an object in the world
  * @constructor
- * @param {Number} id   Unique ID assigned by the World
+ * @param {number} id   Unique ID assigned by the World
  */
 var Entity = function(id) {
     this.id = id;
@@ -65,7 +65,7 @@ Entity.prototype.getComponent = function(componentName) {
 /**
  * Determine if an Entity has a given component type
  * @param {String} componentName
- * @return {Boolean}
+ * @return {boolean}
  */
 Entity.prototype.hasComponent = function(componentName) {
     return this.getComponent(componentName) !== null;

@@ -9,7 +9,7 @@ var Entity = require('./entity.js'),
  * A layer houses a set of entities to be updated/drawn on each frame
  * @constructor
  * @param {Object}  options
- * @param {Number}  options.id          - Unique ID assigned by the World
+ * @param {number}  options.id          - Unique ID assigned by the World
  * @param {Element} options.container   - Element which houses the Layer
  */
 var Layer = function(options) {
@@ -52,7 +52,7 @@ Layer.prototype.restoreCanvas = function() {
 
 /**
  * Set the depth layer index
- * @param {Number} zIndex
+ * @param {number} zIndex
  */
 Layer.prototype.setZIndex = function(zIndex) {
     this.c.canvas.style.zIndex = zIndex;
@@ -61,7 +61,7 @@ Layer.prototype.setZIndex = function(zIndex) {
 /**
  * Add an entity to the layer
  * @param {Entity}  entity
- * @param {Boolean}         [addToSystems=false]
+ * @param {boolean}         [addToSystems=false]
  */
 Layer.prototype.addEntity = function(entity, addToSystems) {
     if (!(entity instanceof Entity)) {
@@ -88,7 +88,7 @@ Layer.prototype.addEntity = function(entity, addToSystems) {
 
 /**
  * Removes an entity from the layer
- * @param {Number|Entity} entityID
+ * @param {number|Entity} entityID
  */
 Layer.prototype.removeEntity = function(entityID) {
     if (entityID instanceof Entity) {
@@ -190,7 +190,7 @@ Layer.prototype.draw = function() {
 
 /**
  * Update the layer
- * @param {Number} delta    Amount of time since the last update
+ * @param {number} delta    Amount of time since the last update
  */
 Layer.prototype.update = function(delta) {
     // Only update if the layer is active and we have some systems for doing behavior

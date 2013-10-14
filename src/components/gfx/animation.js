@@ -6,11 +6,11 @@ var Component = require('../../component.js'),
 /**
  * @desc        Used for keeping track of an animation cycle
  * @param       {Object}    options
- * @param       {Number}    [options.fps=24]             Frame per second
- * @param       {Number}    [options.minFrame=0]         First frame in the animation
- * @param       {Number}    [options.maxFrame=0]         Final frame in the animation
- * @param       {Number}    [options.currentFrame=0]     Current frame
- * @param       {Number}    [options.lastFrameTime]      Time since last frame
+ * @param       {number}    [options.fps=24]             Frame per second
+ * @param       {number}    [options.minFrame=0]         First frame in the animation
+ * @param       {number}    [options.maxFrame=0]         Final frame in the animation
+ * @param       {number}    [options.currentFrame=0]     Current frame
+ * @param       {number}    [options.lastFrameTime]      Time since last frame
  * @constructor
  * @inherit     Component
  */
@@ -38,8 +38,8 @@ Helper.inherit(Animation, Component);
 
 /**
  * @desc    Updates and returns the current frame
- * @param   {Number} delta    Time since last update
- * @return  {Number}
+ * @param   {number} delta    Time since last update
+ * @return  {number}
  */
 Animation.prototype.getFrame = function(delta) {
     this.lastFrameTime += delta;

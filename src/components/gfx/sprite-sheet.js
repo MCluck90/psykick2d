@@ -9,12 +9,12 @@ var Component = require('../../component.js'),
  * @inherit Component
  * @param {Object} options
  * @param {String} [options.src=null]       Path to the image
- * @param {Number} [options.width=0]        Width of the sprite sheet
- * @param {Number} [options.height=0]       Height of the sprite sheet
- * @param {Number} [options.frameWidth=0]   Width of the individual frames
- * @param {Number} [options.frameHeight=0]  Height of the individual frames
- * @param {Number} [options.xOffset=0]      Initial x offset
- * @param {Number} [options.yOffset=0]      Initial y offset
+ * @param {number} [options.width=0]        Width of the sprite sheet
+ * @param {number} [options.height=0]       Height of the sprite sheet
+ * @param {number} [options.frameWidth=0]   Width of the individual frames
+ * @param {number} [options.frameHeight=0]  Height of the individual frames
+ * @param {number} [options.xOffset=0]      Initial x offset
+ * @param {number} [options.yOffset=0]      Initial y offset
  */
 var SpriteSheet = function(options) {
     // Unique name for reference in Entities
@@ -52,7 +52,7 @@ Helper.inherit(SpriteSheet, Component);
 
 /**
  * Returns the width of the sheet
- * @return {Number}
+ * @return {number}
  */
 SpriteSheet.prototype.getWidth = function() {
     return this.img.width;
@@ -60,7 +60,7 @@ SpriteSheet.prototype.getWidth = function() {
 
 /**
  * Returns the height of the sheet
- * @return {Number}
+ * @return {number}
  */
 SpriteSheet.prototype.getHeight = function() {
     return this.img.height;
@@ -68,7 +68,7 @@ SpriteSheet.prototype.getHeight = function() {
 
 /**
  * Sets the width of the sheet
- * @param {Number} width
+ * @param {number} width
  */
 SpriteSheet.prototype.setWidth = function(width) {
     this.img.width = width;
@@ -76,7 +76,7 @@ SpriteSheet.prototype.setWidth = function(width) {
 
 /**
  * Sets the height of the sheet
- * @param {Number} height
+ * @param {number} height
  */
 SpriteSheet.prototype.setHeight = function(height) {
     this.img.height = height;
@@ -92,9 +92,9 @@ SpriteSheet.prototype.changeImage = function(path) {
 
 /**
  * Returns the offset for a given frame
- * @param {Number}  [frameX=0]
- * @param {Number}  [frameY=0]
- * @return {{x:Number, y:Number}}
+ * @param {number}  [frameX=0]
+ * @param {number}  [frameY=0]
+ * @return {{x:number, y:number}}
  */
 SpriteSheet.prototype.getOffset = function(frameX, frameY) {
     if (this.img.src === null) {

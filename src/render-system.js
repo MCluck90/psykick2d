@@ -18,7 +18,7 @@ Helper.inherit(RenderSystem, System);
 
 /**
  * Add a new Entity to the collection and make it the last one to be drawn
- * @param {Entity|Number} entity
+ * @param {Entity|number} entity
  */
 RenderSystem.prototype.addEntity = function(entity) {
     if (System.prototype.addEntity.call(this, entity)) {
@@ -33,8 +33,8 @@ RenderSystem.prototype.addEntity = function(entity) {
 
 /**
  * Removes an Entity
- * @param {Entity|Number} entity
- * @return {Boolean}
+ * @param {Entity|number} entity
+ * @return {boolean}
  */
 RenderSystem.prototype.removeEntity = function(entity) {
     if (System.prototype.removeEntity.call(this, entity)) {

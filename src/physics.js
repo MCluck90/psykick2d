@@ -53,7 +53,7 @@ var Physics = function(options) {
 
 /**
  * Updates the world
- * @param {Number} delta    Amount of time since last update
+ * @param {number} delta    Amount of time since last update
  */
 Physics.prototype.update = function(delta) {
     var bodiesToRemove = this.bodyRemovalQueue.length,
@@ -100,25 +100,25 @@ Physics.prototype.draw = function() {
  * Generates a new body and adds it to the world
  * @param {Object}                     [options={}]
  * @param {String}                     [options.shape='block']
- * @param {Number}                     [options.width=5]
- * @param {Number}                     [options.height=5]
- * @param {Number}                     [options.radius=2.5]
+ * @param {number}                     [options.width=5]
+ * @param {number}                     [options.height=5]
+ * @param {number}                     [options.radius=2.5]
  * @param {String}                     [options.type='static']
- * @param {Number}                     [options.position.x=0]
- * @param {Number}                     [options.position.y=0]
- * @param {Number}                     [options.velocity.x=0]
- * @param {Number}                     [options.velocity.y=0]
- * @param {Number}                     [options.fixture.density=2]
- * @param {Number}                     [options.fixture.friction=1]
- * @param {Number}                     [options.fixture.restitution=0.2]
+ * @param {number}                     [options.position.x=0]
+ * @param {number}                     [options.position.y=0]
+ * @param {number}                     [options.velocity.x=0]
+ * @param {number}                     [options.velocity.y=0]
+ * @param {number}                     [options.fixture.density=2]
+ * @param {number}                     [options.fixture.friction=1]
+ * @param {number}                     [options.fixture.restitution=0.2]
  * @param {Box2D.Common.Math.b2Vec2[]} [options.fixture.points=[]}
- * @param {Boolean}                    [options.definition.active=true]
- * @param {Boolean}                    [options.definition.allowSleep=true]
- * @param {Number}                     [options.angle=0]
- * @param {Number}                     [options.angularVelocity=0]
- * @param {Boolean}                    [options.awake=true]
- * @param {Boolean}                    [options.bullet=false]
- * @param {Boolean}                    [options.fixedRotation=false]
+ * @param {boolean}                    [options.definition.active=true]
+ * @param {boolean}                    [options.definition.allowSleep=true]
+ * @param {number}                     [options.angle=0]
+ * @param {number}                     [options.angularVelocity=0]
+ * @param {boolean}                    [options.awake=true]
+ * @param {boolean}                    [options.bullet=false]
+ * @param {boolean}                    [options.fixedRotation=false]
  * @return {{
  *  definition: Box2D.Dynamics.b2BodyDef,
  *  fixtureDef: Box2D.Dynamics.b2FixtureDef,
