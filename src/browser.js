@@ -1,3 +1,3 @@
 'use strict';
 
-window.Psykick = require('./index.js');
+window.Psykick2D = require('./index.js');

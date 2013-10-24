@@ -1,10 +1,10 @@
 {
-  "name": "psykick",
+  "name": "psykick2d",
   "version": "0.1.0",
   "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MCluck90/psykick"
+    "url": "https://github.com/MCluck90/psykick2d"
   },
   "keywords": [
     "game",
@@ -24,7 +24,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MCluck90/psykick/issues"
+    "url": "https://github.com/MCluck90/psykick2d/issues"
   },
   "dependencies": {
     "box2dweb": "~2.1.0b"

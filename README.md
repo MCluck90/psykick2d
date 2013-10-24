@@ -1,16 +1,16 @@
-Psykick
-=======
+Psykick2D
+=========
 
 An HTML5 game engine. Built as an entity-component framework.
 
 ----------
 
-### Building Psykick
-Psykick relies on [Browserify][1] to be built for the browser.
+### Building Psykick2D
+Psykick2D relies on [Browserify][1] to be built for the browser.
 
 ```bash
 npm install -g browserify
-browserify src/index.js > psykick.js
+browserify src/index.js > psykick2d.js
 ```
 
 

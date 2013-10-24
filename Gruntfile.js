@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         browserify: {
             debug: {
                 files: {
-                    'build/psykick-debug.js': ['src/browser.js']
+                    'build/psykick2d-debug.js': ['src/browser.js']
                 },
                 options: {
                     debug: true
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
             },
             release: {
                 files: {
-                    'build/psykick.js': ['src/browser.js']
+                    'build/psykick2d.js': ['src/browser.js']
                 },
                 options: {
                     debug: false
@@ -53,7 +53,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default', 'jshint:all');
-    grunt.registerTask('build', 'Builds Psykick for the browser', function(type) {
+    grunt.registerTask('build', 'Builds Psykick2D for the browser', function(type) {
         grunt.task.run('jshint:all');
 
         if (type === undefined) {
