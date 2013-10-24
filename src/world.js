@@ -155,7 +155,7 @@ var World = {
     createLayer: function() {
         var self = this,
             layer = new Layer({
-                ID: nextLayerID++,
+                id: nextLayerID++,
                 container: canvasContainer,
                 world: self
             });
