@@ -11,7 +11,7 @@ var Helper = require('../helper.js'),
  */
 var Sprite = function() {
     RenderSystem.call(this);
-    this.RequiredComponents = ['SpriteSheet', 'Position'];
+    this.requiredComponents = ['SpriteSheet', 'Position'];
 };
 
 Helper.inherit(Sprite, RenderSystem);
@@ -21,7 +21,7 @@ Helper.inherit(Sprite, RenderSystem);
  * @param {CanvasRenderingContext2D} c
  */
 Sprite.prototype.draw = function(c) {
-    for (var i = 0, len = this.DrawOrder.length; i < len; i++) {
+    for (var i = 0, len = this.drawOrder.length; i < len; i++) {
         var entity = this.drawOrder[i],
             spriteSheet = entity.getComponent('SpriteSheet'),
             position = entity.getComponent('Position');
