@@ -1,6 +1,6 @@
 {
   "name": "psykick2d",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
       "email": "jonathanholt92@gmail.com"
     }
   ],
+  "main": "./src/index.js",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MCluck90/psykick2d/issues"
