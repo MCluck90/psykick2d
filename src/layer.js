@@ -1,12 +1,11 @@
 'use strict';
 
-var Entity = require('./entity.js'),
-    System = require('./system.js'),
+var System = require('./system.js'),
     BehaviorSystem = require('./behavior-system.js'),
     RenderSystem = require('./render-system.js');
 
 /**
- * A layer houses a set of entities to be updated/drawn on each frame
+ * A layer houses a set of systems which are updated/drawn on each frame
  * @constructor
  * @param {Object}  options
  * @param {number}  options.id          - Unique ID assigned by the World
@@ -15,7 +14,6 @@ var Entity = require('./entity.js'),
 var Layer = function(options) {
     this.id = options.id;
     this.container = options.container;
-    this.entities = {};
     this.renderSystems = [];
     this.behaviorSystems = [];
     this.visible = true;
@@ -59,66 +57,21 @@ Layer.prototype.setZIndex = function(zIndex) {
 };
 
 /**
- * Add an entity to the layer
- * @param {Entity}  entity
- * @param {boolean}         [addToSystems=false]
- */
-Layer.prototype.addEntity = function(entity, addToSystems) {
-    if (!(entity instanceof Entity)) {
-        throw new Error('Invalid argument: \'entity\' must be an instance of Entity');
-    }
-    addToSystems = addToSystems || false;
-    entity.setParentLayer(this);
-    this.entities[entity.id] = entity;
-
-    if (addToSystems) {
-        var bLen = this.behaviorSystems.length,
-            rLen = this.renderSystems.length;
-        for (var i = 0; i < bLen || i < rLen; i++) {
-            if (i < bLen) {
-                this.behaviorSystems[i].addEntity(entity);
-            }
-
-            if (i < rLen) {
-                this.renderSystems[i].addEntity(entity);
-            }
-        }
-    }
-};
-
-/**
- * Removes an entity from the layer
- * @param {number|Entity} entityID
- */
-Layer.prototype.removeEntity = function(entityID) {
-    if (entityID instanceof Entity) {
-        entityID = entityID.id;
-    }
-
-    // Delete the entity from any systems
-    for (var i = 0, bLen = this.behaviorSystems.length, rLen = this.renderSystems.length; i < bLen || i < rLen; i++) {
-        if (i < bLen) {
-            this.behaviorSystems[i].removeEntity(entityID);
-        }
-
-        if (i < rLen) {
-            this.renderSystems[i].removeEntity(entityID);
-        }
-    }
-
-    delete this.entities[entityID];
-};
-
-/**
  * Add a new system to the layer
  * @param {System} system
  */
 Layer.prototype.addSystem = function(system) {
     if (!(system instanceof System)) {
-        throw 'Invalid argument: \'system\' must be an instance of System';
+        throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    system.setParentLayer(this);
+    if (system.parentLayer === null) {
+        system.parentLayer = this;
+    } else {
+        var err = new Error('System already belongs to another Layer');
+        err.system = system;
+        throw err;
+    }
 
     if (system instanceof BehaviorSystem && this.behaviorSystems.indexOf(system) === -1) {
         this.behaviorSystems.push(system);
@@ -128,40 +81,21 @@ Layer.prototype.addSystem = function(system) {
 };
 
 /**
- * Returns the collection of entities
- * @return {Entity[]}
+ * Removes a system from the layer
+ * @param {System} system
  */
-Layer.prototype.getEntities = function() {
-    return this.entities;
-};
-
-/**
- * Returns the entities with the given component names
- * @param {String[]} components
- * @return {Array}
- */
-Layer.prototype.getEntitiesByComponents = function(components) {
-    var numOfComponents = components.length,
-        entities = [];
-    for (var id in this.entities) {
-        if (this.entities.hasOwnProperty(id)) {
-            var entity = this.entities[id],
-                hasComponents = true;
-
-            for (var i = 0; i < numOfComponents; i++) {
-                if (!entity.hasComponent(components[i])) {
-                    hasComponents = false;
-                    break;
-                }
-            }
-
-            if (hasComponents) {
-                entities.push(entity);
-            }
-        }
+Layer.prototype.removeSystem = function(system) {
+    if (!(system instanceof System)) {
+        throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    return entities;
+    system.parentLayer = null;
+
+    var systemCollection = (system instanceof BehaviorSystem) ? this.behaviorSystems : this.renderSystems,
+        systemIndex = systemCollection.indexOf(system);
+    if (systemIndex !== -1) {
+        systemCollection.splice(systemIndex, 1);
+    }
 };
 
 /**
