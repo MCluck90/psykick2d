@@ -15,18 +15,6 @@ var System = function() {
 };
 
 /**
- * Sets which layer this system belongs to
- * @param {Layer} layer
- */
-System.prototype.setParentLayer = function(layer) {
-    if (typeof layer === 'object' && Helper.has(layer, 'id')) {
-        this.parentLayer = layer;
-    } else {
-        throw 'Invalid argument: \'layer\' must be an instance of Layer';
-    }
-};
-
-/**
  * Add a new Entity to the collection
  * @param {Entity}      entity
  * @returns {boolean}   Returns true if Entity could be added
