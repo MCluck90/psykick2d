@@ -10,20 +10,6 @@ var Component = require('./component.js');
 var Entity = function(id) {
     this.id = id;
     this.components = {};
-    this.parentLayer = null;
-};
-
-/**
- * Tells the Entity which Layer owns it.
- * Should only be used by the World
- * @param {Layer} layer
- */
-Entity.prototype.setParentLayer = function(layer) {
-    if (typeof layer === 'object' && layer.id !== undefined) {
-        this.parentLayer = layer;
-    } else {
-        throw 'Invalid Argument: \'layer\' must be an instance of Layer';
-    }
 };
 
 /**
