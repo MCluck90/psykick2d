@@ -12,46 +12,16 @@ var Entity = require('./entity.js'),
     gameLoop,
 
     // Entity ID counter
-    nextEntityID = Number.MIN_VALUE,
+    nextEntityID = 0,
 
     // Layer ID counter
     nextLayerID = 0,
-
-    // Collection of entities
-    entities = {},
 
     // Collection of layers
     layers = {},
 
     // Layers in the order they will be drawn/updated
-    layersInDrawOrder = [],
-
-    // Used to remove entities at the beginning of an update phase
-    entityRemovalQueue = [];
-
-/**
- * Removes entities at the beginning of a frame
- */
-function removeEntities() {
-    for (var i = 0, len = entityRemovalQueue.length; i < len; i++) {
-        var entity = entityRemovalQueue[i];
-        if (typeof entity === 'number') {
-            if (typeof entities[entity] === 'undefined') {
-                throw new Error('Invalid entity ID');
-            }
-
-            entity = entity[entity];
-        }
-
-        if (entity.parentLayer !== null) {
-            entity.parentLayer.removeEntity(entity);
-        }
-
-        delete entities[entity.id];
-    }
-
-    entityRemovalQueue = [];
-}
+    layersInDrawOrder = [];
 
 var World = {
     /**
@@ -116,36 +86,7 @@ var World = {
      * @returns {Entity}
      */
     createEntity: function() {
-        var entity = new Entity(nextEntityID++);
-        entities[entity.id] = entity;
-        return entity;
-    },
-
-    /**
-     * Removes an Entity from the World
-     * @param {Entity|number} entity
-     */
-    removeEntity: function(entity) {
-        if (typeof entity === 'number') {
-            entity = entities[entity];
-        }
-
-        if (entity instanceof Entity) {
-            entityRemovalQueue.push(entity);
-        }
-    },
-
-    /**
-     * Returns an Entity based on it's ID
-     * @param {number} entityID
-     * @returns {Entity|null}
-     */
-    getEntity: function(entityID) {
-        if (Helper.has(entities, entityID)) {
-            return entities[entityID];
-        } else {
-            return null;
-        }
+        return new Entity(nextEntityID++);
     },
 
     /**
@@ -216,7 +157,6 @@ var World = {
      * @param {number} delta    Time since previous update
      */
     update: function(delta) {
-        removeEntities();
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
