@@ -30,7 +30,7 @@ System.prototype.addEntity = function(entity) {
         this.entities[entity.id] = entity;
         return true;
     } else {
-        throw 'Invalid Argument: \'entity\' must be an instance of Entity';
+        throw new Error('Invalid Argument: \'entity\' must be an instance of Entity');
     }
 };
 

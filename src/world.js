@@ -37,7 +37,7 @@ function removeEntities() {
         var entity = entityRemovalQueue[i];
         if (typeof entity === 'number') {
             if (typeof entities[entity] === 'undefined') {
-                throw 'Invalid entity ID';
+                throw new Error('Invalid entity ID');
             }
 
             entity = entity[entity];
@@ -170,7 +170,7 @@ var World = {
      */
     pushLayer: function(layer) {
         if (!(layer instanceof Layer)) {
-            throw 'Invalid argument: \'layer\' must be instance of Layer';
+            throw new Error('Invalid argument: \'layer\' must be instance of Layer');
         }
 
         if (layersInDrawOrder.indexOf(layer) === -1) {
