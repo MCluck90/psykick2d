@@ -17,13 +17,6 @@ module.exports = {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             SpriteSheet: require('./components/gfx/sprite-sheet.js')
-        },
-
-        Physics: {
-            Circle: require('./components/physics/circle.js'),
-            Point: require('./components/physics/point.js'),
-            Position: require('./components/physics/position.js'),
-            Rectangle: require('./components/physics/rectangle.js')
         }
     },
 
