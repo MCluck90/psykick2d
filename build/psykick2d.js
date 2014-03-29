@@ -74,11 +74,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":12,"./system.js":17}],2:[function(require,module,exports){
+},{"./helper.js":8,"./system.js":13}],2:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":13}],3:[function(require,module,exports){
+},{"./index.js":9}],3:[function(require,module,exports){
 'use strict';
 
 /**
@@ -149,7 +149,7 @@ Animation.prototype.getFrame = function(delta) {
 };
 
 module.exports = Animation;
-},{"../../component.js":3,"../../helper.js":12}],5:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":8}],5:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -175,7 +175,7 @@ var Color = function(options) {
 Helper.inherit(Color, Component);
 
 module.exports = Color;
-},{"../../component.js":3,"../../helper.js":12}],6:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":8}],6:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -296,142 +296,7 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../component.js":3,"../../helper.js":12}],7:[function(require,module,exports){
-'use strict';
-
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
-
-/**
- * Defines a simple circle
- * @constructor
- * @inherit Component
- * @param   {Object}    options
- * @param   {number}    [options.x=0]   Center x coordinate
- * @param   {number}    [options.y=0]   Center y coordinate
- * @param   {number}    [options.r=0]   Radius
- */
-var Circle = function(options) {
-    this.NAME = 'Circle';
-
-    var defaults = {
-        x: 0,
-        y: 0,
-        r: 0
-    };
-
-    options = Helper.defaults(options, defaults);
-    this.x = options.x;
-    this.y = options.y;
-    this.r = options.r;
-};
-
-Helper.inherit(Circle, Component);
-
-module.exports = Circle;
-},{"../../component.js":3,"../../helper.js":12}],8:[function(require,module,exports){
-'use strict';
-
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
-
-/**
- * Defines a single point
- * @constructor
- * @inherit Component
- * @param   {Object}    options
- * @param   {number}    [options.x=0]   X coordinate
- * @param   {number}    [options.y=0]   Y coordinate
- */
-var Point = function(options) {
-    this.NAME = 'Point';
-
-    var defaults = {
-        x: 0,
-        y: 0
-    };
-
-    options = Helper.defaults(options, defaults);
-    this.x = options.x;
-    this.y = options.y;
-};
-
-Helper.inherit(Point, Component);
-
-module.exports = Point;
-},{"../../component.js":3,"../../helper.js":12}],9:[function(require,module,exports){
-'use strict';
-
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
-
-/***
- * Define a position (of an object)
- * @constructor
- * @inherit Component
- * @param   {Object}    coords
- * @param   {number}    [coords.x]          X coordinate
- * @param   {number}    [coords.y]          Y coordinate
- * @param   {number}    [coords.rotation]   Rotation
- */
-
-var Position = function(coords){
-    this.NAME = 'Position';
-
-    var defaults = {
-        x: 0,
-        y: 0,
-        rotation: 0
-    };
-
-    coords = Helper.defaults(coords, defaults);
-    this.x = coords.x;
-    this.y = coords.y;
-    this.rotation = coords.rotation;
-};
-
-Helper.inherit(Position, Component);
-
-module.exports = Position;
-},{"../../component.js":3,"../../helper.js":12}],10:[function(require,module,exports){
-'use strict';
-
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
-
-/**
- * Define a rectangle (often used in collisions)
- * @constructor
- * @inherit Component
- * @param   {Object}    options
- * @param   {number}    [options.x=0]   X coordinate
- * @param   {number}    [options.y=0]   Y coordinate
- * @param   {number}    [options.w=0]   Width
- * @param   {number}    [options.h=0]   Height
- */
-var Rectangle = function(options) {
-    this.NAME = 'Rectangle';
-
-    var defaults = {
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0
-    };
-
-    options = Helper.defaults(options, defaults);
-    this.x = options.x;
-    this.y = options.y;
-    this.w = options.w;
-    this.h = options.h;
-};
-
-Helper.inherit(Rectangle, Component);
-
-module.exports = Rectangle;
-
-
-},{"../../component.js":3,"../../helper.js":12}],11:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":8}],7:[function(require,module,exports){
 'use strict';
 
 var Component = require('./component.js');
@@ -444,20 +309,6 @@ var Component = require('./component.js');
 var Entity = function(id) {
     this.id = id;
     this.components = {};
-    this.parentLayer = null;
-};
-
-/**
- * Tells the Entity which Layer owns it.
- * Should only be used by the World
- * @param {Layer} layer
- */
-Entity.prototype.setParentLayer = function(layer) {
-    if (typeof layer === 'object' && layer.id !== undefined) {
-        this.parentLayer = layer;
-    } else {
-        throw 'Invalid Argument: \'layer\' must be an instance of Layer';
-    }
 };
 
 /**
@@ -505,7 +356,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{"./component.js":3}],12:[function(require,module,exports){
+},{"./component.js":3}],8:[function(require,module,exports){
 'use strict';
 
 var
@@ -617,7 +468,7 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],13:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -637,13 +488,6 @@ module.exports = {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             SpriteSheet: require('./components/gfx/sprite-sheet.js')
-        },
-
-        Physics: {
-            Circle: require('./components/physics/circle.js'),
-            Point: require('./components/physics/point.js'),
-            Position: require('./components/physics/position.js'),
-            Rectangle: require('./components/physics/rectangle.js')
         }
     },
 
@@ -651,7 +495,7 @@ module.exports = {
         Sprite: require('./systems/sprite.js')
     }
 };
-},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/physics/circle.js":7,"./components/physics/point.js":8,"./components/physics/position.js":9,"./components/physics/rectangle.js":10,"./entity.js":11,"./helper.js":12,"./keys.js":14,"./layer.js":15,"./render-system.js":16,"./system.js":17,"./systems/sprite.js":18,"./world.js":19}],14:[function(require,module,exports){
+},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./entity.js":7,"./helper.js":8,"./keys.js":10,"./layer.js":11,"./render-system.js":12,"./system.js":13,"./systems/sprite.js":14,"./world.js":15}],10:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -678,16 +522,15 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],15:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
-var Entity = require('./entity.js'),
-    System = require('./system.js'),
+var System = require('./system.js'),
     BehaviorSystem = require('./behavior-system.js'),
     RenderSystem = require('./render-system.js');
 
 /**
- * A layer houses a set of entities to be updated/drawn on each frame
+ * A layer houses a set of systems which are updated/drawn on each frame
  * @constructor
  * @param {Object}  options
  * @param {number}  options.id          - Unique ID assigned by the World
@@ -696,7 +539,6 @@ var Entity = require('./entity.js'),
 var Layer = function(options) {
     this.id = options.id;
     this.container = options.container;
-    this.entities = {};
     this.renderSystems = [];
     this.behaviorSystems = [];
     this.visible = true;
@@ -740,66 +582,21 @@ Layer.prototype.setZIndex = function(zIndex) {
 };
 
 /**
- * Add an entity to the layer
- * @param {Entity}  entity
- * @param {boolean}         [addToSystems=false]
- */
-Layer.prototype.addEntity = function(entity, addToSystems) {
-    if (!(entity instanceof Entity)) {
-        throw new Error('Invalid argument: \'entity\' must be an instance of Entity');
-    }
-    addToSystems = addToSystems || false;
-    entity.setParentLayer(this);
-    this.entities[entity.id] = entity;
-
-    if (addToSystems) {
-        var bLen = this.behaviorSystems.length,
-            rLen = this.renderSystems.length;
-        for (var i = 0; i < bLen || i < rLen; i++) {
-            if (i < bLen) {
-                this.behaviorSystems[i].addEntity(entity);
-            }
-
-            if (i < rLen) {
-                this.renderSystems[i].addEntity(entity);
-            }
-        }
-    }
-};
-
-/**
- * Removes an entity from the layer
- * @param {number|Entity} entityID
- */
-Layer.prototype.removeEntity = function(entityID) {
-    if (entityID instanceof Entity) {
-        entityID = entityID.id;
-    }
-
-    // Delete the entity from any systems
-    for (var i = 0, bLen = this.behaviorSystems.length, rLen = this.renderSystems.length; i < bLen || i < rLen; i++) {
-        if (i < bLen) {
-            this.behaviorSystems[i].removeEntity(entityID);
-        }
-
-        if (i < rLen) {
-            this.renderSystems[i].removeEntity(entityID);
-        }
-    }
-
-    delete this.entities[entityID];
-};
-
-/**
  * Add a new system to the layer
  * @param {System} system
  */
 Layer.prototype.addSystem = function(system) {
     if (!(system instanceof System)) {
-        throw 'Invalid argument: \'system\' must be an instance of System';
+        throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    system.setParentLayer(this);
+    if (system.parentLayer === null) {
+        system.parentLayer = this;
+    } else {
+        var err = new Error('System already belongs to another Layer');
+        err.system = system;
+        throw err;
+    }
 
     if (system instanceof BehaviorSystem && this.behaviorSystems.indexOf(system) === -1) {
         this.behaviorSystems.push(system);
@@ -809,40 +606,21 @@ Layer.prototype.addSystem = function(system) {
 };
 
 /**
- * Returns the collection of entities
- * @return {Entity[]}
+ * Removes a system from the layer
+ * @param {System} system
  */
-Layer.prototype.getEntities = function() {
-    return this.entities;
-};
-
-/**
- * Returns the entities with the given component names
- * @param {String[]} components
- * @return {Array}
- */
-Layer.prototype.getEntitiesByComponents = function(components) {
-    var numOfComponents = components.length,
-        entities = [];
-    for (var id in this.entities) {
-        if (this.entities.hasOwnProperty(id)) {
-            var entity = this.entities[id],
-                hasComponents = true;
-
-            for (var i = 0; i < numOfComponents; i++) {
-                if (!entity.hasComponent(components[i])) {
-                    hasComponents = false;
-                    break;
-                }
-            }
-
-            if (hasComponents) {
-                entities.push(entity);
-            }
-        }
+Layer.prototype.removeSystem = function(system) {
+    if (!(system instanceof System)) {
+        throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    return entities;
+    system.parentLayer = null;
+
+    var systemCollection = (system instanceof BehaviorSystem) ? this.behaviorSystems : this.renderSystems,
+        systemIndex = systemCollection.indexOf(system);
+    if (systemIndex !== -1) {
+        systemCollection.splice(systemIndex, 1);
+    }
 };
 
 /**
@@ -886,7 +664,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":1,"./entity.js":11,"./render-system.js":16,"./system.js":17}],16:[function(require,module,exports){
+},{"./behavior-system.js":1,"./render-system.js":12,"./system.js":13}],12:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -955,7 +733,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":12,"./system.js":17}],17:[function(require,module,exports){
+},{"./helper.js":8,"./system.js":13}],13:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -970,18 +748,6 @@ var System = function() {
     this.parentLayer = null;
     this.requiredComponents = [];
     this.active = true;
-};
-
-/**
- * Sets which layer this system belongs to
- * @param {Layer} layer
- */
-System.prototype.setParentLayer = function(layer) {
-    if (typeof layer === 'object' && Helper.has(layer, 'id')) {
-        this.parentLayer = layer;
-    } else {
-        throw 'Invalid argument: \'layer\' must be an instance of Layer';
-    }
 };
 
 /**
@@ -1000,7 +766,7 @@ System.prototype.addEntity = function(entity) {
         this.entities[entity.id] = entity;
         return true;
     } else {
-        throw 'Invalid Argument: \'entity\' must be an instance of Entity';
+        throw new Error('Invalid Argument: \'entity\' must be an instance of Entity');
     }
 };
 
@@ -1024,7 +790,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":11,"./helper.js":12}],18:[function(require,module,exports){
+},{"./entity.js":7,"./helper.js":8}],14:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../helper.js'),
@@ -1038,7 +804,7 @@ var Helper = require('../helper.js'),
  */
 var Sprite = function() {
     RenderSystem.call(this);
-    this.RequiredComponents = ['SpriteSheet', 'Position'];
+    this.requiredComponents = ['SpriteSheet', 'Position'];
 };
 
 Helper.inherit(Sprite, RenderSystem);
@@ -1048,7 +814,7 @@ Helper.inherit(Sprite, RenderSystem);
  * @param {CanvasRenderingContext2D} c
  */
 Sprite.prototype.draw = function(c) {
-    for (var i = 0, len = this.DrawOrder.length; i < len; i++) {
+    for (var i = 0, len = this.drawOrder.length; i < len; i++) {
         var entity = this.drawOrder[i],
             spriteSheet = entity.getComponent('SpriteSheet'),
             position = entity.getComponent('Position');
@@ -1072,7 +838,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../helper.js":12,"../render-system.js":16}],19:[function(require,module,exports){
+},{"../helper.js":8,"../render-system.js":12}],15:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1087,46 +853,16 @@ var Entity = require('./entity.js'),
     gameLoop,
 
     // Entity ID counter
-    nextEntityID = Number.MIN_VALUE,
+    nextEntityID = 0,
 
     // Layer ID counter
     nextLayerID = 0,
-
-    // Collection of entities
-    entities = {},
 
     // Collection of layers
     layers = {},
 
     // Layers in the order they will be drawn/updated
-    layersInDrawOrder = [],
-
-    // Used to remove entities at the beginning of an update phase
-    entityRemovalQueue = [];
-
-/**
- * Removes entities at the beginning of a frame
- */
-function removeEntities() {
-    for (var i = 0, len = entityRemovalQueue.length; i < len; i++) {
-        var entity = entityRemovalQueue[i];
-        if (typeof entity === 'number') {
-            if (typeof entities[entity] === 'undefined') {
-                throw 'Invalid entity ID';
-            }
-
-            entity = entity[entity];
-        }
-
-        if (entity.parentLayer !== null) {
-            entity.parentLayer.removeEntity(entity);
-        }
-
-        delete entities[entity.id];
-    }
-
-    entityRemovalQueue = [];
-}
+    layersInDrawOrder = [];
 
 var World = {
     /**
@@ -1177,7 +913,7 @@ var World = {
                                     window.webkitRequestAnimationFrame ||
                                     window.msRequestAnimationFrame;
         gameLoop = function() {
-            var delta = (new Date() - gameTime) / 1000;
+            var delta = new Date() - gameTime / 1000;
             self.update(delta);
             self.draw();
             gameTime = new Date();
@@ -1191,36 +927,7 @@ var World = {
      * @returns {Entity}
      */
     createEntity: function() {
-        var entity = new Entity(nextEntityID++);
-        entities[entity.id] = entity;
-        return entity;
-    },
-
-    /**
-     * Removes an Entity from the World
-     * @param {Entity|number} entity
-     */
-    removeEntity: function(entity) {
-        if (typeof entity === 'number') {
-            entity = entities[entity];
-        }
-
-        if (entity instanceof Entity) {
-            entityRemovalQueue.push(entity);
-        }
-    },
-
-    /**
-     * Returns an Entity based on it's ID
-     * @param {number} entityID
-     * @returns {Entity|null}
-     */
-    getEntity: function(entityID) {
-        if (Helper.has(entities, entityID)) {
-            return entities[entityID];
-        } else {
-            return null;
-        }
+        return new Entity(nextEntityID++);
     },
 
     /**
@@ -1245,7 +952,7 @@ var World = {
      */
     pushLayer: function(layer) {
         if (!(layer instanceof Layer)) {
-            throw 'Invalid argument: \'layer\' must be instance of Layer';
+            throw new Error('Invalid argument: \'layer\' must be instance of Layer');
         }
 
         if (layersInDrawOrder.indexOf(layer) === -1) {
@@ -1291,7 +998,6 @@ var World = {
      * @param {number} delta    Time since previous update
      */
     update: function(delta) {
-        removeEntities();
         for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
@@ -1314,5 +1020,5 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":11,"./helper.js":12,"./layer.js":15}]},{},[2])
+},{"./entity.js":7,"./helper.js":8,"./layer.js":11}]},{},[2])
 ;
