@@ -80,7 +80,7 @@ var World = {
                                     window.webkitRequestAnimationFrame ||
                                     window.msRequestAnimationFrame;
         gameLoop = function() {
-            var delta = new Date() - gameTime / 1000;
+            var delta = (new Date() - gameTime) / 1000;
             self.update(delta);
             self.draw();
             gameTime = new Date();

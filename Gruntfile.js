@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 
         watch: {
             all: {
-                files: ['Gruntfile.js', 'src/**/*.js'],
+                files: ['Gruntfile.js', 'src/**/*.js', 'examples/**/*.js'],
                 tasks: ['jshint:all']
             },
             debug: {

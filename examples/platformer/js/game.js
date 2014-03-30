@@ -23,4 +23,8 @@
     drawSystem.addEntity(box);
     layer.addSystem(drawSystem);
 
+    var inputSystem = new Game.Systems.PlayerInput();
+    inputSystem.addEntity(box);
+    layer.addSystem(inputSystem);
+
 })(Psykick2D);
