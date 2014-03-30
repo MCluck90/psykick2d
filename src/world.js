@@ -166,20 +166,21 @@ var World = {
      */
     update: function(delta) {
         var beforeUpdate = eventHandlers.beforeUpdate,
-            afterUpdate = eventHandlers.afterUpdate;
+            afterUpdate = eventHandlers.afterUpdate,
+            i, len;
 
-        for (var i = 0, len = beforeUpdate.length; i < len; i++) {
+        for (i = 0, len = beforeUpdate.length; i < len; i++) {
             beforeUpdate[i](delta);
         }
 
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
                 layersInDrawOrder[i].update(delta);
             }
         }
 
-        for (var i = 0, len = afterUpdate.length; i < len; i++) {
+        for (i = 0, len = afterUpdate.length; i < len; i++) {
             afterUpdate[i](delta);
         }
     },
@@ -189,20 +190,21 @@ var World = {
      */
     draw: function() {
         var beforeDraw = eventHandlers.beforeDraw,
-            afterDraw = eventHandlers.afterDraw;
+            afterDraw = eventHandlers.afterDraw,
+            i, len;
 
-        for (var i = 0, len = beforeDraw.length; i < len; i++) {
+        for (i = 0, len = beforeDraw.length; i < len; i++) {
             beforeDraw[i]();
         }
 
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
                 layersInDrawOrder[i].draw(this.context);
             }
         }
 
-        for (var i = 0, len = afterDraw.length; i < len; i++) {
+        for (i = 0, len = afterDraw.length; i < len; i++) {
             afterDraw[i]();
         }
     },

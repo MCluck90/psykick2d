@@ -24,4 +24,4 @@ module.exports = {
         }
     },
     World: require('./world.js')
-}
+};

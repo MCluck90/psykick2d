@@ -526,7 +526,7 @@ module.exports = {
         }
     },
     World: require('./world.js')
-}
+};
 },{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/shape/rectangle.js":7,"./entity.js":8,"./helper.js":9,"./keys.js":11,"./layer.js":12,"./render-system.js":13,"./system.js":14,"./systems/render/colored-rect.js":15,"./systems/render/sprite.js":16,"./world.js":17}],11:[function(require,module,exports){
 /**
  * A simple reference point for key codes
@@ -849,7 +849,7 @@ ColoredRect.prototype.draw = function(c) {
             color = entity.getComponent('Color').colors[0],
             rect = entity.getComponent('Rectangle');
         c.fillStyle = color;
-        c.rect(rect.x, rect.y, rect.w, rect.h);
+        c.fillRect(rect.x, rect.y, rect.w, rect.h);
     }
 };
 

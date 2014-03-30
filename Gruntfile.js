@@ -99,11 +99,11 @@ module.exports = function(grunt) {
                 activeNamespace = activeNamespace[namespace];
             }
 
-            activeNamespace[moduleName] = "require('./" + filepath + "')";
+            activeNamespace[moduleName] = 'require(\'./' + filepath + '\')';
         });
 
         fileContents = JSON.stringify(psykick, null, 4).replace(/"/g, '');
-        grunt.file.write('./src/index.js', 'module.exports = ' + fileContents);
+        grunt.file.write('./src/index.js', 'module.exports = ' + fileContents + ';');
 
         // Stuff it all in to one file
         if (type === undefined) {
