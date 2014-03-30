@@ -21,7 +21,15 @@ var Entity = require('./entity.js'),
     layers = {},
 
     // Layers in the order they will be drawn/updated
-    layersInDrawOrder = [];
+    layersInDrawOrder = [],
+
+    // Container for event handlers
+    eventHandlers = {
+        beforeUpdate: [],
+        afterUpdate: [],
+        beforeDraw: [],
+        afterDraw: []
+    };
 
 var World = {
     /**
@@ -157,11 +165,23 @@ var World = {
      * @param {number} delta    Time since previous update
      */
     update: function(delta) {
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        var beforeUpdate = eventHandlers.beforeUpdate,
+            afterUpdate = eventHandlers.afterUpdate,
+            i, len;
+
+        for (i = 0, len = beforeUpdate.length; i < len; i++) {
+            beforeUpdate[i](delta);
+        }
+
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
                 layersInDrawOrder[i].update(delta);
             }
+        }
+
+        for (i = 0, len = afterUpdate.length; i < len; i++) {
+            afterUpdate[i](delta);
         }
     },
 
@@ -169,12 +189,64 @@ var World = {
      * Draws the World
      */
     draw: function() {
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        var beforeDraw = eventHandlers.beforeDraw,
+            afterDraw = eventHandlers.afterDraw,
+            i, len;
+
+        for (i = 0, len = beforeDraw.length; i < len; i++) {
+            beforeDraw[i]();
+        }
+
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
                 layersInDrawOrder[i].draw(this.context);
             }
         }
+
+        for (i = 0, len = afterDraw.length; i < len; i++) {
+            afterDraw[i]();
+        }
+    },
+
+    /**
+     * Adds a new event listener
+     * @param {string}      eventType   Event to listen for
+     * @param {function}    listener    Callback
+     */
+    addEventListener: function(eventType, listener) {
+        if (!eventHandlers[eventType]) {
+            eventHandlers[eventType] = [];
+        }
+
+        var listenerList = eventHandlers[eventType];
+        if (listenerList.indexOf(listener) === -1) {
+            listenerList.push(listener);
+        }
+    },
+
+    /**
+     * Removes an event listener
+     * @param {string}      eventType   Event to listen for
+     * @param {function}    listener    Callback
+     */
+    removeEventListener: function(eventType, listener) {
+        if (!eventHandlers[eventType]) {
+            return;
+        }
+
+        var index = eventHandlers[eventType].indexOf(listener);
+        if (index !== -1) {
+            eventHandlers[eventType].splice(index, 1);
+        }
+    },
+
+    /**
+     * Remove all listeners for a given event
+     * @param {string} eventType    Event to no longer listen for
+     */
+    removeAllListeners: function(eventType) {
+        eventHandlers[eventType] = [];
     }
 };
 

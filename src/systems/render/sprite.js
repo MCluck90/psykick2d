@@ -1,7 +1,7 @@
 'use strict';
 
-var Helper = require('../helper.js'),
-    RenderSystem = require('../render-system.js');
+var Helper = require('../../helper.js'),
+    RenderSystem = require('../../render-system.js');
 
 /**
  * Renders an animated sprite

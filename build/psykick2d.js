@@ -74,11 +74,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":8,"./system.js":13}],2:[function(require,module,exports){
+},{"./helper.js":9,"./system.js":14}],2:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":9}],3:[function(require,module,exports){
+},{"./index.js":10}],3:[function(require,module,exports){
 'use strict';
 
 /**
@@ -149,7 +149,7 @@ Animation.prototype.getFrame = function(delta) {
 };
 
 module.exports = Animation;
-},{"../../component.js":3,"../../helper.js":8}],5:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":9}],5:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -175,7 +175,7 @@ var Color = function(options) {
 Helper.inherit(Color, Component);
 
 module.exports = Color;
-},{"../../component.js":3,"../../helper.js":8}],6:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":9}],6:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -296,7 +296,38 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../component.js":3,"../../helper.js":8}],7:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":9}],7:[function(require,module,exports){
+'use strict';
+
+var Component = require('../../component.js'),
+    Helper = require('../../helper.js');
+
+/**
+ * A generic rectangle
+ * @constructor
+ * @param {Object}  options
+ */
+var Rectangle = function(options) {
+    this.NAME = 'Rectangle';
+
+    var defaults = {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0
+    };
+
+    options = Helper.defaults(options, defaults);
+    this.x = options.x;
+    this.y = options.y;
+    this.w = options.w;
+    this.h = options.h;
+};
+
+Helper.inherit(Rectangle, Component);
+
+module.exports = Rectangle;
+},{"../../component.js":3,"../../helper.js":9}],8:[function(require,module,exports){
 'use strict';
 
 var Component = require('./component.js');
@@ -356,7 +387,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{"./component.js":3}],8:[function(require,module,exports){
+},{"./component.js":3}],9:[function(require,module,exports){
 'use strict';
 
 var
@@ -468,34 +499,35 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],9:[function(require,module,exports){
-'use strict';
-
+},{}],10:[function(require,module,exports){
 module.exports = {
-    World: require('./world.js'),
-    Component: require('./component.js'),
-    Entity: require('./entity.js'),
-    Layer: require('./layer.js'),
-    System: require('./system.js'),
-    RenderSystem: require('./render-system.js'),
     BehaviorSystem: require('./behavior-system.js'),
-
-    Helper: require('./helper.js'),
-    Keys: require('./keys.js'),
-
+    Component: require('./component.js'),
     Components: {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             SpriteSheet: require('./components/gfx/sprite-sheet.js')
+        },
+        Shape: {
+            Rectangle: require('./components/shape/rectangle.js')
         }
     },
-
+    Entity: require('./entity.js'),
+    Helper: require('./helper.js'),
+    Keys: require('./keys.js'),
+    Layer: require('./layer.js'),
+    RenderSystem: require('./render-system.js'),
+    System: require('./system.js'),
     Systems: {
-        Sprite: require('./systems/sprite.js')
-    }
-};
-},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./entity.js":7,"./helper.js":8,"./keys.js":10,"./layer.js":11,"./render-system.js":12,"./system.js":13,"./systems/sprite.js":14,"./world.js":15}],10:[function(require,module,exports){
+        Render: {
+            ColoredRect: require('./systems/render/colored-rect.js'),
+            Sprite: require('./systems/render/sprite.js')
+        }
+    },
+    World: require('./world.js')
+}
+},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/shape/rectangle.js":7,"./entity.js":8,"./helper.js":9,"./keys.js":11,"./layer.js":12,"./render-system.js":13,"./system.js":14,"./systems/render/colored-rect.js":15,"./systems/render/sprite.js":16,"./world.js":17}],11:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -522,7 +554,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -664,7 +696,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":1,"./render-system.js":12,"./system.js":13}],12:[function(require,module,exports){
+},{"./behavior-system.js":1,"./render-system.js":13,"./system.js":14}],13:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -733,7 +765,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":8,"./system.js":13}],13:[function(require,module,exports){
+},{"./helper.js":9,"./system.js":14}],14:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -790,11 +822,43 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":7,"./helper.js":8}],14:[function(require,module,exports){
+},{"./entity.js":8,"./helper.js":9}],15:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../helper.js'),
-    RenderSystem = require('../render-system.js');
+var Helper = require('../../helper.js'),
+    RenderSystem = require('../../render-system.js');
+
+/**
+ * Renders colored rectangles
+ * @constructor
+ */
+var ColoredRect = function() {
+    RenderSystem.call(this);
+    this.requiredComponents = ['Color', 'Rectangle'];
+};
+
+Helper.inherit(ColoredRect, RenderSystem);
+
+/**
+ * Draws all the rectangles
+ * @param {CanvasRenderingContext2D} c
+ */
+ColoredRect.prototype.draw = function(c) {
+    for (var i = 0, len = this.drawOrder.length; i < len; i++) {
+        var entity = this.drawOrder[i],
+            color = entity.getComponent('Color').colors[0],
+            rect = entity.getComponent('Rectangle');
+        c.fillStyle = color;
+        c.rect(rect.x, rect.y, rect.w, rect.h);
+    }
+};
+
+module.exports = ColoredRect;
+},{"../../helper.js":9,"../../render-system.js":13}],16:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
+    RenderSystem = require('../../render-system.js');
 
 /**
  * Renders an animated sprite
@@ -838,7 +902,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../helper.js":8,"../render-system.js":12}],15:[function(require,module,exports){
+},{"../../helper.js":9,"../../render-system.js":13}],17:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -862,7 +926,15 @@ var Entity = require('./entity.js'),
     layers = {},
 
     // Layers in the order they will be drawn/updated
-    layersInDrawOrder = [];
+    layersInDrawOrder = [],
+
+    // Container for event handlers
+    eventHandlers = {
+        beforeUpdate: [],
+        afterUpdate: [],
+        beforeDraw: [],
+        afterDraw: []
+    };
 
 var World = {
     /**
@@ -998,11 +1070,23 @@ var World = {
      * @param {number} delta    Time since previous update
      */
     update: function(delta) {
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        var beforeUpdate = eventHandlers.beforeUpdate,
+            afterUpdate = eventHandlers.afterUpdate,
+            i, len;
+
+        for (i = 0, len = beforeUpdate.length; i < len; i++) {
+            beforeUpdate[i](delta);
+        }
+
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
                 layersInDrawOrder[i].update(delta);
             }
+        }
+
+        for (i = 0, len = afterUpdate.length; i < len; i++) {
+            afterUpdate[i](delta);
         }
     },
 
@@ -1010,15 +1094,67 @@ var World = {
      * Draws the World
      */
     draw: function() {
-        for (var i = 0, len = layersInDrawOrder.length; i < len; i++) {
+        var beforeDraw = eventHandlers.beforeDraw,
+            afterDraw = eventHandlers.afterDraw,
+            i, len;
+
+        for (i = 0, len = beforeDraw.length; i < len; i++) {
+            beforeDraw[i]();
+        }
+
+        for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
                 layersInDrawOrder[i].draw(this.context);
             }
         }
+
+        for (i = 0, len = afterDraw.length; i < len; i++) {
+            afterDraw[i]();
+        }
+    },
+
+    /**
+     * Adds a new event listener
+     * @param {string}      eventType   Event to listen for
+     * @param {function}    listener    Callback
+     */
+    addEventListener: function(eventType, listener) {
+        if (!eventHandlers[eventType]) {
+            eventHandlers[eventType] = [];
+        }
+
+        var listenerList = eventHandlers[eventType];
+        if (listenerList.indexOf(listener) === -1) {
+            listenerList.push(listener);
+        }
+    },
+
+    /**
+     * Removes an event listener
+     * @param {string}      eventType   Event to listen for
+     * @param {function}    listener    Callback
+     */
+    removeEventListener: function(eventType, listener) {
+        if (!eventHandlers[eventType]) {
+            return;
+        }
+
+        var index = eventHandlers[eventType].indexOf(listener);
+        if (index !== -1) {
+            eventHandlers[eventType].splice(index, 1);
+        }
+    },
+
+    /**
+     * Remove all listeners for a given event
+     * @param {string} eventType    Event to no longer listen for
+     */
+    removeAllListeners: function(eventType) {
+        eventHandlers[eventType] = [];
     }
 };
 
 module.exports = World;
-},{"./entity.js":7,"./helper.js":8,"./layer.js":11}]},{},[2])
+},{"./entity.js":8,"./helper.js":9,"./layer.js":12}]},{},[2])
 ;
