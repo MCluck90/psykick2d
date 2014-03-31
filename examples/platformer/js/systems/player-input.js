@@ -1,7 +1,12 @@
 (function(P2D, Game) {
+    /**
+     * Handles player input
+     * @inherits BehaviorSystem
+     * @constructor
+     */
     var PlayerInput = function() {
         P2D.BehaviorSystem.call(this);
-        this.requiredComponents = ['Rectangle', 'Color'];
+        this.requiredComponents = ['Physics'];
     };
 
     P2D.Helper.inherit(PlayerInput, P2D.BehaviorSystem);
@@ -15,12 +20,12 @@
             isPressingDown = P2D.Helper.isKeyDown(P2D.Keys.Down),
             isPressingLeft = P2D.Helper.isKeyDown(P2D.Keys.Left),
             isPressingRight = P2D.Helper.isKeyDown(P2D.Keys.Right),
-            playerRect = this.actionOrder[0].getComponent('Rectangle');
+            physicsBody = this.actionOrder[0].getComponent('Physics');
 
-        var deltaX = 200 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            deltaY = 200 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
-        playerRect.x += deltaX;
-        playerRect.y += deltaY;
+        var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
+            deltaY = 20 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
+        physicsBody.velocity.x += deltaX;
+        physicsBody.velocity.y += deltaY;
     };
 
     Game.Systems = Game.Systems || {};

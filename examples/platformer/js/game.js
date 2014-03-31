@@ -14,11 +14,18 @@
     box.addComponent(new P2D.Components.Shape.Rectangle({
         x: 100,
         y: 100,
-        w: 200,
-        h: 400
+        w: 64,
+        h: 128
     }));
     box.addComponent(new P2D.Components.GFX.Color({
         colors: ['#F00']
+    }));
+    box.addComponent(new Game.Components.Physics({
+        x: 100,
+        y: 100,
+        w: 64,
+        h: 128,
+        mass: 1
     }));
     drawSystem.addEntity(box);
     layer.addSystem(drawSystem);
@@ -26,4 +33,8 @@
     var inputSystem = new Game.Systems.PlayerInput();
     inputSystem.addEntity(box);
     layer.addSystem(inputSystem);
+
+    var physicsSystem = new Game.Systems.Physics();
+    physicsSystem.addEntity(box);
+    layer.addSystem(physicsSystem);
 })(Psykick2D);
