@@ -23,17 +23,12 @@ Helper.inherit(BehaviorSystem, System);
  */
 BehaviorSystem.prototype.addEntity = function(entity) {
     if (System.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
         if (this.actionOrder.indexOf(entity) === -1) {
             this.actionOrder.push(entity);
+            return true;
         }
-
-        return true;
-    } else {
-        return false;
     }
+    return false;
 };
 
 /**

@@ -37,4 +37,24 @@
     var physicsSystem = new Game.Systems.Physics();
     physicsSystem.addEntity(box);
     layer.addSystem(physicsSystem);
+
+    var box2 = P2D.World.createEntity();
+    box2.addComponent(new P2D.Components.Shape.Rectangle({
+        x: 400,
+        y: 100,
+        w: 128,
+        h: 128
+    }));
+    box2.addComponent(new P2D.Components.GFX.Color({
+        colors: ['#0F0']
+    }));
+    box2.addComponent(new Game.Components.Physics({
+        x: 400,
+        y: 100,
+        w: 128,
+        h: 128,
+        mass: 2
+    }));
+    drawSystem.addEntity(box2);
+    physicsSystem.addEntity(box2);
 })(Psykick2D);

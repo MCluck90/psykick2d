@@ -22,13 +22,12 @@ Helper.inherit(RenderSystem, System);
  */
 RenderSystem.prototype.addEntity = function(entity) {
     if (System.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
         if (this.drawOrder.indexOf(entity) === -1) {
             this.drawOrder.push(entity);
+            return true;
         }
     }
+    return false;
 };
 
 /**

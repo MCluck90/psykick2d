@@ -36,7 +36,7 @@ System.prototype.addEntity = function(entity) {
 
 /**
  * Remove an Entity from the collection
- * @param {Entity}      entity
+ * @param {Entity|number}      entity
  * @return {boolean}    True if the entity was removed
  */
 System.prototype.removeEntity = function(entity) {
