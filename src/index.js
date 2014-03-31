@@ -18,6 +18,9 @@ module.exports = {
     RenderSystem: require('./render-system.js'),
     System: require('./system.js'),
     Systems: {
+        Behavior: {
+            Animate: require('./systems/behavior/animate.js')
+        },
         Render: {
             ColoredRect: require('./systems/render/colored-rect.js'),
             Sprite: require('./systems/render/sprite.js')

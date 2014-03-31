@@ -520,6 +520,9 @@ module.exports = {
     RenderSystem: require('./render-system.js'),
     System: require('./system.js'),
     Systems: {
+        Behavior: {
+            Animate: require('./systems/behavior/animate.js')
+        },
         Render: {
             ColoredRect: require('./systems/render/colored-rect.js'),
             Sprite: require('./systems/render/sprite.js')
@@ -527,7 +530,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/shape/rectangle.js":7,"./entity.js":8,"./helper.js":9,"./keys.js":11,"./layer.js":12,"./render-system.js":13,"./system.js":14,"./systems/render/colored-rect.js":15,"./systems/render/sprite.js":16,"./world.js":17}],11:[function(require,module,exports){
+},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/shape/rectangle.js":7,"./entity.js":8,"./helper.js":9,"./keys.js":11,"./layer.js":12,"./render-system.js":13,"./system.js":14,"./systems/behavior/animate.js":15,"./systems/render/colored-rect.js":16,"./systems/render/sprite.js":17,"./world.js":18}],11:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -826,6 +829,46 @@ module.exports = System;
 'use strict';
 
 var Helper = require('../../helper.js'),
+    BehaviorSystem = require('../../behavior-system.js');
+
+/**
+ * Updates animations
+ *
+ * @inherit BehaviorSystem
+ * @constructor
+ */
+var Animate = function() {
+    BehaviorSystem.call(this);
+    this.requiredComponents = ['Animation'];
+};
+
+Helper.inherit(Animate, BehaviorSystem);
+
+/**
+ * Updates the animations
+ * @param {number} delta
+ */
+Animate.prototype.update = function(delta) {
+    for (var i = 0, len = this.actionOrder.length; i < len; i++) {
+        var entity = this.actionOrder[i],
+            animation = entity.getComponent('Animation'),
+            frameTime = (1000 / animation.fps) / 1000;
+        animation.lastFrameTime += delta;
+        if (animation.lastFrameTime > frameTime) {
+            animation.lastFrameTime = 0;
+            animation.currentFrame += 1;
+            if (animation.currentFrame > animation.maxFrame) {
+                animation.currentFrame = animation.minFrame;
+            }
+        }
+    }
+};
+
+module.exports = Animate;
+},{"../../behavior-system.js":1,"../../helper.js":9}],16:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
     RenderSystem = require('../../render-system.js');
 
 /**
@@ -854,7 +897,7 @@ ColoredRect.prototype.draw = function(c) {
 };
 
 module.exports = ColoredRect;
-},{"../../helper.js":9,"../../render-system.js":13}],16:[function(require,module,exports){
+},{"../../helper.js":9,"../../render-system.js":13}],17:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -902,7 +945,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":9,"../../render-system.js":13}],17:[function(require,module,exports){
+},{"../../helper.js":9,"../../render-system.js":13}],18:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
