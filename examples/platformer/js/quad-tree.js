@@ -180,7 +180,9 @@
             }
         }
 
-        return result;
+        return result.filter(function(elem, pos) {
+            return result.indexOf(elem) === pos;
+        });
     };
 
     Game.QuadTree = QuadTree;

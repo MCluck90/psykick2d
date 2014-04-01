@@ -11,7 +11,8 @@
                 x: 0,
                 y: 0
             },
-            mass: 0
+            mass: 0,
+            bounciness: 0
         };
 
         options = P2D.Helper.defaults(options, defaults);
@@ -21,6 +22,7 @@
         this.h = options.h;
         this.velocity = options.velocity;
         this.mass = options.mass;
+        this.bounciness = options.bounciness;
     };
 
     P2D.Helper.inherit(Physics, P2D.Component);

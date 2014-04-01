@@ -40,7 +40,7 @@
 
     var box2 = P2D.World.createEntity();
     box2.addComponent(new P2D.Components.Shape.Rectangle({
-        x: 400,
+        x: 290,
         y: 100,
         w: 128,
         h: 128
@@ -49,11 +49,32 @@
         colors: ['#0F0']
     }));
     box2.addComponent(new Game.Components.Physics({
-        x: 400,
+        x: 290,
         y: 100,
         w: 128,
         h: 128,
         mass: 2
+    }));
+    drawSystem.addEntity(box2);
+    physicsSystem.addEntity(box2);
+
+    box2 = P2D.World.createEntity();
+    box2.addComponent(new P2D.Components.Shape.Rectangle({
+        x: 600,
+        y: 50,
+        w: 50,
+        h: 50
+    }));
+    box2.addComponent(new P2D.Components.GFX.Color({
+        colors: ['#00F']
+    }));
+    box2.addComponent(new Game.Components.Physics({
+        x: 600,
+        y: 50,
+        w: 50,
+        h: 50,
+        mass: 0.5,
+        bounciness: 0.5
     }));
     drawSystem.addEntity(box2);
     physicsSystem.addEntity(box2);

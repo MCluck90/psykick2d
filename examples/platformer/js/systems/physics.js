@@ -68,58 +68,107 @@
                 this._quadTree.addEntity(entity);
             }
 
-            var collisions = this._quadTree.getCollisions(entity),
-                initialXVelocity = physics.velocity.x,
-                initialYVelocity = physics.velocity.y;
+            var collisions = this._quadTree.getCollisions(entity);
             for (var j = 0, len2 = collisions.length; j < len2; j++) {
-                var otherBody = collisions[j].getComponent('Physics'),
+                var other = collisions[j],
+                    otherBody = other.getComponent('Physics'),
                     mA = physics.mass,
                     mB = otherBody.mass,
-                    vAX = initialXVelocity,
+                    vAX = physics.velocity.x,
                     vBX = otherBody.velocity.x,
+                    vAY = physics.velocity.y,
+                    vBY = otherBody.velocity.y,
                     bodyA = {
                         top: physics.y,
                         bottom: physics.y + physics.h,
                         left: physics.x,
-                        right: physics.x + physics.w
+                        right: physics.x + physics.w,
+                        centerX: physics.x + physics.w / 2,
+                        centerY: physics.y + physics.h / 2
                     },
                     bodyB = {
                         top: otherBody.y,
                         bottom: otherBody.y + otherBody.h,
                         left: otherBody.x,
-                        right: otherBody.x + otherBody.w
-                    };
+                        right: otherBody.x + otherBody.w,
+                        centerX: otherBody.x + otherBody.w / 2,
+                        centerY: otherBody.y + otherBody.h / 2
+                    },
+                    yDiff = bodyA.bottom - bodyB.top,
+                    onTop = bodyA.top < bodyB.top && yDiff <= 5;
 
-                if (bodyA.left < bodyB.left && bodyA.right > bodyB.left) {
-                    physics.x = otherBody.x - physics.w;
-                } else if (bodyA.right > bodyB.right && bodyA.left < bodyB.right) {
-                    physics.x = otherBody.x + otherBody.w;
+                // If we're on top
+                if (onTop) {
+                    physics.y = bodyB.top - physics.h;
+                } else {
+                    if (bodyA.left < bodyB.left) {
+                        physics.x = bodyB.left - physics.w - 1;
+                    } else {
+                        physics.x = bodyB.right + 1;
+                    }
                 }
 
-                physics.velocity.x = (2 * mB * vBX + vAX * (mA - mB)) / (mA + mB);
-                otherBody.velocity.x = (2 * mA * vAX + vBX * (mA - mB)) / (mA + mB);
-            }
-            if (collisions.length > 0 && color.colors.length === 1 && entity.id !== 0) {
-                color.colors.push('#F0F');
-                color.colors = color.colors.reverse();
-            } else if (collisions.length === 0 && color.colors.length > 1) {
-                color.colors = [color.colors[1]];
+                if (!onTop) {
+                    physics.velocity.x = ((2 * mB * vBX + vAX * (mA - mB)) / (mA + mB)) * physics.bounciness;
+                    otherBody.velocity.x = ((2 * mA * vAX + vBX * (mA - mB)) / (mA + mB)) * otherBody.bounciness;
+
+                    if (Math.abs(otherBody.velocity.x) <= 0.5) {
+                        otherBody.velocity.x = 0;
+                    }
+                    if (Math.abs(otherBody.velocity.x) <= 0.5) {
+                        physics.velocity.x = 0;
+                    }
+
+                    physics.x += physics.velocity.x;
+                    otherBody.x += otherBody.velocity.x;
+                }
+
+                physics.velocity.y = ((2 * mB * vBY + vAY * (mA - mB)) / (mA + mB)) * physics.bounciness;
+                otherBody.velocity.y = ((2 * mA * vAY + vBY * (mA - mB)) / (mA + mB)) * otherBody.bounciness;
+
+                if (Math.abs(otherBody.velocity.y) <= 1) {
+                    otherBody.velocity.y = 0;
+                }
+                if (Math.abs(otherBody.velocity.y) <= 1) {
+                    physics.velocity.y = 0;
+                }
+
+                physics.y += physics.velocity.y;
+                otherBody.y += otherBody.velocity.y;
+
+                bodyA.top = physics.y;
+                bodyB.top = otherBody.y;
+                bodyA.bottom = physics.y + physics.h;
+                bodyA.left = physics.x;
+                bodyB.left = otherBody.x;
+                bodyB.right = otherBody.x + otherBody.w;
+                yDiff = bodyA.bottom - bodyB.top;
+                onTop = bodyA.top < bodyB.top && yDiff <= 5;
+                if (onTop) {
+                    physics.y = bodyB.top - physics.h;
+                } else {
+                    if (bodyA.left < bodyB.left) {
+                        physics.x = bodyB.left - physics.w - 1;
+                    } else {
+                        physics.x = bodyB.right + 1;
+                    }
+                }
             }
 
             // Keep it inside of that box for the time being
             if (rect.y < 0) {
                 physics.y = rect.y = 0;
-                physics.velocity.y = -physics.velocity.y / 2;
+                physics.velocity.y = -physics.velocity.y * physics.bounciness;
             } else if (rect.y + rect.h > 600) {
                 physics.y = rect.y = 600 - rect.h;
-                physics.velocity.y = -physics.velocity.y / 2;
+                physics.velocity.y = -physics.velocity.y * physics.bounciness;
             }
             if (rect.x < 0) {
                 physics.x = rect.x = 0;
-                physics.velocity.x = -physics.velocity.x / 2;
+                physics.velocity.x = -physics.velocity.x * physics.bounciness;
             } else if (rect.x + rect.w > 800) {
                 physics.x = rect.x = 800 - rect.w;
-                physics.velocity.x = -physics.velocity.x / 2;
+                physics.velocity.x = -physics.velocity.x * physics.bounciness;
             }
         }
     };
