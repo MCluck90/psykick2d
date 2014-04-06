@@ -41,7 +41,7 @@
     var box2 = P2D.World.createEntity();
     box2.addComponent(new P2D.Components.Shape.Rectangle({
         x: 290,
-        y: 100,
+        y: 400,
         w: 128,
         h: 128
     }));
@@ -50,10 +50,10 @@
     }));
     box2.addComponent(new Game.Components.Physics({
         x: 290,
-        y: 100,
+        y: 400,
         w: 128,
         h: 128,
-        mass: 2
+        mass: 0
     }));
     drawSystem.addEntity(box2);
     physicsSystem.addEntity(box2);

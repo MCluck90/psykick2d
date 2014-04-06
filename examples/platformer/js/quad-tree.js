@@ -138,6 +138,28 @@
     };
 
     /**
+     * Moves an Entity and updates it's position in the tree
+     * @param {Entity} entity
+     * @param {{ x: number, y: number }} deltaPosition
+     */
+    QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
+        var body = entity.getComponent('Physics'),
+            oldXCell = Math.floor(body.x / this.CELL_SIZE),
+            oldYCell = Math.floor(body.y / this.CELL_SIZE);
+
+        body.x += deltaPosition.x;
+        body.y += deltaPosition.y;
+
+        var newXCell = Math.floor(body.x / this.CELL_SIZE),
+            newYCell = Math.floor(body.y / this.CELL_SIZE);
+
+        if (oldXCell !== newXCell || oldYCell !== newYCell) {
+            this.removeEntity(entity, body);
+            this.addEntity(entity, body);
+        }
+    };
+
+    /**
      * Returns all entities the given entity is colliding with
      * @param {Entity} entity
      * @param {Physics} [body]

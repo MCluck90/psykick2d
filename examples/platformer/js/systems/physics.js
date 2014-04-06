@@ -1,6 +1,25 @@
 (function(P2D, Game) {
     var GRAVITY = 9.8,
-        GROUND_FRICTION = 1.68;
+        GROUND_FRICTION = 10;
+
+    /**
+     * Returns the sides of a body
+     * @param {Physics} body
+     * @returns {{
+     *  top: number,
+     *  bottom: number,
+     *  left: number,
+     *  right: number
+     * }}
+     */
+    function getSides(body) {
+        return {
+            top: body.y,
+            bottom: body.y + body.h,
+            left: body.x,
+            right: body.x + body.w
+        };
+    }
 
     /**
      * Handles essential physics
@@ -43,6 +62,7 @@
 
     Physics.prototype.update = function(delta) {
         for (var i = 0, len = this.actionOrder.length; i < len; i++) {
+            /*
             var entity = this.actionOrder[i],
                 rect = entity.getComponent('Rectangle'),
                 color = entity.getComponent('Color'),
@@ -154,21 +174,90 @@
                     }
                 }
             }
+            */
 
-            // Keep it inside of that box for the time being
+            // Update it's position
+            var entity = this.actionOrder[i],
+                rect = entity.getComponent('Rectangle'),
+                body = entity.getComponent('Physics'),
+                vXSign = (body.velocity.x) ? (body.velocity.x < 0) ? -1 : 1 : 0,
+                frictionForce = delta * GROUND_FRICTION * body.mass * vXSign,
+                gravityForce = delta * GRAVITY * body.mass;
+
+            body.velocity.x -= frictionForce;
+            body.velocity.y += gravityForce;
+            if (Math.abs(body.velocity.x) < frictionForce) {
+                body.velocity.x = 0;
+            }
+            if (Math.abs(body.velocity.y) < gravityForce) {
+                body.velocity.y = 0;
+            }
+            this._quadTree.moveEntity(entity, body.velocity);
+
+            // Resolve any collisions
+            var collisions = this._quadTree.getCollisions(entity),
+                entityIsMoving = (body.velocity.x !== 0 || body.velocity.y !== 0),
+                entitySides = getSides(body);
+            for (var j = 0, len2 = collisions.length; j < len2; j++) {
+                var other = collisions[j],
+                    otherBody = other.getComponent('Physics'),
+                    otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
+                    otherSides = getSides(otherBody),
+                    bothMoving = (entityIsMoving && otherIsMoving);
+
+                if (!bothMoving) {
+                    var movingEntity = (entityIsMoving) ? entity : other,
+                        movingBody = (entityIsMoving) ? body : otherBody,
+                        movingSides = (entityIsMoving) ? entitySides : otherSides,
+                        staticSides = (entityIsMoving) ? otherSides : entitySides,
+                        deltaPosition = {
+                            x: 0,
+                            y: 0
+                        };
+                    if (movingSides.bottom > staticSides.top && movingSides.top < staticSides.top
+                        && Math.abs(movingSides.bottom - staticSides.top) <= movingBody.velocity.y + gravityForce) {
+                        // Dropping from above
+                        deltaPosition.y = -(movingSides.bottom - staticSides.top);
+                        movingBody.velocity.y = 0;
+                    } else if (movingSides.top < staticSides.bottom && movingSides.bottom > staticSides.bottom
+                        && Math.abs(-(staticSides.bottom - movingSides.top)) <= movingBody.velocity.y) {
+                        // Coming from below
+                        deltaPosition.y = staticSides.bottom - movingSides.top;
+                        movingBody.velocity.y = 0;
+                    } else if (movingSides.right > staticSides.left && movingSides.left < staticSides.left
+                        && movingBody.velocity.x > 0) {
+                        // Coming from the left
+                        deltaPosition.x = -(movingSides.right - staticSides.left);
+                        movingBody.velocity.x = 0;
+                    } else if (movingSides.left < staticSides.right && movingSides.right > staticSides.left
+                        && movingBody.velocity.x < 0) {
+                        // Coming from the right
+                        deltaPosition.x = staticSides.right - movingSides.left;
+                        movingBody.velocity.x = 0;
+                    }
+
+                    this._quadTree.moveEntity(movingEntity, deltaPosition);
+                }
+            }
+
+            // Synchronize the drawing rectangle
+            rect.x = body.x;
+            rect.y = body.y;
+
+            // Keep it inside of the box for the time being
             if (rect.y < 0) {
-                physics.y = rect.y = 0;
-                physics.velocity.y = -physics.velocity.y * physics.bounciness;
+                body.y = rect.y = 0;
+                body.velocity.y = -body.velocity.y * body.bounciness;
             } else if (rect.y + rect.h > 600) {
-                physics.y = rect.y = 600 - rect.h;
-                physics.velocity.y = -physics.velocity.y * physics.bounciness;
+                body.y = rect.y = 600 - rect.h;
+                body.velocity.y = -body.velocity.y * body.bounciness;
             }
             if (rect.x < 0) {
-                physics.x = rect.x = 0;
-                physics.velocity.x = -physics.velocity.x * physics.bounciness;
+                body.x = rect.x = 0;
+                body.velocity.x = -body.velocity.x * body.bounciness;
             } else if (rect.x + rect.w > 800) {
-                physics.x = rect.x = 800 - rect.w;
-                physics.velocity.x = -physics.velocity.x * physics.bounciness;
+                body.x = rect.x = 800 - rect.w;
+                body.velocity.x = -body.velocity.x * body.bounciness;
             }
         }
     };
