@@ -1,8 +1,8 @@
 (function(Game) {
     /**
      * Determines if two objects are colliding
-     * @param {Physics} a
-     * @param {Physics} b
+     * @param {PhysicsBody} a
+     * @param {PhysicsBody} b
      * @returns {boolean}
      */
     function isColliding(a, b) {
@@ -43,7 +43,7 @@
     /**
      * Adds an entity to the tree
      * @param {Entity} entity
-     * @param {Physics} [body]
+     * @param {PhysicsBody} [body]
      */
     QuadTree.prototype.addEntity = function(entity, body) {
         if (this.entities.indexOf(entity) !== -1) {
@@ -52,7 +52,7 @@
         if (this.w <= CELL_SIZE || this.h <= CELL_SIZE) {
             this.entities.push(entity);
         } else {
-            body = body || entity.getComponent('Physics');
+            body = body || entity.getComponent('PhysicsBody');
             var top    = body.y,
                 bottom = body.y + body.h,
                 left   = body.x,
@@ -104,7 +104,7 @@
     /**
      * Removes an Entity from the tree
      * @param {Entity} entity
-     * @param {Physics} [body]
+     * @param {PhysicsBody} [body]
      */
     QuadTree.prototype.removeEntity = function(entity, body) {
         var entityIndex = this.entities.indexOf(entity);
@@ -113,7 +113,7 @@
             return;
         }
 
-        body = body || entity.getComponent('Physics');
+        body = body || entity.getComponent('PhysicsBody');
         var top    = body.y,
             bottom = body.y + body.h,
             left   = body.x,
@@ -143,7 +143,7 @@
      * @param {{ x: number, y: number }} deltaPosition
      */
     QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
-        var body = entity.getComponent('Physics'),
+        var body = entity.getComponent('PhysicsBody'),
             oldXCell = Math.floor(body.x / this.CELL_SIZE),
             oldYCell = Math.floor(body.y / this.CELL_SIZE);
 
@@ -162,13 +162,13 @@
     /**
      * Returns all entities the given entity is colliding with
      * @param {Entity} entity
-     * @param {Physics} [body]
+     * @param {PhysicsBody} [body]
      * @returns {Entity[]}
      */
     QuadTree.prototype.getCollisions = function(entity, body) {
         var result = [];
         if (this.entities.indexOf(entity) === -1) {
-            body = body || entity.getComponent('Physics');
+            body = body || entity.getComponent('PhysicsBody');
             var top    = body.y,
                 bottom = body.y + body.h,
                 left   = body.x,
@@ -196,7 +196,7 @@
                 if (other === entity) {
                     continue;
                 }
-                if (isColliding(body, other.getComponent('Physics'))) {
+                if (isColliding(body, other.getComponent('PhysicsBody'))) {
                     result.push(other);
                 }
             }

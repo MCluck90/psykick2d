@@ -20,7 +20,7 @@
     box.addComponent(new P2D.Components.GFX.Color({
         colors: ['#F00']
     }));
-    box.addComponent(new Game.Components.Physics({
+    box.addComponent(new Game.Components.PhysicsBody({
         x: 100,
         y: 10,
         w: 64,
@@ -49,7 +49,7 @@
         floorPiece.addComponent(new P2D.Components.GFX.Color({
             colors: ['#0F0']
         }));
-        floorPiece.addComponent(new Game.Components.Physics({
+        floorPiece.addComponent(new Game.Components.PhysicsBody({
             x: x,
             y: 860 - x,
             w: 100,
@@ -70,7 +70,7 @@
         colors: ['#0F0']
     }));
     platform.addComponent(new P2D.Components.Shape.Rectangle(platformOptions));
-    platform.addComponent(new Game.Components.Physics(platformOptions));
+    platform.addComponent(new Game.Components.PhysicsBody(platformOptions));
     drawSystem.addEntity(platform);
     physicsSystem.addEntity(platform);
 })(Psykick2D);
