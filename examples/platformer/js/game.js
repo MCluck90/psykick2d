@@ -20,7 +20,7 @@
     box.addComponent(new P2D.Components.GFX.Color({
         colors: ['#F00']
     }));
-    box.addComponent(new Game.Components.PhysicsBody({
+    box.addComponent(new P2D.Components.Physics.RectPhysicsBody({
         x: 100,
         y: 10,
         w: 64,
@@ -34,9 +34,13 @@
     inputSystem.addEntity(box);
     layer.addSystem(inputSystem);
 
-    var physicsSystem = new Game.Systems.Physics();
+    var physicsSystem = new P2D.Systems.Behavior.Physics.Platformer();
     physicsSystem.addEntity(box);
     layer.addSystem(physicsSystem);
+
+    var syncSystem = new Game.Systems.SyncRect();
+    syncSystem.addEntity(box);
+    layer.addSystem(syncSystem);
 
     for (var x = 310; x < 720; x += 50) {
         var floorPiece = P2D.World.createEntity();
@@ -49,7 +53,7 @@
         floorPiece.addComponent(new P2D.Components.GFX.Color({
             colors: ['#0F0']
         }));
-        floorPiece.addComponent(new Game.Components.PhysicsBody({
+        floorPiece.addComponent(new P2D.Components.Physics.RectPhysicsBody({
             x: x,
             y: 860 - x,
             w: 100,
@@ -57,6 +61,7 @@
         }));
         drawSystem.addEntity(floorPiece);
         physicsSystem.addEntity(floorPiece);
+        syncSystem.addEntity(floorPiece);
     }
 
     var platform = P2D.World.createEntity(),
@@ -70,7 +75,41 @@
         colors: ['#0F0']
     }));
     platform.addComponent(new P2D.Components.Shape.Rectangle(platformOptions));
-    platform.addComponent(new Game.Components.PhysicsBody(platformOptions));
+    platform.addComponent(new P2D.Components.Physics.RectPhysicsBody(platformOptions));
     drawSystem.addEntity(platform);
     physicsSystem.addEntity(platform);
+    syncSystem.addEntity(platform);
+
+    var baseFloor = P2D.World.createEntity();
+    baseFloor.addComponent(new P2D.Components.Physics.RectPhysicsBody({
+        x: 0,
+        y: 600,
+        w: 800,
+        h: 50
+    }));
+    physicsSystem.addEntity(baseFloor);
+
+    var ceiling = P2D.World.createEntity();
+    ceiling.addComponent(new P2D.Components.Physics.RectPhysicsBody({
+        x: 0,
+        y: -50,
+        w: 800,
+        h: 50
+    }));
+    physicsSystem.addEntity(ceiling);
+
+    var wallOptions = {
+            x: -50,
+            y: 0,
+            w: 50,
+            h: 600
+        },
+        leftWall = P2D.World.createEntity(),
+        rightWall = P2D.World.createEntity();
+    leftWall.addComponent(new P2D.Components.Physics.RectPhysicsBody(wallOptions));
+    physicsSystem.addEntity(leftWall);
+
+    wallOptions.x = 800;
+    rightWall.addComponent(new P2D.Components.Physics.RectPhysicsBody(wallOptions));
+    physicsSystem.addEntity(rightWall);
 })(Psykick2D);

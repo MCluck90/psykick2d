@@ -6,7 +6,7 @@
      */
     var PlayerInput = function() {
         P2D.BehaviorSystem.call(this);
-        this.requiredComponents = ['PhysicsBody'];
+        this.requiredComponents = ['RectPhysicsBody'];
     };
 
     P2D.Helper.inherit(PlayerInput, P2D.BehaviorSystem);
@@ -20,7 +20,7 @@
             isPressingDown = P2D.Helper.isKeyDown(P2D.Keys.Down),
             isPressingLeft = P2D.Helper.isKeyDown(P2D.Keys.Left),
             isPressingRight = P2D.Helper.isKeyDown(P2D.Keys.Right),
-            physicsBody = this.actionOrder[0].getComponent('PhysicsBody');
+            physicsBody = this.actionOrder[0].getComponent('RectPhysicsBody');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
             deltaY = 100 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);

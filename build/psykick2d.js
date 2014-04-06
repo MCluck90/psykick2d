@@ -24,17 +24,12 @@ Helper.inherit(BehaviorSystem, System);
  */
 BehaviorSystem.prototype.addEntity = function(entity) {
     if (System.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
         if (this.actionOrder.indexOf(entity) === -1) {
             this.actionOrder.push(entity);
+            return true;
         }
-
-        return true;
-    } else {
-        return false;
     }
+    return false;
 };
 
 /**
@@ -74,11 +69,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":9,"./system.js":14}],2:[function(require,module,exports){
+},{"./helper.js":10,"./system.js":16}],2:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":10}],3:[function(require,module,exports){
+},{"./index.js":12}],3:[function(require,module,exports){
 'use strict';
 
 /**
@@ -149,7 +144,7 @@ Animation.prototype.getFrame = function(delta) {
 };
 
 module.exports = Animation;
-},{"../../component.js":3,"../../helper.js":9}],5:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":10}],5:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -175,7 +170,7 @@ var Color = function(options) {
 Helper.inherit(Color, Component);
 
 module.exports = Color;
-},{"../../component.js":3,"../../helper.js":9}],6:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":10}],6:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -296,7 +291,44 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../component.js":3,"../../helper.js":9}],7:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":10}],7:[function(require,module,exports){
+'use strict';
+
+var Component = require('../../component.js'),
+    Helper = require('../../helper.js');
+
+var RectPhysicsBody = function(options) {
+    this.NAME = 'RectPhysicsBody';
+
+    var defaults = {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+        velocity: {
+            x: 0,
+            y: 0
+        },
+        mass: 0,
+        bounciness: 0,
+        solid: true
+    };
+
+    options = Helper.defaults(options, defaults);
+    this.x = options.x;
+    this.y = options.y;
+    this.w = options.w;
+    this.h = options.h;
+    this.velocity = options.velocity;
+    this.mass = options.mass;
+    this.bounciness = options.bounciness;
+    this.solid = options.solid;
+};
+
+Helper.inherit(RectPhysicsBody, Component);
+
+module.exports = RectPhysicsBody;
+},{"../../component.js":3,"../../helper.js":10}],8:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -327,7 +359,7 @@ var Rectangle = function(options) {
 Helper.inherit(Rectangle, Component);
 
 module.exports = Rectangle;
-},{"../../component.js":3,"../../helper.js":9}],8:[function(require,module,exports){
+},{"../../component.js":3,"../../helper.js":10}],9:[function(require,module,exports){
 'use strict';
 
 var Component = require('./component.js');
@@ -387,7 +419,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{"./component.js":3}],9:[function(require,module,exports){
+},{"./component.js":3}],10:[function(require,module,exports){
 'use strict';
 
 var
@@ -499,7 +531,221 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+'use strict';
+
+/**
+ * Determines if two objects are colliding
+ * @param {RectPhysicsBody} a
+ * @param {RectPhysicsBody} b
+ * @returns {boolean}
+ */
+function isColliding(a, b) {
+    var topA = a.y,
+        bottomA = a.y + a.h,
+        leftA = a.x,
+        rightA = a.x + a.w,
+
+        topB = b.y,
+        bottomB = b.y + b.h,
+        leftB = b.x,
+        rightB = b.x + b.w,
+
+        verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
+            (topB <= bottomA && bottomB >= bottomA),
+        horizontalIntersect = (leftA <= rightB && rightA >= rightB) ||
+            (leftB <= rightA && rightB >= rightA);
+
+    return (verticalIntersect && horizontalIntersect);
+}
+
+var CELL_SIZE = 100;
+
+/**
+ * Keeps track of all the physical objects in space
+ * @param {object} options
+ * @constructor
+ */
+var QuadTree = function(options) {
+    this.x = options.x;
+    this.y = options.y;
+    this.w = options.w;
+    this.h = options.h;
+    this.children = new Array(4);
+    this.entities = [];
+};
+
+/**
+ * Adds an entity to the tree
+ * @param {Entity} entity
+ * @param {RectPhysicsBody} [body]
+ */
+QuadTree.prototype.addEntity = function(entity, body) {
+    if (this.entities.indexOf(entity) !== -1) {
+        return;
+    }
+    if (this.w <= CELL_SIZE || this.h <= CELL_SIZE) {
+        this.entities.push(entity);
+    } else {
+        body = body || entity.getComponent('RectPhysicsBody');
+        var top    = body.y,
+            bottom = body.y + body.h,
+            left   = body.x,
+            right  = body.x + body.w,
+            inUpper = (top <= this.y + this.h / 2),
+            inLower = (bottom >= this.y + this.h / 2),
+            inLeft = (left <= this.x + this.w / 2),
+            inRight = (right >= this.x + this.w / 2),
+            nodeOptions = {
+                w: this.w / 2,
+                h: this.h / 2
+            };
+
+        if (inUpper && inLeft) {
+            if (!this.children[0]) {
+                nodeOptions.x = this.x;
+                nodeOptions.y = this.y;
+                this.children[0] = new QuadTree(nodeOptions);
+            }
+            this.children[0].addEntity(entity, body);
+        }
+        if (inUpper && inRight) {
+            if (!this.children[1]) {
+                nodeOptions.x = this.x + this.w / 2;
+                nodeOptions.y = this.y;
+                this.children[1] = new QuadTree(nodeOptions);
+            }
+            this.children[1].addEntity(entity, body);
+        }
+        if (inLower && inRight) {
+            if (!this.children[2]) {
+                nodeOptions.x = this.x + this.w / 2;
+                nodeOptions.y = this.y + this.h / 2;
+                this.children[2] = new QuadTree(nodeOptions);
+            }
+            this.children[2].addEntity(entity, body);
+        }
+        if (inLower && inLeft) {
+            if (!this.children[3]) {
+                nodeOptions.x = this.x;
+                nodeOptions.y = this.y + this.h / 2;
+                this.children[3] = new QuadTree(nodeOptions);
+            }
+            this.children[3].addEntity(entity, body);
+        }
+    }
+};
+
+/**
+ * Removes an Entity from the tree
+ * @param {Entity} entity
+ * @param {RectPhysicsBody} [body]
+ */
+QuadTree.prototype.removeEntity = function(entity, body) {
+    var entityIndex = this.entities.indexOf(entity);
+    if (entityIndex !== -1) {
+        this.entities.splice(entityIndex, 1);
+        return;
+    }
+
+    body = body || entity.getComponent('RectPhysicsBody');
+    var top    = body.y,
+        bottom = body.y + body.h,
+        left   = body.x,
+        right  = body.x + body.w,
+        inUpper = (top <= this.y + this.h / 2),
+        inLower = (bottom >= this.y + this.h / 2),
+        inLeft = (left <= this.x + this.w / 2),
+        inRight = (right >= this.x + this.w / 2);
+
+    if (inUpper && inLeft && this.children[0]) {
+        this.children[0].removeEntity(entity, body);
+    }
+    if (inUpper && inRight && this.children[1]) {
+        this.children[1].removeEntity(entity, body);
+    }
+    if (inLower && inRight && this.children[2]) {
+        this.children[2].removeEntity(entity, body);
+    }
+    if (inLower && inLeft && this.children[3]) {
+        this.children[3].removeEntity(entity, body);
+    }
+};
+
+/**
+ * Moves an Entity and updates it's position in the tree
+ * @param {Entity} entity
+ * @param {{ x: number, y: number }} deltaPosition
+ */
+QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
+    var body = entity.getComponent('RectPhysicsBody'),
+        oldXCell = Math.floor(body.x / this.CELL_SIZE),
+        oldYCell = Math.floor(body.y / this.CELL_SIZE);
+
+    body.x += deltaPosition.x;
+    body.y += deltaPosition.y;
+
+    var newXCell = Math.floor(body.x / this.CELL_SIZE),
+        newYCell = Math.floor(body.y / this.CELL_SIZE);
+
+    if (oldXCell !== newXCell || oldYCell !== newYCell) {
+        this.removeEntity(entity, body);
+        this.addEntity(entity, body);
+    }
+};
+
+/**
+ * Returns all entities the given entity is colliding with
+ * @param {Entity} entity
+ * @param {RectPhysicsBody} [body]
+ * @returns {Entity[]}
+ */
+QuadTree.prototype.getCollisions = function(entity, body) {
+    var result = [];
+    if (this.entities.indexOf(entity) === -1) {
+        body = body || entity.getComponent('RectPhysicsBody');
+        var top    = body.y,
+            bottom = body.y + body.h,
+            left   = body.x,
+            right  = body.x + body.w,
+            inUpper = (top <= this.y + this.h / 2),
+            inLower = (bottom >= this.y + this.h / 2),
+            inLeft = (left <= this.x + this.w / 2),
+            inRight = (right >= this.x + this.w / 2);
+
+        if (inUpper && inLeft && this.children[0]) {
+            result = result.concat(this.children[0].getCollisions(entity, body));
+        }
+        if (inUpper && inRight && this.children[1]) {
+            result = result.concat(this.children[1].getCollisions(entity, body));
+        }
+        if (inLower && inRight && this.children[2]) {
+            result = result.concat(this.children[2].getCollisions(entity, body));
+        }
+        if (inLower && inLeft && this.children[3]) {
+            result = result.concat(this.children[3].getCollisions(entity, body));
+        }
+    } else {
+        for (var i = 0, len = this.entities.length; i < len; i++) {
+            var other = this.entities[i];
+            if (other === entity) {
+                continue;
+            }
+            if (isColliding(body, other.getComponent('RectPhysicsBody'))) {
+                result.push(other);
+            }
+        }
+    }
+
+    return result.filter(function(elem, pos) {
+        return result.indexOf(elem) === pos;
+    });
+};
+
+QuadTree.CELL_SIZE = CELL_SIZE;
+
+module.exports = QuadTree;
+},{}],12:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Component: require('./component.js'),
@@ -509,19 +755,28 @@ module.exports = {
             Color: require('./components/gfx/color.js'),
             SpriteSheet: require('./components/gfx/sprite-sheet.js')
         },
+        Physics: {
+            RectPhysicsBody: require('./components/physics/rect-physics-body.js')
+        },
         Shape: {
             Rectangle: require('./components/shape/rectangle.js')
         }
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
+    Helpers: {
+        QuadTree: require('./helpers/quad-tree.js')
+    },
     Keys: require('./keys.js'),
     Layer: require('./layer.js'),
     RenderSystem: require('./render-system.js'),
     System: require('./system.js'),
     Systems: {
         Behavior: {
-            Animate: require('./systems/behavior/animate.js')
+            Animate: require('./systems/behavior/animate.js'),
+            Physics: {
+                Platformer: require('./systems/behavior/physics/platformer.js')
+            }
         },
         Render: {
             ColoredRect: require('./systems/render/colored-rect.js'),
@@ -530,7 +785,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/shape/rectangle.js":7,"./entity.js":8,"./helper.js":9,"./keys.js":11,"./layer.js":12,"./render-system.js":13,"./system.js":14,"./systems/behavior/animate.js":15,"./systems/render/colored-rect.js":16,"./systems/render/sprite.js":17,"./world.js":18}],11:[function(require,module,exports){
+},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/physics/rect-physics-body.js":7,"./components/shape/rectangle.js":8,"./entity.js":9,"./helper.js":10,"./helpers/quad-tree.js":11,"./keys.js":13,"./layer.js":14,"./render-system.js":15,"./system.js":16,"./systems/behavior/animate.js":17,"./systems/behavior/physics/platformer.js":18,"./systems/render/colored-rect.js":19,"./systems/render/sprite.js":20,"./world.js":21}],13:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -557,7 +812,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -699,7 +954,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":1,"./render-system.js":13,"./system.js":14}],13:[function(require,module,exports){
+},{"./behavior-system.js":1,"./render-system.js":15,"./system.js":16}],15:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -724,13 +979,12 @@ Helper.inherit(RenderSystem, System);
  */
 RenderSystem.prototype.addEntity = function(entity) {
     if (System.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
         if (this.drawOrder.indexOf(entity) === -1) {
             this.drawOrder.push(entity);
+            return true;
         }
     }
+    return false;
 };
 
 /**
@@ -768,7 +1022,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":9,"./system.js":14}],14:[function(require,module,exports){
+},{"./helper.js":10,"./system.js":16}],16:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -807,7 +1061,7 @@ System.prototype.addEntity = function(entity) {
 
 /**
  * Remove an Entity from the collection
- * @param {Entity}      entity
+ * @param {Entity|number}      entity
  * @return {boolean}    True if the entity was removed
  */
 System.prototype.removeEntity = function(entity) {
@@ -825,7 +1079,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":8,"./helper.js":9}],15:[function(require,module,exports){
+},{"./entity.js":9,"./helper.js":10}],17:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -865,7 +1119,158 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":1,"../../helper.js":9}],16:[function(require,module,exports){
+},{"../../behavior-system.js":1,"../../helper.js":10}],18:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../../helper.js'),
+    BehaviorSystem = require('../../../behavior-system.js'),
+    QuadTree = require('../../../helpers/quad-tree.js');
+
+var GRAVITY = 9.8,
+    FRICTION = 10;
+
+/**
+ * Returns the sides of a body
+ * @param {RectPhysicsBody} body
+ * @returns {{
+ *  top: number,
+ *  bottom: number,
+ *  left: number,
+ *  right: number
+ * }}
+ */
+function getSides(body) {
+    return {
+        top: body.y,
+        bottom: body.y + body.h,
+        left: body.x,
+        right: body.x + body.w
+    };
+}
+
+/**
+ * Handles essential physics
+ * @inherits BehaviorSystem
+ * @constructor
+ */
+var Platformer = function() {
+    BehaviorSystem.call(this);
+    this._quadTree = new QuadTree({
+        x: 0,
+        y: 0,
+        w: 800,
+        h: 600
+    });
+    this.requiredComponents = ['RectPhysicsBody'];
+};
+
+Helper.inherit(Platformer, BehaviorSystem);
+
+Platformer.prototype.addEntity = function(entity) {
+    if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
+        if (typeof entity === 'number') {
+            entity = this.entities[entity];
+        }
+        this._quadTree.addEntity(entity);
+        return true;
+    } else {
+        return false;
+    }
+};
+
+Platformer.prototype.removeEntity = function(entity) {
+    if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
+        this._quadTree.removeEntity(entity);
+        return true;
+    } else {
+        return false;
+    }
+};
+
+Platformer.prototype.update = function(delta) {
+    for (var i = 0, len = this.actionOrder.length; i < len; i++) {
+        // Update it's position
+        var entity = this.actionOrder[i],
+            body = entity.getComponent('RectPhysicsBody'),
+            vXSign = (body.velocity.x) ? (body.velocity.x < 0) ? -1 : 1 : 0,
+            frictionForce = delta * FRICTION * vXSign,
+            gravityForce = delta * GRAVITY * body.mass;
+
+        body.velocity.x -= frictionForce;
+        body.velocity.y += gravityForce;
+        if (Math.abs(body.velocity.x) < Math.abs(frictionForce)) {
+            body.velocity.x = 0;
+        }
+        if (Math.abs(body.velocity.y) < gravityForce) {
+            body.velocity.y = 0;
+        }
+        this._quadTree.moveEntity(entity, body.velocity);
+
+        // Resolve any collisions
+        var collisions = (body.solid) ? this._quadTree.getCollisions(entity) : [],
+            entityIsMoving = (body.velocity.x !== 0 || body.velocity.y !== 0),
+            entitySides = getSides(body);
+        for (var j = 0, len2 = collisions.length; j < len2; j++) {
+            var other = collisions[j],
+                otherBody = other.getComponent('RectPhysicsBody'),
+                otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
+                otherSides = getSides(otherBody),
+                bothMoving = (entityIsMoving && otherIsMoving);
+
+            if (!otherBody.solid) {
+                continue;
+            }
+
+            if (!bothMoving) {
+                var movingEntity = (entityIsMoving) ? entity : other,
+                    movingBody = (entityIsMoving) ? body : otherBody,
+                    movingSides = (entityIsMoving) ? entitySides : otherSides,
+                    staticSides = (entityIsMoving) ? otherSides : entitySides,
+                    deltaPosition = {
+                        x: 0,
+                        y: 0
+                    },
+                    fromAbove = movingSides.bottom - staticSides.top,
+                    fromBelow = staticSides.bottom - movingSides.top,
+                    fromLeft = movingSides.right - staticSides.left,
+                    fromRight = staticSides.right - movingSides.left;
+                if (movingSides.bottom >= staticSides.top &&
+                    movingSides.top < staticSides.top &&
+                    Math.abs(fromAbove).toFixed(6) * 1 <= (movingBody.velocity.y + gravityForce).toFixed(6) * 1) {
+                    // Dropping from above
+                    deltaPosition.y = -fromAbove;
+                    movingBody.velocity.y = 0;
+                } else if (movingSides.top <= staticSides.bottom &&
+                    movingSides.bottom > staticSides.bottom &&
+                    movingBody.velocity.y < 0 &&
+                    Math.abs(fromBelow).toFixed(6) * 1 <= Math.abs(movingBody.velocity.y).toFixed(6) * 1) {
+                    // Coming from below
+                    deltaPosition.y = fromBelow;
+                    movingBody.velocity.y = 0;
+                } else if (movingSides.right >= staticSides.left &&
+                    movingSides.left < staticSides.left &&
+                    Math.abs(fromLeft).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
+                    // Coming from the left
+                    deltaPosition.x = -fromLeft;
+                    movingBody.velocity.x = 0;
+                } else if (movingSides.left <= staticSides.right &&
+                    movingSides.right > staticSides.right &&
+                    Math.abs(fromRight).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
+                    // Coming from the right
+                    deltaPosition.x = fromRight;
+                    movingBody.velocity.x = 0;
+                } else {
+                    //debugger;
+                }
+
+                this._quadTree.moveEntity(movingEntity, deltaPosition);
+            }
+        }
+    }
+};
+
+module.exports = Platformer;
+},{"../../../behavior-system.js":1,"../../../helper.js":10,"../../../helpers/quad-tree.js":11}],19:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -897,7 +1302,7 @@ ColoredRect.prototype.draw = function(c) {
 };
 
 module.exports = ColoredRect;
-},{"../../helper.js":9,"../../render-system.js":13}],17:[function(require,module,exports){
+},{"../../helper.js":10,"../../render-system.js":15}],20:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -945,7 +1350,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":9,"../../render-system.js":13}],18:[function(require,module,exports){
+},{"../../helper.js":10,"../../render-system.js":15}],21:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1199,5 +1604,5 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":8,"./helper.js":9,"./layer.js":12}]},{},[2])
+},{"./entity.js":9,"./helper.js":10,"./layer.js":14}]},{},[2])
 ;
