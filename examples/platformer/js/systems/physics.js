@@ -1,6 +1,6 @@
 (function(P2D, Game) {
     var GRAVITY = 9.8,
-        GROUND_FRICTION = 10;
+        FRICTION = 10;
 
     /**
      * Returns the sides of a body
@@ -181,7 +181,7 @@
                 rect = entity.getComponent('Rectangle'),
                 body = entity.getComponent('Physics'),
                 vXSign = (body.velocity.x) ? (body.velocity.x < 0) ? -1 : 1 : 0,
-                frictionForce = delta * GROUND_FRICTION * body.mass * vXSign,
+                frictionForce = delta * FRICTION * vXSign,
                 gravityForce = delta * GRAVITY * body.mass;
 
             body.velocity.x -= frictionForce;
@@ -224,7 +224,8 @@
                         deltaPosition.y = -fromAbove;
                         movingBody.velocity.y = 0;
                     } else if (movingSides.top <= staticSides.bottom && movingSides.bottom > staticSides.bottom
-                        && Math.abs(fromBelow).toFixed(5) * 1 <= movingBody.velocity.y.toFixed(5) * 1) {
+                        && movingBody.velocity.y < 0
+                        && Math.abs(fromBelow).toFixed(5) * 1 <= Math.abs(movingBody.velocity.y).toFixed(5) * 1) {
                         // Coming from below
                         deltaPosition.y = fromBelow;
                         movingBody.velocity.y = 0;
@@ -239,7 +240,7 @@
                         deltaPosition.x = fromRight;
                         movingBody.velocity.x = 0;
                     } else {
-                        debugger;
+                        //debugger;
                     }
 
                     this._quadTree.moveEntity(movingEntity, deltaPosition);

@@ -23,9 +23,12 @@
             physicsBody = this.actionOrder[0].getComponent('Physics');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            deltaY = 20 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
+            deltaY = 100 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
         physicsBody.velocity.x += deltaX;
         physicsBody.velocity.y += deltaY;
+        if (physicsBody.velocity.y < -10) {
+            physicsBody.velocity.y = -10;
+        }
     };
 
     Game.Systems = Game.Systems || {};

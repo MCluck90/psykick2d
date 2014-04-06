@@ -13,7 +13,7 @@
     P2D.World.pushLayer(layer);
     box.addComponent(new P2D.Components.Shape.Rectangle({
         x: 100,
-        y: 100,
+        y: 10,
         w: 64,
         h: 128
     }));
@@ -22,10 +22,10 @@
     }));
     box.addComponent(new Game.Components.Physics({
         x: 100,
-        y: 100,
+        y: 10,
         w: 64,
         h: 128,
-        mass: 1
+        mass: 3
     }));
     drawSystem.addEntity(box);
     layer.addSystem(drawSystem);
@@ -59,46 +59,18 @@
         physicsSystem.addEntity(floorPiece);
     }
 
-    /*
-    var box2 = P2D.World.createEntity();
-    box2.addComponent(new P2D.Components.Shape.Rectangle({
-        x: 290,
-        y: 400,
-        w: 128,
-        h: 128
-    }));
-    box2.addComponent(new P2D.Components.GFX.Color({
+    var platform = P2D.World.createEntity(),
+        platformOptions = {
+            x: 140,
+            y: 150,
+            w: 300,
+            h: 80
+        };
+    platform.addComponent(new P2D.Components.GFX.Color({
         colors: ['#0F0']
     }));
-    box2.addComponent(new Game.Components.Physics({
-        x: 290,
-        y: 400,
-        w: 128,
-        h: 128,
-        mass: 0
-    }));
-    drawSystem.addEntity(box2);
-    physicsSystem.addEntity(box2);
-
-    box2 = P2D.World.createEntity();
-    box2.addComponent(new P2D.Components.Shape.Rectangle({
-        x: 600,
-        y: 50,
-        w: 50,
-        h: 50
-    }));
-    box2.addComponent(new P2D.Components.GFX.Color({
-        colors: ['#00F']
-    }));
-    box2.addComponent(new Game.Components.Physics({
-        x: 600,
-        y: 50,
-        w: 50,
-        h: 50,
-        mass: 0.5,
-        bounciness: 0.5
-    }));
-    drawSystem.addEntity(box2);
-    physicsSystem.addEntity(box2);
-    */
+    platform.addComponent(new P2D.Components.Shape.Rectangle(platformOptions));
+    platform.addComponent(new Game.Components.Physics(platformOptions));
+    drawSystem.addEntity(platform);
+    physicsSystem.addEntity(platform);
 })(Psykick2D);
