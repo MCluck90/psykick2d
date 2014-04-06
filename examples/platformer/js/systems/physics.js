@@ -186,7 +186,7 @@
 
             body.velocity.x -= frictionForce;
             body.velocity.y += gravityForce;
-            if (Math.abs(body.velocity.x) < frictionForce) {
+            if (Math.abs(body.velocity.x) < Math.abs(frictionForce)) {
                 body.velocity.x = 0;
             }
             if (Math.abs(body.velocity.y) < gravityForce) {
@@ -213,27 +213,33 @@
                         deltaPosition = {
                             x: 0,
                             y: 0
-                        };
-                    if (movingSides.bottom > staticSides.top && movingSides.top < staticSides.top
-                        && Math.abs(movingSides.bottom - staticSides.top) <= movingBody.velocity.y + gravityForce) {
+                        },
+                        fromAbove = movingSides.bottom - staticSides.top,
+                        fromBelow = staticSides.bottom - movingSides.top,
+                        fromLeft = movingSides.right - staticSides.left,
+                        fromRight = staticSides.right - movingSides.left;
+                    if (movingSides.bottom >= staticSides.top && movingSides.top < staticSides.top
+                        && Math.abs(fromAbove).toFixed(5) * 1 <= (movingBody.velocity.y + gravityForce).toFixed(5) * 1) {
                         // Dropping from above
-                        deltaPosition.y = -(movingSides.bottom - staticSides.top);
+                        deltaPosition.y = -fromAbove;
                         movingBody.velocity.y = 0;
-                    } else if (movingSides.top < staticSides.bottom && movingSides.bottom > staticSides.bottom
-                        && Math.abs(-(staticSides.bottom - movingSides.top)) <= movingBody.velocity.y) {
+                    } else if (movingSides.top <= staticSides.bottom && movingSides.bottom > staticSides.bottom
+                        && Math.abs(fromBelow).toFixed(5) * 1 <= movingBody.velocity.y.toFixed(5) * 1) {
                         // Coming from below
-                        deltaPosition.y = staticSides.bottom - movingSides.top;
+                        deltaPosition.y = fromBelow;
                         movingBody.velocity.y = 0;
-                    } else if (movingSides.right > staticSides.left && movingSides.left < staticSides.left
-                        && movingBody.velocity.x > 0) {
+                    } else if (movingSides.right >= staticSides.left && movingSides.left < staticSides.left
+                        && Math.abs(fromLeft).toFixed(5) * 1 <= Math.abs(movingBody.velocity.x).toFixed(5) * 1) {
                         // Coming from the left
-                        deltaPosition.x = -(movingSides.right - staticSides.left);
+                        deltaPosition.x = -fromLeft;
                         movingBody.velocity.x = 0;
-                    } else if (movingSides.left < staticSides.right && movingSides.right > staticSides.left
-                        && movingBody.velocity.x < 0) {
+                    } else if (movingSides.left <= staticSides.right && movingSides.right > staticSides.right
+                        && Math.abs(fromRight).toFixed(5) * 1 <= Math.abs(movingBody.velocity.x).toFixed(5) * 1) {
                         // Coming from the right
-                        deltaPosition.x = staticSides.right - movingSides.left;
+                        deltaPosition.x = fromRight;
                         movingBody.velocity.x = 0;
+                    } else {
+                        debugger;
                     }
 
                     this._quadTree.moveEntity(movingEntity, deltaPosition);

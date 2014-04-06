@@ -38,6 +38,28 @@
     physicsSystem.addEntity(box);
     layer.addSystem(physicsSystem);
 
+    for (var x = 310; x < 720; x += 50) {
+        var floorPiece = P2D.World.createEntity();
+        floorPiece.addComponent(new P2D.Components.Shape.Rectangle({
+            x: x,
+            y: 860 - x,
+            w: 100,
+            h: 50
+        }));
+        floorPiece.addComponent(new P2D.Components.GFX.Color({
+            colors: ['#0F0']
+        }));
+        floorPiece.addComponent(new Game.Components.Physics({
+            x: x,
+            y: 860 - x,
+            w: 100,
+            h: 50
+        }));
+        drawSystem.addEntity(floorPiece);
+        physicsSystem.addEntity(floorPiece);
+    }
+
+    /*
     var box2 = P2D.World.createEntity();
     box2.addComponent(new P2D.Components.Shape.Rectangle({
         x: 290,
@@ -78,4 +100,5 @@
     }));
     drawSystem.addEntity(box2);
     physicsSystem.addEntity(box2);
+    */
 })(Psykick2D);
