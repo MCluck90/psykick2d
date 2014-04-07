@@ -42,7 +42,10 @@
     physicsSystem.addEntity(box);
     layer.addSystem(physicsSystem);
     physicsSystem.addCollisionHandler(box, function(other) {
-        playerBody.inContact = true;
+        var otherBody = other.getComponent('RectPhysicsBody');
+        if (otherBody.y + 1 >= playerBody.y + playerBody.h) {
+            playerBody.inContact = true;
+        }
     });
 
     var syncSystem = new Game.Systems.SyncRect();
