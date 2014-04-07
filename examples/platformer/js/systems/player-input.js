@@ -26,6 +26,9 @@
             deltaY = 100 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
         physicsBody.velocity.x += deltaX;
         physicsBody.velocity.y += deltaY;
+        if (Math.abs(physicsBody.velocity.x) > 20) {
+            physicsBody.velocity.x = (physicsBody.velocity.x > 0) ? 20 : -20;
+        }
         if (physicsBody.velocity.y < -10) {
             physicsBody.velocity.y = -10;
         }

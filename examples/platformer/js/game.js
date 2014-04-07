@@ -20,15 +20,19 @@
     box.addComponent(new P2D.Components.GFX.Color({
         colors: ['#F00']
     }));
-    box.addComponent(new P2D.Components.Physics.RectPhysicsBody({
+    var playerBody = new P2D.Components.Physics.RectPhysicsBody({
         x: 100,
         y: 10,
         w: 64,
         h: 128,
         mass: 3
-    }));
+    });
+    box.addComponent(playerBody);
     drawSystem.addEntity(box);
     layer.addSystem(drawSystem);
+
+    var playerCam = new Game.PlayerCam(playerBody);
+    layer.camera = playerCam;
 
     var inputSystem = new Game.Systems.PlayerInput();
     inputSystem.addEntity(box);
@@ -80,36 +84,18 @@
     physicsSystem.addEntity(platform);
     syncSystem.addEntity(platform);
 
-    var baseFloor = P2D.World.createEntity();
-    baseFloor.addComponent(new P2D.Components.Physics.RectPhysicsBody({
-        x: 0,
-        y: 600,
-        w: 800,
-        h: 50
+    var baseFloor = P2D.World.createEntity(),
+        floorOptions = {
+            x: -10000,
+            y: 600,
+            w: 20000,
+            h: 800
+        };
+    baseFloor.addComponent(new P2D.Components.Physics.RectPhysicsBody(floorOptions));
+    baseFloor.addComponent(new P2D.Components.Shape.Rectangle(floorOptions));
+    baseFloor.addComponent(new P2D.Components.GFX.Color({
+        colors: ['#0F0']
     }));
+    drawSystem.addEntity(baseFloor);
     physicsSystem.addEntity(baseFloor);
-
-    var ceiling = P2D.World.createEntity();
-    ceiling.addComponent(new P2D.Components.Physics.RectPhysicsBody({
-        x: 0,
-        y: -50,
-        w: 800,
-        h: 50
-    }));
-    physicsSystem.addEntity(ceiling);
-
-    var wallOptions = {
-            x: -50,
-            y: 0,
-            w: 50,
-            h: 600
-        },
-        leftWall = P2D.World.createEntity(),
-        rightWall = P2D.World.createEntity();
-    leftWall.addComponent(new P2D.Components.Physics.RectPhysicsBody(wallOptions));
-    physicsSystem.addEntity(leftWall);
-
-    wallOptions.x = 800;
-    rightWall.addComponent(new P2D.Components.Physics.RectPhysicsBody(wallOptions));
-    physicsSystem.addEntity(rightWall);
 })(Psykick2D);
