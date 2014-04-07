@@ -7,16 +7,31 @@
      */
     var PlayerCam = function(playerBody) {
         this.playerBody = playerBody;
+        this.x = 0;
+        this.y = 0;
+        this.scale = 1;
     };
 
     /**
      * Move the camera so that it follows the player
      * @param {CanvasRenderingContext2D} c
      */
-    PlayerCam.prototype.render = function(c) {
-        var halfWidth = this.playerBody.w / 2,
-            halfHeight = this.playerBody.h / 2;
-        c.translate(-this.playerBody.x + 400 - halfWidth, -this.playerBody.y + 300 - halfHeight);
+    PlayerCam.prototype.render = function(c, delta) {
+        if (P2D.Helper.isKeyDown(P2D.Keys.A)) {
+            this.scale += 2 * delta;
+        }
+        if (P2D.Helper.isKeyDown(P2D.Keys.Z)) {
+            this.scale -= 2 * delta;
+        }
+        if (P2D.Helper.isKeyDown(P2D.Keys.R)) {
+            this.scale = 1;
+        }
+
+        this.x = -this.playerBody.x + (400 / this.scale) - (this.playerBody.w / 2);
+        this.y = -this.playerBody.y + (300 / this.scale) - (this.playerBody.h / 2);
+
+        c.scale(this.scale, this.scale);
+        c.translate(this.x, this.y);
     };
 
     Game.PlayerCam = PlayerCam;
