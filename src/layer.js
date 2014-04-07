@@ -14,6 +14,7 @@ var System = require('./system.js'),
 var Layer = function(options) {
     this.id = options.id;
     this.container = options.container;
+    this.camera = null;
     this.renderSystems = [];
     this.behaviorSystems = [];
     this.visible = true;
@@ -109,6 +110,12 @@ Layer.prototype.draw = function() {
 
     this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);
 
+    // If the layer has a camera, use it
+    if (this.camera !== null) {
+        this.c.save();
+        this.camera.render(this.c);
+    }
+
     // Only draw if "visible" and have some kind of system for rendering
     if (this.visible && this.renderSystems.length > 0) {
         this.c.save();
@@ -118,6 +125,10 @@ Layer.prototype.draw = function() {
                 system.draw(this.c);
             }
         }
+        this.c.restore();
+    }
+
+    if (this.camera !== null) {
         this.c.restore();
     }
 };

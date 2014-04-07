@@ -69,11 +69,36 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":10,"./system.js":16}],2:[function(require,module,exports){
+},{"./helper.js":11,"./system.js":17}],2:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":12}],3:[function(require,module,exports){
+},{"./index.js":13}],3:[function(require,module,exports){
+'use strict';
+
+/**
+ * A basic camera
+ * @constructor
+ */
+var Camera = function() {
+    this.x = 0;
+    this.y = 0;
+};
+
+/**
+ * Called before every draw phase
+ * @param {CanvasRenderingContext2D} c
+ */
+Camera.prototype.render = function(c) {
+    c.translate(-this.x, -this.y);
+};
+
+Camera.prototype.toString = function() {
+    return '[object Camera]';
+};
+
+module.exports = Camera;
+},{}],4:[function(require,module,exports){
 'use strict';
 
 /**
@@ -86,7 +111,7 @@ var Component = function() {
 };
 
 module.exports = Component;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -144,7 +169,7 @@ Animation.prototype.getFrame = function(delta) {
 };
 
 module.exports = Animation;
-},{"../../component.js":3,"../../helper.js":10}],5:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":11}],6:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -170,7 +195,7 @@ var Color = function(options) {
 Helper.inherit(Color, Component);
 
 module.exports = Color;
-},{"../../component.js":3,"../../helper.js":10}],6:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":11}],7:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -291,7 +316,7 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../component.js":3,"../../helper.js":10}],7:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":11}],8:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -328,7 +353,7 @@ var RectPhysicsBody = function(options) {
 Helper.inherit(RectPhysicsBody, Component);
 
 module.exports = RectPhysicsBody;
-},{"../../component.js":3,"../../helper.js":10}],8:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":11}],9:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -359,7 +384,7 @@ var Rectangle = function(options) {
 Helper.inherit(Rectangle, Component);
 
 module.exports = Rectangle;
-},{"../../component.js":3,"../../helper.js":10}],9:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":11}],10:[function(require,module,exports){
 'use strict';
 
 var Component = require('./component.js');
@@ -419,7 +444,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{"./component.js":3}],10:[function(require,module,exports){
+},{"./component.js":4}],11:[function(require,module,exports){
 'use strict';
 
 var
@@ -531,7 +556,7 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -745,9 +770,10 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 QuadTree.CELL_SIZE = CELL_SIZE;
 
 module.exports = QuadTree;
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
+    Camera: require('./camera.js'),
     Component: require('./component.js'),
     Components: {
         GFX: {
@@ -785,7 +811,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":1,"./component.js":3,"./components/gfx/animation.js":4,"./components/gfx/color.js":5,"./components/gfx/sprite-sheet.js":6,"./components/physics/rect-physics-body.js":7,"./components/shape/rectangle.js":8,"./entity.js":9,"./helper.js":10,"./helpers/quad-tree.js":11,"./keys.js":13,"./layer.js":14,"./render-system.js":15,"./system.js":16,"./systems/behavior/animate.js":17,"./systems/behavior/physics/platformer.js":18,"./systems/render/colored-rect.js":19,"./systems/render/sprite.js":20,"./world.js":21}],13:[function(require,module,exports){
+},{"./behavior-system.js":1,"./camera.js":3,"./component.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/physics/rect-physics-body.js":8,"./components/shape/rectangle.js":9,"./entity.js":10,"./helper.js":11,"./helpers/quad-tree.js":12,"./keys.js":14,"./layer.js":15,"./render-system.js":16,"./system.js":17,"./systems/behavior/animate.js":18,"./systems/behavior/physics/platformer.js":19,"./systems/render/colored-rect.js":20,"./systems/render/sprite.js":21,"./world.js":22}],14:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -812,7 +838,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -829,6 +855,7 @@ var System = require('./system.js'),
 var Layer = function(options) {
     this.id = options.id;
     this.container = options.container;
+    this.camera = null;
     this.renderSystems = [];
     this.behaviorSystems = [];
     this.visible = true;
@@ -924,6 +951,12 @@ Layer.prototype.draw = function() {
 
     this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);
 
+    // If the layer has a camera, use it
+    if (this.camera !== null) {
+        this.c.save();
+        this.camera.render(this.c);
+    }
+
     // Only draw if "visible" and have some kind of system for rendering
     if (this.visible && this.renderSystems.length > 0) {
         this.c.save();
@@ -933,6 +966,10 @@ Layer.prototype.draw = function() {
                 system.draw(this.c);
             }
         }
+        this.c.restore();
+    }
+
+    if (this.camera !== null) {
         this.c.restore();
     }
 };
@@ -954,7 +991,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":1,"./render-system.js":15,"./system.js":16}],15:[function(require,module,exports){
+},{"./behavior-system.js":1,"./render-system.js":16,"./system.js":17}],16:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1022,7 +1059,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":10,"./system.js":16}],16:[function(require,module,exports){
+},{"./helper.js":11,"./system.js":17}],17:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1079,7 +1116,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":9,"./helper.js":10}],17:[function(require,module,exports){
+},{"./entity.js":10,"./helper.js":11}],18:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1119,7 +1156,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":1,"../../helper.js":10}],18:[function(require,module,exports){
+},{"../../behavior-system.js":1,"../../helper.js":11}],19:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -1270,7 +1307,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":1,"../../../helper.js":10,"../../../helpers/quad-tree.js":11}],19:[function(require,module,exports){
+},{"../../../behavior-system.js":1,"../../../helper.js":11,"../../../helpers/quad-tree.js":12}],20:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1302,7 +1339,7 @@ ColoredRect.prototype.draw = function(c) {
 };
 
 module.exports = ColoredRect;
-},{"../../helper.js":10,"../../render-system.js":15}],20:[function(require,module,exports){
+},{"../../helper.js":11,"../../render-system.js":16}],21:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1350,7 +1387,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":10,"../../render-system.js":15}],21:[function(require,module,exports){
+},{"../../helper.js":11,"../../render-system.js":16}],22:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1604,5 +1641,5 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":9,"./helper.js":10,"./layer.js":14}]},{},[2])
+},{"./entity.js":10,"./helper.js":11,"./layer.js":15}]},{},[2])
 ;
