@@ -41,6 +41,9 @@
     var physicsSystem = new P2D.Systems.Behavior.Physics.Platformer();
     physicsSystem.addEntity(box);
     layer.addSystem(physicsSystem);
+    physicsSystem.addCollisionHandler(box, function(other) {
+        playerBody.inContact = true;
+    });
 
     var syncSystem = new Game.Systems.SyncRect();
     syncSystem.addEntity(box);

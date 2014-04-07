@@ -17,15 +17,18 @@
         }
 
         var isPressingUp = P2D.Helper.isKeyDown(P2D.Keys.Up),
-            isPressingDown = P2D.Helper.isKeyDown(P2D.Keys.Down),
             isPressingLeft = P2D.Helper.isKeyDown(P2D.Keys.Left),
             isPressingRight = P2D.Helper.isKeyDown(P2D.Keys.Right),
-            physicsBody = this.actionOrder[0].getComponent('RectPhysicsBody');
+            entity = this.actionOrder[0],
+            physicsBody = entity.getComponent('RectPhysicsBody');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            deltaY = 100 * delta * ((isPressingUp)   ? -1 : (isPressingDown)  ? 1 : 0);
+            jumpVelocity = (isPressingUp) ? -20 : 0;
+        physicsBody.inContact = physicsBody.inContact && physicsBody.velocity.y === 0;
         physicsBody.velocity.x += deltaX;
-        physicsBody.velocity.y += deltaY;
+        physicsBody.velocity.y += (physicsBody.inContact) ? jumpVelocity : 0;
+
+        // Cap out the maximum speeds
         if (Math.abs(physicsBody.velocity.x) > 20) {
             physicsBody.velocity.x = (physicsBody.velocity.x > 0) ? 20 : -20;
         }

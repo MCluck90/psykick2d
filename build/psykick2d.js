@@ -1162,6 +1162,14 @@ function getSides(body) {
     };
 }
 
+function callEventHandlers(entity, other) {
+    /* jshint validthis:true */
+    var collection = this._collisionHandlers[entity.id] || [];
+    for (var i = 0, len = collection.length; i < len; i++) {
+        collection[i](other);
+    }
+}
+
 /**
  * Handles essential physics
  * @inherits BehaviorSystem
@@ -1169,6 +1177,7 @@ function getSides(body) {
  */
 var Platformer = function() {
     BehaviorSystem.call(this);
+    this._collisionHandlers = {};
     this._quadTree = new QuadTree({
         x: 0,
         y: 0,
@@ -1180,12 +1189,38 @@ var Platformer = function() {
 
 Helper.inherit(Platformer, BehaviorSystem);
 
+/**
+ * Adds a handler for when a given entity encounters a collision
+ * @param {Entity} entity
+ * @param {function(Entity)} callback
+ */
+Platformer.prototype.addCollisionHandler = function(entity, callback) {
+    var collection = this._collisionHandlers[entity.id];
+    if (collection.indexOf(callback) === -1) {
+        this._collisionHandlers[entity.id].push(callback);
+    }
+};
+
+/**
+ * Removes a given collision handler for a given entity
+ * @param {Entity} entity
+ * @param {function} callback
+ */
+Platformer.prototype.removeCollisionHandler = function(entity, callback) {
+    var collection = this._collisionHandlers[entity.id],
+        index = (collection) ? collection.indexOf(callback) : -1;
+    if (index !== -1) {
+        collection.splice(index, 1);
+    }
+};
+
 Platformer.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
         if (typeof entity === 'number') {
             entity = this.entities[entity];
         }
         this._quadTree.addEntity(entity);
+        this._collisionHandlers[entity.id] = [];
         return true;
     } else {
         return false;
@@ -1195,6 +1230,7 @@ Platformer.prototype.addEntity = function(entity) {
 Platformer.prototype.removeEntity = function(entity) {
     if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
         this._quadTree.removeEntity(entity);
+        delete this._collisionHandlers[entity.id];
         return true;
     } else {
         return false;
@@ -1230,6 +1266,8 @@ Platformer.prototype.update = function(delta) {
                 otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
                 otherSides = getSides(otherBody),
                 bothMoving = (entityIsMoving && otherIsMoving);
+
+            callEventHandlers.call(this, entity, other);
 
             if (!otherBody.solid) {
                 continue;
