@@ -1391,8 +1391,22 @@ Sprite.prototype.draw = function(c) {
         if (spriteSheet.repeat) {
             c.translate(rect.x, rect.y);
             c.rotate(rect.rotation);
-            var pattern = c.createPattern(spriteSheet.img, spriteSheet.repeat);
-            c.fillStyle = pattern;
+            var patternCanvas = document.createElement('canvas');
+            patternCanvas.width = spriteSheet.frameWidth;
+            patternCanvas.height = spriteSheet.frameHeight;
+            var patternContext = patternCanvas.getContext('2d');
+            patternContext.drawImage(
+                spriteSheet.img,
+                spriteSheet.xOffset,
+                spriteSheet.yOffset,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight,
+                0,
+                0,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight
+            );
+            c.fillStyle = c.createPattern(patternCanvas, spriteSheet.repeat);
             c.fillRect(
                 0,
                 0,
