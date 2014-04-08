@@ -15,7 +15,8 @@ var Rectangle = function(options) {
         x: 0,
         y: 0,
         w: 0,
-        h: 0
+        h: 0,
+        rotation: 0
     };
 
     options = Helper.defaults(options, defaults);
@@ -23,6 +24,7 @@ var Rectangle = function(options) {
     this.y = options.y;
     this.w = options.w;
     this.h = options.h;
+    this.rotation = options.rotation;
 };
 
 Helper.inherit(Rectangle, Component);

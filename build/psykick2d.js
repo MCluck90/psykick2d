@@ -181,13 +181,14 @@ var Component = require('../../component.js'),
  * @constructor
  * @inherit Component
  * @param {Object} options
- * @param {String} [options.src=null]       Path to the image
- * @param {number} [options.width=0]        Width of the sprite sheet
- * @param {number} [options.height=0]       Height of the sprite sheet
- * @param {number} [options.frameWidth=0]   Width of the individual frames
- * @param {number} [options.frameHeight=0]  Height of the individual frames
- * @param {number} [options.xOffset=0]      Initial x offset
- * @param {number} [options.yOffset=0]      Initial y offset
+ * @param {String} [options.src=null]      Path to the image
+ * @param {number} [options.width=0]       Width of the sprite sheet
+ * @param {number} [options.height=0]      Height of the sprite sheet
+ * @param {number} [options.frameWidth=0]  Width of the individual frames
+ * @param {number} [options.frameHeight=0] Height of the individual frames
+ * @param {number} [options.xOffset=0]     Initial x offset
+ * @param {number} [options.yOffset=0]     Initial y offset
+ * @param {string} [options.repeat=null]   Type of repeating pattern to use
  */
 var SpriteSheet = function(options) {
     // Unique name for reference in Entities
@@ -196,23 +197,21 @@ var SpriteSheet = function(options) {
     var self = this,
         defaults = {
             src: null,
-            width: 0,
-            height: 0,
             frameWidth: 0,
             frameHeight: 0,
             xOffset: 0,
-            yOffset: 0
+            yOffset: 0,
+            repeat: null
         };
 
     options = Helper.defaults(options, defaults);
     this.img = new Image();
     this.img.src = options.src;
-    this.img.width = options.width;
-    this.img.height = options.height;
     this.frameWidth = options.frameWidth;
     this.frameHeight = options.frameHeight;
     this.xOffset = options.xOffset;
     this.yOffset = options.yOffset;
+    this.repeat = options.repeat;
 
     // Flag when the image has been loaded
     this.loaded = false;
@@ -346,7 +345,8 @@ var Rectangle = function(options) {
         x: 0,
         y: 0,
         w: 0,
-        h: 0
+        h: 0,
+        rotation: 0
     };
 
     options = Helper.defaults(options, defaults);
@@ -354,6 +354,7 @@ var Rectangle = function(options) {
     this.y = options.y;
     this.w = options.w;
     this.h = options.h;
+    this.rotation = options.rotation;
 };
 
 Helper.inherit(Rectangle, Component);
@@ -1368,7 +1369,7 @@ var Helper = require('../../helper.js'),
  */
 var Sprite = function() {
     RenderSystem.call(this);
-    this.requiredComponents = ['SpriteSheet', 'Position'];
+    this.requiredComponents = ['SpriteSheet', 'Rectangle'];
 };
 
 Helper.inherit(Sprite, RenderSystem);
@@ -1381,22 +1382,38 @@ Sprite.prototype.draw = function(c) {
     for (var i = 0, len = this.drawOrder.length; i < len; i++) {
         var entity = this.drawOrder[i],
             spriteSheet = entity.getComponent('SpriteSheet'),
-            position = entity.getComponent('Position');
+            rect = entity.getComponent('Rectangle');
+        if (!spriteSheet.loaded) {
+            continue;
+        }
 
         c.save();
-        c.translate(position.x, position.y);
-        c.rotate(position.rotation);
-        c.drawImage(
-            spriteSheet.img,
-            spriteSheet.xOffset,
-            spriteSheet.yOffset,
-            spriteSheet.frameWidth,
-            spriteSheet.frameHeight,
-            -spriteSheet.frameWidth / 2,
-            -spriteSheet.frameHeight / 2,
-            spriteSheet.frameWidth,
-            spriteSheet.frameHeight
-        );
+        if (spriteSheet.repeat) {
+            c.translate(rect.x, rect.y);
+            c.rotate(rect.rotation);
+            var pattern = c.createPattern(spriteSheet.img, spriteSheet.repeat);
+            c.fillStyle = pattern;
+            c.fillRect(
+                0,
+                0,
+                rect.w,
+                rect.h
+            );
+        } else {
+            c.translate(rect.x + rect.w / 2, rect.y + rect.h / 2);
+            c.rotate(rect.rotation);
+            c.drawImage(
+                spriteSheet.img,
+                spriteSheet.xOffset,
+                spriteSheet.yOffset,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight,
+                -spriteSheet.frameWidth / 2,
+                -spriteSheet.frameHeight / 2,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight
+            );
+        }
         c.restore();
     }
 };

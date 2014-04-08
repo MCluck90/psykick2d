@@ -9,7 +9,7 @@
         this.playerBody = playerBody;
         this.x = 0;
         this.y = 0;
-        this.scale = 1;
+        this.scale = 0.48;
     };
 
     /**

@@ -90,6 +90,7 @@
     physicsSystem.addEntity(platform);
     syncSystem.addEntity(platform);
 
+    /*
     var baseFloor = P2D.World.createEntity(),
         floorOptions = {
             x: -10000,
@@ -104,4 +105,33 @@
     }));
     drawSystem.addEntity(baseFloor);
     physicsSystem.addEntity(baseFloor);
+    */
+    var ground = P2D.World.createEntity(),
+        spriteSystem = new P2D.Systems.Render.Sprite();
+    ground.addComponent(new P2D.Components.Physics.RectPhysicsBody({
+        x: -10000,
+        y: 600,
+        w: 20000,
+        h: 800
+    }));
+    ground.addComponent(new P2D.Components.Shape.Rectangle({
+        x: -10000,
+        y: 600,
+        w: 20000,
+        h: 70
+    }));
+    ground.addComponent(new P2D.Components.GFX.SpriteSheet({
+        src: 'media/sprites/ground.png',
+        x: 100,
+        y: 600,
+        frameWidth: 70,
+        frameHeight: 70,
+        width: 1000,
+        height: 70,
+        repeat: 'repeat-x'
+    }));
+
+    physicsSystem.addEntity(ground);
+    layer.addSystem(spriteSystem);
+    spriteSystem.addEntity(ground);
 })(Psykick2D);

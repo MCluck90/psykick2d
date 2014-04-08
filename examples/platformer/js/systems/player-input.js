@@ -23,7 +23,7 @@
             physicsBody = entity.getComponent('RectPhysicsBody');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            jumpVelocity = (isPressingUp) ? -20 : 0;
+            jumpVelocity = (isPressingUp) ? -10 : 0;
         physicsBody.inContact = physicsBody.inContact && physicsBody.velocity.y === 0;
         physicsBody.velocity.x += deltaX;
         physicsBody.velocity.y += (physicsBody.inContact) ? jumpVelocity : 0;
@@ -32,8 +32,8 @@
         if (Math.abs(physicsBody.velocity.x) > 20) {
             physicsBody.velocity.x = (physicsBody.velocity.x > 0) ? 20 : -20;
         }
-        if (physicsBody.velocity.y < -10) {
-            physicsBody.velocity.y = -10;
+        if (physicsBody.velocity.y > 10) {
+            physicsBody.velocity.y = 10;
         }
     };
 

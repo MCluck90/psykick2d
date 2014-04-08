@@ -8,13 +8,14 @@ var Component = require('../../component.js'),
  * @constructor
  * @inherit Component
  * @param {Object} options
- * @param {String} [options.src=null]       Path to the image
- * @param {number} [options.width=0]        Width of the sprite sheet
- * @param {number} [options.height=0]       Height of the sprite sheet
- * @param {number} [options.frameWidth=0]   Width of the individual frames
- * @param {number} [options.frameHeight=0]  Height of the individual frames
- * @param {number} [options.xOffset=0]      Initial x offset
- * @param {number} [options.yOffset=0]      Initial y offset
+ * @param {String} [options.src=null]      Path to the image
+ * @param {number} [options.width=0]       Width of the sprite sheet
+ * @param {number} [options.height=0]      Height of the sprite sheet
+ * @param {number} [options.frameWidth=0]  Width of the individual frames
+ * @param {number} [options.frameHeight=0] Height of the individual frames
+ * @param {number} [options.xOffset=0]     Initial x offset
+ * @param {number} [options.yOffset=0]     Initial y offset
+ * @param {string} [options.repeat=null]   Type of repeating pattern to use
  */
 var SpriteSheet = function(options) {
     // Unique name for reference in Entities
@@ -23,23 +24,21 @@ var SpriteSheet = function(options) {
     var self = this,
         defaults = {
             src: null,
-            width: 0,
-            height: 0,
             frameWidth: 0,
             frameHeight: 0,
             xOffset: 0,
-            yOffset: 0
+            yOffset: 0,
+            repeat: null
         };
 
     options = Helper.defaults(options, defaults);
     this.img = new Image();
     this.img.src = options.src;
-    this.img.width = options.width;
-    this.img.height = options.height;
     this.frameWidth = options.frameWidth;
     this.frameHeight = options.frameHeight;
     this.xOffset = options.xOffset;
     this.yOffset = options.yOffset;
+    this.repeat = options.repeat;
 
     // Flag when the image has been loaded
     this.loaded = false;
