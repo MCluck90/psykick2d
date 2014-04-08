@@ -90,22 +90,6 @@
     physicsSystem.addEntity(platform);
     syncSystem.addEntity(platform);
 
-    /*
-    var baseFloor = P2D.World.createEntity(),
-        floorOptions = {
-            x: -10000,
-            y: 600,
-            w: 20000,
-            h: 800
-        };
-    baseFloor.addComponent(new P2D.Components.Physics.RectPhysicsBody(floorOptions));
-    baseFloor.addComponent(new P2D.Components.Shape.Rectangle(floorOptions));
-    baseFloor.addComponent(new P2D.Components.GFX.Color({
-        colors: ['#0F0']
-    }));
-    drawSystem.addEntity(baseFloor);
-    physicsSystem.addEntity(baseFloor);
-    */
     var ground = P2D.World.createEntity(),
         spriteSystem = new P2D.Systems.Render.Sprite();
     ground.addComponent(new P2D.Components.Physics.RectPhysicsBody({
@@ -118,22 +102,35 @@
         x: -10000,
         y: 600,
         w: 20000,
-        h: 70
+        h: 65
     }));
     ground.addComponent(new P2D.Components.GFX.SpriteSheet({
         src: 'media/sprites/ground.png',
-        x: 100,
-        y: 600,
         xOffset: 6,
         yOffset: 0,
         frameWidth: 59,
-        frameHeight: 70,
-        width: 1000,
-        height: 70,
+        frameHeight: 65,
         repeat: 'repeat-x'
     }));
 
     physicsSystem.addEntity(ground);
     layer.addSystem(spriteSystem);
     spriteSystem.addEntity(ground);
+
+    var dirt = P2D.World.createEntity();
+    dirt.addComponent(new P2D.Components.Shape.Rectangle({
+        x: -10000,
+        y: 665,
+        w: 20000,
+        h: 5000
+    }));
+    dirt.addComponent(new P2D.Components.GFX.SpriteSheet({
+        src: 'media/sprites/ground_dirt.png',
+        xOffset: 6,
+        yOffset: 5,
+        frameWidth: 59,
+        frameHeight: 60,
+        repeat: 'repeat'
+    }));
+    spriteSystem.addEntity(dirt);
 })(Psykick2D);

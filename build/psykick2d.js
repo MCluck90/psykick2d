@@ -1427,7 +1427,7 @@ Sprite.prototype.draw = function(c) {
                 0,
                 0,
                 spriteSheet.frameWidth,
-                spriteSheet.frameHeight
+                spriteSheet.frameHeight + 5
             );
             c.fillStyle = c.createPattern(patternCanvas, spriteSheet.repeat);
             c.fillRect(
