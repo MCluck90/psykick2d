@@ -12,9 +12,28 @@ var Helper = require('../../helper.js'),
 var Sprite = function() {
     RenderSystem.call(this);
     this.requiredComponents = ['SpriteSheet', 'Rectangle'];
+    this._patternCanvases = {};
 };
 
 Helper.inherit(Sprite, RenderSystem);
+
+/**
+ * Removes an Entity
+ * @param {Entity|number} entity
+ * @return {boolean}
+ */
+Sprite.prototype.removeEntity = function(entity) {
+    if (RenderSystem.prototype.removeEntity.call(this, entity)) {
+        if (typeof entity === 'number') {
+            delete this._patternCanvases[entity];
+        } else {
+            delete this._patternCanvases[entity.id];
+        }
+        return true;
+    } else {
+        return false;
+    }
+};
 
 /**
  * Draw all the sprites
@@ -33,9 +52,13 @@ Sprite.prototype.draw = function(c) {
         if (spriteSheet.repeat) {
             c.translate(rect.x, rect.y);
             c.rotate(rect.rotation);
-            var patternCanvas = document.createElement('canvas');
-            patternCanvas.width = spriteSheet.frameWidth;
-            patternCanvas.height = spriteSheet.frameHeight;
+            var patternCanvas = this._patternCanvases[entity.id];
+            if (!patternCanvas) {
+                patternCanvas = document.createElement('canvas');
+                patternCanvas.width = spriteSheet.frameWidth;
+                patternCanvas.height = spriteSheet.frameHeight;
+                this._patternCanvases[entity.id] = patternCanvas;
+            }
             var patternContext = patternCanvas.getContext('2d');
             patternContext.drawImage(
                 spriteSheet.img,
