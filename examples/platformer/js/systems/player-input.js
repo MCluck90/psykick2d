@@ -1,4 +1,7 @@
 (function(P2D, Game) {
+    var fallTimeout = 0,
+        TOTAL_TIMEOUT = 0.25;
+
     /**
      * Handles player input
      * @inherits BehaviorSystem
@@ -7,6 +10,7 @@
     var PlayerInput = function() {
         P2D.BehaviorSystem.call(this);
         this.requiredComponents = ['RectPhysicsBody'];
+        this._jumpPressed = false;
     };
 
     P2D.Helper.inherit(PlayerInput, P2D.BehaviorSystem);
@@ -23,10 +27,17 @@
             physicsBody = entity.getComponent('RectPhysicsBody');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            jumpVelocity = (isPressingUp) ? -10 : 0;
+            jumpVelocity = (isPressingUp) ? -15 : 0,
+            minJumpVelocity = jumpVelocity / 2;
         physicsBody.inContact = physicsBody.inContact && physicsBody.velocity.y === 0;
         physicsBody.velocity.x += deltaX;
-        physicsBody.velocity.y += (physicsBody.inContact) ? jumpVelocity : 0;
+
+        if (physicsBody.inContact && isPressingUp && !this._jumpPressed) {
+            physicsBody.velocity.y = jumpVelocity;
+        } else if (!isPressingUp && this._jumpPressed && physicsBody.velocity.y < minJumpVelocity) {
+            fallTimeout += delta;
+            physicsBody.velocity.y = minJumpVelocity * (1 - (fallTimeout / TOTAL_TIMEOUT));
+        }
 
         // Cap out the maximum speeds
         if (Math.abs(physicsBody.velocity.x) > 20) {
@@ -35,6 +46,8 @@
         if (physicsBody.velocity.y > 10) {
             physicsBody.velocity.y = 10;
         }
+
+        this._jumpPressed = isPressingUp;
     };
 
     Game.Systems = Game.Systems || {};
