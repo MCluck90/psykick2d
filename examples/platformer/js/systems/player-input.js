@@ -27,7 +27,7 @@
             physicsBody = entity.getComponent('RectPhysicsBody');
 
         var deltaX = 20 * delta * ((isPressingLeft) ? -1 : (isPressingRight) ? 1 : 0),
-            jumpVelocity = (isPressingUp) ? -15 : 0,
+            jumpVelocity = -15,
             minJumpVelocity = jumpVelocity / 2;
         physicsBody.inContact = physicsBody.inContact && physicsBody.velocity.y === 0;
         physicsBody.velocity.x += deltaX;
