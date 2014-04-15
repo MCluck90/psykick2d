@@ -28,7 +28,7 @@
     var layer = P2D.World.createLayer(),
         drawSystem = new P2D.Systems.Render.ColoredRect(),
         inputSystem = new Game.Systems.PlayerInput(),
-        physicsSystem = new P2D.Systems.Behavior.Physics.Platformer(),
+        physicsSystem = new P2D.Systems.Behavior.Physics.Platformer({ cellSize: 100 }),
         spriteSystem = new P2D.Systems.Render.Sprite(),
         player = Game.Factory.createPlayer(),
         playerBody = player.getComponent('RectPhysicsBody');

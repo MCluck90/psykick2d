@@ -572,11 +572,14 @@ function isColliding(a, b) {
     return (verticalIntersect && horizontalIntersect);
 }
 
-var CELL_SIZE = 100;
-
 /**
  * Keeps track of all the physical objects in space
  * @param {object} options
+ * @param {number} options.x        X position
+ * @param {number} options.y        Y position
+ * @param {number} options.w        Width
+ * @param {number} options.h        Height
+ * @param {number} options.cellSize Size of a cell
  * @constructor
  */
 var QuadTree = function(options) {
@@ -584,6 +587,7 @@ var QuadTree = function(options) {
     this.y = options.y;
     this.w = options.w;
     this.h = options.h;
+    this.cellSize = options.cellSize || 100;
     this.children = new Array(4);
     this.entities = [];
 };
@@ -597,7 +601,7 @@ QuadTree.prototype.addEntity = function(entity, body) {
     if (this.entities.indexOf(entity) !== -1) {
         return;
     }
-    if (this.w <= CELL_SIZE || this.h <= CELL_SIZE) {
+    if (this.w <= this.cellSize || this.h <= this.cellSize) {
         this.entities.push(entity);
     } else {
         body = body || entity.getComponent('RectPhysicsBody');
@@ -611,7 +615,8 @@ QuadTree.prototype.addEntity = function(entity, body) {
             inRight = (right >= this.x + this.w / 2),
             nodeOptions = {
                 w: this.w / 2,
-                h: this.h / 2
+                h: this.h / 2,
+                cellSize: this.cellSize
             };
 
         if (inUpper && inLeft) {
@@ -692,14 +697,14 @@ QuadTree.prototype.removeEntity = function(entity, body) {
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
     var body = entity.getComponent('RectPhysicsBody'),
-        oldXCell = Math.floor(body.x / this.CELL_SIZE),
-        oldYCell = Math.floor(body.y / this.CELL_SIZE);
+        oldXCell = Math.floor(body.x / this.cellSize),
+        oldYCell = Math.floor(body.y / this.cellSize);
 
     body.x += deltaPosition.x;
     body.y += deltaPosition.y;
 
-    var newXCell = Math.floor(body.x / this.CELL_SIZE),
-        newYCell = Math.floor(body.y / this.CELL_SIZE);
+    var newXCell = Math.floor(body.x / this.cellSize),
+        newYCell = Math.floor(body.y / this.cellSize);
 
     if (oldXCell !== newXCell || oldYCell !== newYCell) {
         this.removeEntity(entity, body);
@@ -754,8 +759,6 @@ QuadTree.prototype.getCollisions = function(entity, body) {
         return result.indexOf(elem) === pos;
     });
 };
-
-QuadTree.CELL_SIZE = CELL_SIZE;
 
 module.exports = QuadTree;
 },{}],12:[function(require,module,exports){
@@ -1183,15 +1186,18 @@ function callEventHandlers(entity, other) {
  * @inherits BehaviorSystem
  * @constructor
  */
-var Platformer = function() {
+var Platformer = function(options) {
     BehaviorSystem.call(this);
-    this._collisionHandlers = {};
-    this._quadTree = new QuadTree({
+    var defaults = {
         x: 0,
         y: 0,
         w: 800,
-        h: 600
-    });
+        h: 600,
+        cellSize: 100
+    };
+    options = Helper.defaults(options, defaults);
+    this._collisionHandlers = {};
+    this._quadTree = new QuadTree(options);
     this.requiredComponents = ['RectPhysicsBody'];
 };
 

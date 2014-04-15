@@ -39,15 +39,18 @@ function callEventHandlers(entity, other) {
  * @inherits BehaviorSystem
  * @constructor
  */
-var Platformer = function() {
+var Platformer = function(options) {
     BehaviorSystem.call(this);
-    this._collisionHandlers = {};
-    this._quadTree = new QuadTree({
+    var defaults = {
         x: 0,
         y: 0,
         w: 800,
-        h: 600
-    });
+        h: 600,
+        cellSize: 100
+    };
+    options = Helper.defaults(options, defaults);
+    this._collisionHandlers = {};
+    this._quadTree = new QuadTree(options);
     this.requiredComponents = ['RectPhysicsBody'];
 };
 
