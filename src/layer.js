@@ -103,11 +103,6 @@ Layer.prototype.removeSystem = function(system) {
  * Draw the layer
  */
 Layer.prototype.draw = function() {
-    // If the node doesn't exist, don't even try to draw
-    if (this.c.canvas.parentNode === null) {
-        return;
-    }
-
     this.c.save();
     this.c.setTransform(1, 0, 0, 1, 0, 0);
     this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);

@@ -29,7 +29,6 @@
         drawSystem = new P2D.Systems.Render.ColoredRect(),
         inputSystem = new Game.Systems.PlayerInput(),
         physicsSystem = new P2D.Systems.Behavior.Physics.Platformer(),
-        syncSystem = new Game.Systems.SyncRect(),
         spriteSystem = new P2D.Systems.Render.Sprite(),
         player = Game.Factory.createPlayer(),
         playerBody = player.getComponent('RectPhysicsBody');
@@ -38,14 +37,12 @@
     layer.addSystem(drawSystem);
     layer.addSystem(inputSystem);
     layer.addSystem(physicsSystem);
-    layer.addSystem(syncSystem);
     layer.addSystem(spriteSystem);
     P2D.World.pushLayer(layer);
 
     drawSystem.addEntity(player);
     inputSystem.addEntity(player);
     physicsSystem.addEntity(player);
-    syncSystem.addEntity(player);
 
     physicsSystem.addCollisionHandler(player, function(other) {
         var otherBody = other.getComponent('RectPhysicsBody');

@@ -386,6 +386,18 @@ Entity.prototype.addComponent = function(component) {
 };
 
 /**
+ * Adds a Component marked as a given type
+ * This can be used to use one component for multiple things i.e. physics body and a rectangle
+ * @param {Component} component
+ * @param {string} componentType Type to mark it as
+ */
+Entity.prototype.addComponentAs = function(component, componentType) {
+    if (component instanceof Component) {
+        this.components[componentType] = component;
+    }
+};
+
+/**
  * Removes a Component from the Entity
  * @param {Component} componentName
  */
@@ -919,11 +931,6 @@ Layer.prototype.removeSystem = function(system) {
  * Draw the layer
  */
 Layer.prototype.draw = function() {
-    // If the node doesn't exist, don't even try to draw
-    if (this.c.canvas.parentNode === null) {
-        return;
-    }
-
     this.c.save();
     this.c.setTransform(1, 0, 0, 1, 0, 0);
     this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);
@@ -1427,7 +1434,7 @@ Sprite.prototype.draw = function(c) {
                 0,
                 0,
                 spriteSheet.frameWidth,
-                spriteSheet.frameHeight + 5
+                spriteSheet.frameHeight
             );
             c.fillStyle = c.createPattern(patternCanvas, spriteSheet.repeat);
             c.fillRect(
