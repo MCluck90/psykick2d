@@ -69,11 +69,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":11,"./system.js":17}],2:[function(require,module,exports){
+},{"./helper.js":11,"./system.js":18}],2:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":13}],3:[function(require,module,exports){
+},{"./index.js":14}],3:[function(require,module,exports){
 'use strict';
 
 /**
@@ -561,6 +561,180 @@ module.exports = Helper;
 
 /**
  * Determines if two objects are colliding
+ * @param {Rectangle} a
+ * @param {Rectangle} b
+ * @returns {boolean}
+ */
+function isColliding(a, b) {
+    var topA = a.y,
+        bottomA = a.y + a.h,
+        leftA = a.x,
+        rightA = a.x + a.w,
+
+        topB = b.y,
+        bottomB = b.y + b.h,
+        leftB = b.x,
+        rightB = b.x + b.w,
+
+        verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
+            (topB <= bottomA && bottomB >= bottomA),
+        horizontalIntersect = (leftA <= rightB && rightA >= rightB) ||
+            (leftB <= rightA && rightB >= rightA);
+
+    return (verticalIntersect && horizontalIntersect);
+}
+
+/**
+ * A simple grid for finding any collisions
+ * Best used for tiled game worlds with defined boundaries
+ * @param {object} options
+ * @param {number} options.width        Width of the game world
+ * @param {number} options.height       Height of the game world
+ * @param {number} options.cellWidth    Width of a cell. May use cellSize instead
+ * @param {number} options.cellHeight   Height of a cell. May use cellSize instead
+ * @param {number} [options.cellSize]   Set this if you want width and height to be the same
+ * @constructor
+ */
+var CollisionGrid = function(options) {
+    this.width = options.width;
+    this.height = options.height;
+    if (options.cellSize) {
+        this.cellWidth = options.cellSize;
+        this.cellHeight = options.cellSize;
+    } else {
+        this.cellWidth = options.cellWidth || 100;
+        this.cellHeight = options.cellHeight || 100;
+    }
+
+    var maxX = ~~(this.width / this.cellWidth),
+        maxY = ~~(this.height / this.cellHeight);
+    this._grid = new Array(maxX);
+    for (var x = 0; x < maxX; x++) {
+        this._grid[x] = new Array(maxY);
+        for (var y = 0; y < maxY; y++) {
+            this._grid[x][y] = [];
+        }
+    }
+};
+
+/**
+ * Adds an entity to the grid
+ * Entity must have a Rectangle component
+ * @param {Entity} entity
+ */
+CollisionGrid.prototype.addEntity = function(entity) {
+    var rect = entity.getComponent('Rectangle'),
+        minX = ~~(rect.x / this.cellWidth),
+        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        minY = ~~(rect.y / this.cellHeight),
+        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
+    for (var x = minX; x < maxX; x++) {
+        for (var y = minY; y < maxY; y++) {
+            var collection = this._grid[x][y];
+            if (collection.indexOf(entity) === -1) {
+                collection.push(entity);
+            }
+        }
+    }
+};
+
+/**
+ * Removes an entity from the grid
+ * @param {Entity} entity
+ */
+CollisionGrid.prototype.removeEntity = function(entity) {
+    var rect = entity.getComponent('Rectangle'),
+        minX = ~~(rect.x / this.cellWidth),
+        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        minY = ~~(rect.y / this.cellHeight),
+        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
+    for (var x = minX; x < maxX; x++) {
+        for (var y = minY; y < maxY; y++) {
+            var collection = this._grid[x][y],
+                entityIndex = collection.indexOf(entity);
+            if (entityIndex !== -1) {
+                collection.splice(entityIndex, 1);
+            }
+        }
+    }
+};
+
+/**
+ * Moves an Entity and updates it's position in the grid
+ * @param {Entity} entity
+ * @param {{ x: number, y: number }} deltaPosition
+ */
+CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
+    var rect = entity.getComponent('Rectangle'),
+        newRect = {
+            minX: rect.x + deltaPosition.x,
+            maxX: rect.x + rect.w + deltaPosition.x,
+            minY: rect.y + deltaPosition.y,
+            maxY: rect.y + rect.h + deltaPosition.y
+        },
+        oldCells = {
+            minX: ~~(rect.x / this.cellWidth),
+            maxX: ~~( (rect.x + rect.w) / this.cellWidth ),
+            minY: ~~(rect.y / this.cellHeight),
+            maxY: ~~( (rect.y + rect.h) / this.cellHeight )
+        },
+        newCells = {
+            minX: ~~(newRect.minX / this.cellWidth),
+            maxX: ~~(newRect.maxX / this.cellWidth),
+            minY: ~~(newRect.minY / this.cellHeight),
+            maxY: ~~(newRect.maxY / this.cellHeight)
+        };
+    if (oldCells.minX !== newCells.minX ||
+        oldCells.maxX !== newCells.maxX ||
+        oldCells.minY !== newCells.minY ||
+        oldCells.maxY !== newCells.maxY) {
+        this.removeEntity(entity);
+        rect.x += deltaPosition.x;
+        rect.y += deltaPosition.y;
+        this.addEntity(entity);
+    } else {
+        rect.x += deltaPosition.x;
+        rect.y += deltaPosition.y;
+    }
+};
+
+CollisionGrid.prototype.getCollisions = function(entity) {
+    var rect = entity.getComponent('Rectangle'),
+        minX = ~~(rect.x / this.cellWidth),
+        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        minY = ~~(rect.y / this.cellHeight),
+        maxY = ~~( (rect.y + rect.h) / this.cellHeight ),
+        results = [];
+
+    for (var x = minX; x <= maxX; x++) {
+        if (!this._grid[x]) {
+            continue;
+        }
+        for (var y = minY; y <= maxY; y++) {
+            if (!this._grid[x][y]) {
+                continue;
+            }
+            var collection = this._grid[x][y];
+            for (var i = 0, len = collection.length; i < len; i++) {
+                var other = collection[i];
+                if (other !== entity && isColliding(other.getComponent('Rectangle'), rect)) {
+                    if (results.indexOf(other) === -1) {
+                        results.push(other);
+                    }
+                }
+            }
+        }
+    }
+
+    return results;
+};
+
+module.exports = CollisionGrid;
+},{}],13:[function(require,module,exports){
+'use strict';
+
+/**
+ * Determines if two objects are colliding
  * @param {RectPhysicsBody} a
  * @param {RectPhysicsBody} b
  * @returns {boolean}
@@ -770,7 +944,7 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 QuadTree.CELL_SIZE = CELL_SIZE;
 
 module.exports = QuadTree;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
@@ -791,6 +965,7 @@ module.exports = {
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
     Helpers: {
+        CollisionGrid: require('./helpers/collision-grid.js'),
         QuadTree: require('./helpers/quad-tree.js')
     },
     Keys: require('./keys.js'),
@@ -811,7 +986,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":1,"./camera.js":3,"./component.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/physics/rect-physics-body.js":8,"./components/shape/rectangle.js":9,"./entity.js":10,"./helper.js":11,"./helpers/quad-tree.js":12,"./keys.js":14,"./layer.js":15,"./render-system.js":16,"./system.js":17,"./systems/behavior/animate.js":18,"./systems/behavior/physics/platformer.js":19,"./systems/render/colored-rect.js":20,"./systems/render/sprite.js":21,"./world.js":22}],14:[function(require,module,exports){
+},{"./behavior-system.js":1,"./camera.js":3,"./component.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/physics/rect-physics-body.js":8,"./components/shape/rectangle.js":9,"./entity.js":10,"./helper.js":11,"./helpers/collision-grid.js":12,"./helpers/quad-tree.js":13,"./keys.js":15,"./layer.js":16,"./render-system.js":17,"./system.js":18,"./systems/behavior/animate.js":19,"./systems/behavior/physics/platformer.js":20,"./systems/render/colored-rect.js":21,"./systems/render/sprite.js":22,"./world.js":23}],15:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -838,7 +1013,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -991,7 +1166,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":1,"./render-system.js":16,"./system.js":17}],16:[function(require,module,exports){
+},{"./behavior-system.js":1,"./render-system.js":17,"./system.js":18}],17:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1059,7 +1234,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":11,"./system.js":17}],17:[function(require,module,exports){
+},{"./helper.js":11,"./system.js":18}],18:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1116,7 +1291,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":10,"./helper.js":11}],18:[function(require,module,exports){
+},{"./entity.js":10,"./helper.js":11}],19:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1156,7 +1331,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":1,"../../helper.js":11}],19:[function(require,module,exports){
+},{"../../behavior-system.js":1,"../../helper.js":11}],20:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -1307,7 +1482,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":1,"../../../helper.js":11,"../../../helpers/quad-tree.js":12}],20:[function(require,module,exports){
+},{"../../../behavior-system.js":1,"../../../helper.js":11,"../../../helpers/quad-tree.js":13}],21:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1339,7 +1514,7 @@ ColoredRect.prototype.draw = function(c) {
 };
 
 module.exports = ColoredRect;
-},{"../../helper.js":11,"../../render-system.js":16}],21:[function(require,module,exports){
+},{"../../helper.js":11,"../../render-system.js":17}],22:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1387,7 +1562,7 @@ Sprite.prototype.draw = function(c) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":11,"../../render-system.js":16}],22:[function(require,module,exports){
+},{"../../helper.js":11,"../../render-system.js":17}],23:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1641,5 +1816,5 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":10,"./helper.js":11,"./layer.js":15}]},{},[2])
+},{"./entity.js":10,"./helper.js":11,"./layer.js":16}]},{},[2])
 ;

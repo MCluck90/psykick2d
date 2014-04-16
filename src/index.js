@@ -18,6 +18,7 @@ module.exports = {
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
     Helpers: {
+        CollisionGrid: require('./helpers/collision-grid.js'),
         QuadTree: require('./helpers/quad-tree.js')
     },
     Keys: require('./keys.js'),
