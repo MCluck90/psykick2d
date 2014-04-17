@@ -13,5 +13,12 @@ npm install -g browserify
 browserify src/index.js > psykick2d.js
 ```
 
+Or you can use [Grunt][2] to build it
+
+```bash
+grunt build
+```
+
 
   [1]: https://github.com/substack/node-browserify
+  [2]: http://gruntjs.com/
