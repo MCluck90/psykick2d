@@ -888,18 +888,19 @@ QuadTree.prototype.removeEntity = function(entity, body) {
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
     var body = entity.getComponent('RectPhysicsBody'),
-        oldXCell = Math.floor(body.x / this.cellSize),
-        oldYCell = Math.floor(body.y / this.cellSize);
-
-    body.x += deltaPosition.x;
-    body.y += deltaPosition.y;
-
-    var newXCell = Math.floor(body.x / this.cellSize),
-        newYCell = Math.floor(body.y / this.cellSize);
+        oldXCell = (body.x / this.cellSize) | 0,
+        oldYCell = (body.y / this.cellSize) | 0,
+        newXCell = ( (body.x + deltaPosition.x) / this.cellSize ) | 0,
+        newYCell = ( (body.y + deltaPosition.y) / this.cellSize ) | 0;
 
     if (oldXCell !== newXCell || oldYCell !== newYCell) {
         this.removeEntity(entity, body);
+        body.x += deltaPosition.x;
+        body.y += deltaPosition.y;
         this.addEntity(entity, body);
+    } else {
+        body.x += deltaPosition.x;
+        body.y += deltaPosition.y;
     }
 };
 
