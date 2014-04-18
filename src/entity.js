@@ -23,6 +23,18 @@ Entity.prototype.addComponent = function(component) {
 };
 
 /**
+ * Adds a Component marked as a given type
+ * This can be used to use one component for multiple things i.e. physics body and a rectangle
+ * @param {Component} component
+ * @param {string} componentType Type to mark it as
+ */
+Entity.prototype.addComponentAs = function(component, componentType) {
+    if (component instanceof Component) {
+        this.components[componentType] = component;
+    }
+};
+
+/**
  * Removes a Component from the Entity
  * @param {Component} componentName
  */
