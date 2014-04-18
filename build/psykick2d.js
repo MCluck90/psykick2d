@@ -698,6 +698,11 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     }
 };
 
+/**
+ * Gets the collisions for a given Entity
+ * @param {Entity} entity
+ * @returns {Entity[]}
+ */
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
@@ -758,11 +763,14 @@ function isColliding(a, b) {
     return (verticalIntersect && horizontalIntersect);
 }
 
-var CELL_SIZE = 100;
-
 /**
  * Keeps track of all the physical objects in space
  * @param {object} options
+ * @param {number} options.x        X position
+ * @param {number} options.y        Y position
+ * @param {number} options.w        Width
+ * @param {number} options.h        Height
+ * @param {number} options.cellSize Size of a cell
  * @constructor
  */
 var QuadTree = function(options) {
@@ -770,6 +778,7 @@ var QuadTree = function(options) {
     this.y = options.y;
     this.w = options.w;
     this.h = options.h;
+    this.cellSize = options.cellSize || 100;
     this.children = new Array(4);
     this.entities = [];
 };
@@ -783,7 +792,7 @@ QuadTree.prototype.addEntity = function(entity, body) {
     if (this.entities.indexOf(entity) !== -1) {
         return;
     }
-    if (this.w <= CELL_SIZE || this.h <= CELL_SIZE) {
+    if (this.w <= this.cellSize || this.h <= this.cellSize) {
         this.entities.push(entity);
     } else {
         body = body || entity.getComponent('RectPhysicsBody');
@@ -797,7 +806,8 @@ QuadTree.prototype.addEntity = function(entity, body) {
             inRight = (right >= this.x + this.w / 2),
             nodeOptions = {
                 w: this.w / 2,
-                h: this.h / 2
+                h: this.h / 2,
+                cellSize: this.cellSize
             };
 
         if (inUpper && inLeft) {
@@ -878,14 +888,14 @@ QuadTree.prototype.removeEntity = function(entity, body) {
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
     var body = entity.getComponent('RectPhysicsBody'),
-        oldXCell = Math.floor(body.x / this.CELL_SIZE),
-        oldYCell = Math.floor(body.y / this.CELL_SIZE);
+        oldXCell = Math.floor(body.x / this.cellSize),
+        oldYCell = Math.floor(body.y / this.cellSize);
 
     body.x += deltaPosition.x;
     body.y += deltaPosition.y;
 
-    var newXCell = Math.floor(body.x / this.CELL_SIZE),
-        newYCell = Math.floor(body.y / this.CELL_SIZE);
+    var newXCell = Math.floor(body.x / this.cellSize),
+        newYCell = Math.floor(body.y / this.cellSize);
 
     if (oldXCell !== newXCell || oldYCell !== newYCell) {
         this.removeEntity(entity, body);
@@ -940,8 +950,6 @@ QuadTree.prototype.getCollisions = function(entity, body) {
         return result.indexOf(elem) === pos;
     });
 };
-
-QuadTree.CELL_SIZE = CELL_SIZE;
 
 module.exports = QuadTree;
 },{}],14:[function(require,module,exports){
@@ -1360,23 +1368,60 @@ function getSides(body) {
     };
 }
 
+function callEventHandlers(entity, other) {
+    /* jshint validthis:true */
+    var collection = this._collisionHandlers[entity.id] || [];
+    for (var i = 0, len = collection.length; i < len; i++) {
+        collection[i](other);
+    }
+}
+
 /**
  * Handles essential physics
  * @inherits BehaviorSystem
  * @constructor
  */
-var Platformer = function() {
+var Platformer = function(options) {
     BehaviorSystem.call(this);
-    this._quadTree = new QuadTree({
+    var defaults = {
         x: 0,
         y: 0,
         w: 800,
-        h: 600
-    });
+        h: 600,
+        cellSize: 100
+    };
+    options = Helper.defaults(options, defaults);
+    this._collisionHandlers = {};
+    this._quadTree = new QuadTree(options);
     this.requiredComponents = ['RectPhysicsBody'];
 };
 
 Helper.inherit(Platformer, BehaviorSystem);
+
+/**
+ * Adds a handler for when a given entity encounters a collision
+ * @param {Entity} entity
+ * @param {function(Entity)} callback
+ */
+Platformer.prototype.addCollisionHandler = function(entity, callback) {
+    var collection = this._collisionHandlers[entity.id];
+    if (collection.indexOf(callback) === -1) {
+        this._collisionHandlers[entity.id].push(callback);
+    }
+};
+
+/**
+ * Removes a given collision handler for a given entity
+ * @param {Entity} entity
+ * @param {function} callback
+ */
+Platformer.prototype.removeCollisionHandler = function(entity, callback) {
+    var collection = this._collisionHandlers[entity.id],
+        index = (collection) ? collection.indexOf(callback) : -1;
+    if (index !== -1) {
+        collection.splice(index, 1);
+    }
+};
 
 Platformer.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
@@ -1384,6 +1429,7 @@ Platformer.prototype.addEntity = function(entity) {
             entity = this.entities[entity];
         }
         this._quadTree.addEntity(entity);
+        this._collisionHandlers[entity.id] = [];
         return true;
     } else {
         return false;
@@ -1393,6 +1439,7 @@ Platformer.prototype.addEntity = function(entity) {
 Platformer.prototype.removeEntity = function(entity) {
     if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
         this._quadTree.removeEntity(entity);
+        delete this._collisionHandlers[entity.id];
         return true;
     } else {
         return false;
@@ -1428,6 +1475,8 @@ Platformer.prototype.update = function(delta) {
                 otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
                 otherSides = getSides(otherBody),
                 bothMoving = (entityIsMoving && otherIsMoving);
+
+            callEventHandlers.call(this, entity, other);
 
             if (!otherBody.solid) {
                 continue;
@@ -1610,7 +1659,7 @@ var World = {
             backgroundEl = document.createElement('div'),
             gameTime = new Date(),
             defaults = {
-                canvasContainer: document.getElementById('canvas-container'),
+                canvasContainer: document.getElementById('psykick'),
                 width: window.innerWidth,
                 height: window.innerHeight,
                 backgroundColor: '#000'

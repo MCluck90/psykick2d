@@ -45,7 +45,7 @@ var World = {
             backgroundEl = document.createElement('div'),
             gameTime = new Date(),
             defaults = {
-                canvasContainer: document.getElementById('canvas-container'),
+                canvasContainer: document.getElementById('psykick'),
                 width: window.innerWidth,
                 height: window.innerHeight,
                 backgroundColor: '#000'
