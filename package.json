@@ -1,6 +1,6 @@
 {
   "name": "psykick2d",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
@@ -27,11 +27,11 @@
     "url": "https://github.com/MCluck90/psykick2d/issues"
   },
   "devDependencies": {
-    "browserify": "~2.33.1",
-    "grunt-browserify": "~1.2.8",
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.5.3",
+    "browserify": "~3.43.0",
+    "grunt-browserify": "~2.0.7",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt": "~0.4.4",
+    "grunt-contrib-watch": "~0.6.1",
     "matchdep": "~0.3.0"
   }
 }
