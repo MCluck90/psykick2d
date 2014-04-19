@@ -10,6 +10,7 @@ var System = require('./system.js'),
  * @param {Object}  options
  * @param {number}  options.id          - Unique ID assigned by the World
  * @param {Element} options.container   - Element which houses the Layer
+ * @param {boolean} options.serverMode  - If true, a canvas will not be made
  */
 var Layer = function(options) {
     this.id = options.id;
@@ -21,16 +22,18 @@ var Layer = function(options) {
     this.active = true;
 
     // Create a new canvas to draw on
+    if (!options.serverMode) {
     var canvas = document.createElement('canvas');
-    canvas.width = parseInt(options.container.style.width, 10);
-    canvas.height = parseInt(options.container.style.height, 10);
-    canvas.setAttribute('id', 'psykick-layer-' + options.id);
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0px';
-    canvas.style.left = '0px';
-    canvas.style.zIndex = 0;
+        canvas.width = parseInt(options.container.style.width, 10);
+        canvas.height = parseInt(options.container.style.height, 10);
+        canvas.setAttribute('id', 'psykick-layer-' + options.id);
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0px';
+        canvas.style.left = '0px';
+        canvas.style.zIndex = 0;
 
-    this.c = canvas.getContext('2d');
+        this.c = canvas.getContext('2d');
+    }
 };
 
 /**
@@ -104,7 +107,7 @@ Layer.prototype.removeSystem = function(system) {
  */
 Layer.prototype.draw = function() {
     // If the node doesn't exist, don't even try to draw
-    if (this.c.canvas.parentNode === null) {
+    if (!this.c || this.c.canvas.parentNode === null) {
         return;
     }
 
