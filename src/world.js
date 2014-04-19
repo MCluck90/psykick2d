@@ -119,7 +119,7 @@ var World = {
             id: nextLayerID++,
             container: canvasContainer,
             serverMode: serverMode
-        });;
+        });
     },
 
     /**
@@ -248,6 +248,18 @@ var World = {
      */
     removeAllListeners: function(eventType) {
         eventHandlers[eventType] = [];
+    },
+
+    /**
+     * Resets the state of the world
+     * All Layers are removed
+     * ID counters return to 0
+     */
+    reset: function() {
+        while (this.popLayer()) {}
+        layersInDrawOrder = [];
+        nextEntityID = 0;
+        nextLayerID = 0;
     }
 };
 

@@ -1,7 +1,8 @@
 'use strict';
 
+/* global window: true */
 var
-    window = window,
+    window = window || null,
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
