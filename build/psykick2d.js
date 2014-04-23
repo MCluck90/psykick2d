@@ -1,4 +1,4 @@
-;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -433,9 +433,11 @@ Entity.prototype.hasComponent = function(componentName) {
 
 module.exports = Entity;
 },{"./component.js":3}],10:[function(require,module,exports){
-'use strict';
-
+/* jshint strict: false */
 var
+    // Determine if we're running in a server environment or now
+    win = window || null,
+
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
@@ -448,20 +450,22 @@ var
     keysDown = {};
 
 // Capture keyboard events
-window.onkeydown = function(e) {
-    keysDown[e.keyCode] = {
-        pressed: true,
-        shift:   e.shiftKey,
-        ctrl:    e.ctrlKey,
-        alt:     e.altKey
-    };
-};
+if (win) {
+    win.addEventListener('keydown', function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
+    });
 
-window.onkeyup = function(e) {
-    if (keysDown.hasOwnProperty(e.keyCode)) {
-        keysDown[e.keyCode].pressed = false;
-    }
-};
+    win.addEventListener('keyup', function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    });
+}
 
 var Helper = {
     /**
@@ -1723,5 +1727,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":9,"./helper.js":10,"./layer.js":14}]},{},[2])
-;
+},{"./entity.js":9,"./helper.js":10,"./layer.js":14}]},{},[2]);

@@ -1,6 +1,8 @@
-'use strict';
-
+/* jshint strict: false */
 var
+    // Determine if we're running in a server environment or now
+    win = window || null,
+
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
@@ -13,20 +15,22 @@ var
     keysDown = {};
 
 // Capture keyboard events
-window.onkeydown = function(e) {
-    keysDown[e.keyCode] = {
-        pressed: true,
-        shift:   e.shiftKey,
-        ctrl:    e.ctrlKey,
-        alt:     e.altKey
-    };
-};
+if (win) {
+    win.addEventListener('keydown', function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
+    });
 
-window.onkeyup = function(e) {
-    if (keysDown.hasOwnProperty(e.keyCode)) {
-        keysDown[e.keyCode].pressed = false;
-    }
-};
+    win.addEventListener('keyup', function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    });
+}
 
 var Helper = {
     /**
