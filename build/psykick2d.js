@@ -461,7 +461,7 @@ module.exports = Entity;
 
 /* global window: true */
 var
-    window = window || null,
+    win = window || null,
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
@@ -474,21 +474,21 @@ var
     keysDown = {};
 
 // Capture keyboard events
-if (window) {
-    window.onkeydown = function(e) {
-    keysDown[e.keyCode] = {
-        pressed: true,
-        shift:   e.shiftKey,
-        ctrl:    e.ctrlKey,
-        alt:     e.altKey
+if (win) {
+    win.onkeydown = function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
     };
-};
 
-    window.onkeyup = function(e) {
-    if (keysDown.hasOwnProperty(e.keyCode)) {
-        keysDown[e.keyCode].pressed = false;
-    }
-};
+    win.onkeyup = function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    };
 }
 
 var Helper = {
@@ -904,19 +904,14 @@ QuadTree.prototype.removeEntity = function(entity, body) {
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
     var body = entity.getComponent('RectPhysicsBody'),
-        oldXCell = (body.x / this.cellSize) | 0,
-        oldYCell = (body.y / this.cellSize) | 0,
-        newXCell = ( (body.x + deltaPosition.x) / this.cellSize ) | 0,
-        newYCell = ( (body.y + deltaPosition.y) / this.cellSize ) | 0;
+        hasMoved = (Math.abs(deltaPosition.x) + Math.abs(deltaPosition.y)) > 0;
 
-    if (oldXCell !== newXCell || oldYCell !== newYCell) {
+    // TODO: Do a smart check to see if it's changed cells
+    if (hasMoved) {
         this.removeEntity(entity, body);
         body.x += deltaPosition.x;
         body.y += deltaPosition.y;
         this.addEntity(entity, body);
-    } else {
-        body.x += deltaPosition.x;
-        body.y += deltaPosition.y;
     }
 };
 
@@ -1597,10 +1592,29 @@ var Helper = require('../../helper.js'),
  */
 var Sprite = function() {
     RenderSystem.call(this);
-    this.requiredComponents = ['SpriteSheet', 'Position'];
+    this.requiredComponents = ['SpriteSheet', 'Rectangle'];
+    this._patternCanvases = {};
 };
 
 Helper.inherit(Sprite, RenderSystem);
+
+/**
+ * Removes an Entity
+ * @param {Entity|number} entity
+ * @return {boolean}
+ */
+Sprite.prototype.removeEntity = function(entity) {
+    if (RenderSystem.prototype.removeEntity.call(this, entity)) {
+        if (typeof entity === 'number') {
+            delete this._patternCanvases[entity];
+        } else {
+            delete this._patternCanvases[entity.id];
+        }
+        return true;
+    } else {
+        return false;
+    }
+};
 
 /**
  * Draw all the sprites
@@ -1610,22 +1624,56 @@ Sprite.prototype.draw = function(c) {
     for (var i = 0, len = this.drawOrder.length; i < len; i++) {
         var entity = this.drawOrder[i],
             spriteSheet = entity.getComponent('SpriteSheet'),
-            position = entity.getComponent('Position');
+            rect = entity.getComponent('Rectangle');
+        if (!spriteSheet.loaded) {
+            continue;
+        }
 
         c.save();
-        c.translate(position.x, position.y);
-        c.rotate(position.rotation);
-        c.drawImage(
-            spriteSheet.img,
-            spriteSheet.xOffset,
-            spriteSheet.yOffset,
-            spriteSheet.frameWidth,
-            spriteSheet.frameHeight,
-            -spriteSheet.frameWidth / 2,
-            -spriteSheet.frameHeight / 2,
-            spriteSheet.frameWidth,
-            spriteSheet.frameHeight
-        );
+        if (spriteSheet.repeat) {
+            c.translate(rect.x, rect.y);
+            c.rotate(rect.rotation);
+            var patternCanvas = this._patternCanvases[entity.id];
+            if (!patternCanvas) {
+                patternCanvas = document.createElement('canvas');
+                patternCanvas.width = spriteSheet.frameWidth;
+                patternCanvas.height = spriteSheet.frameHeight;
+                this._patternCanvases[entity.id] = patternCanvas;
+            }
+            var patternContext = patternCanvas.getContext('2d');
+            patternContext.drawImage(
+                spriteSheet.img,
+                spriteSheet.xOffset,
+                spriteSheet.yOffset,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight,
+                0,
+                0,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight
+            );
+            c.fillStyle = c.createPattern(patternCanvas, spriteSheet.repeat);
+            c.fillRect(
+                0,
+                0,
+                rect.w,
+                rect.h
+            );
+        } else {
+            c.translate(rect.x + rect.w / 2, rect.y + rect.h / 2);
+            c.rotate(rect.rotation);
+            c.drawImage(
+                spriteSheet.img,
+                spriteSheet.xOffset,
+                spriteSheet.yOffset,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight,
+                -spriteSheet.frameWidth / 2,
+                -spriteSheet.frameHeight / 2,
+                spriteSheet.frameWidth,
+                spriteSheet.frameHeight
+            );
+        }
         c.restore();
     }
 };

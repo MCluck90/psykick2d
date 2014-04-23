@@ -2,7 +2,7 @@
 
 /* global window: true */
 var
-    window = window || null,
+    win = window || null,
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
@@ -15,21 +15,21 @@ var
     keysDown = {};
 
 // Capture keyboard events
-if (window) {
-    window.onkeydown = function(e) {
-    keysDown[e.keyCode] = {
-        pressed: true,
-        shift:   e.shiftKey,
-        ctrl:    e.ctrlKey,
-        alt:     e.altKey
+if (win) {
+    win.onkeydown = function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
     };
-};
 
-    window.onkeyup = function(e) {
-    if (keysDown.hasOwnProperty(e.keyCode)) {
-        keysDown[e.keyCode].pressed = false;
-    }
-};
+    win.onkeyup = function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    };
 }
 
 var Helper = {
