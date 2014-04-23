@@ -2,7 +2,9 @@
 
 /* global window: true */
 var
-    win = window || null,
+    // Determine if we're running in a server environment or now
+    win = (this.document) ? this : null,
+
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
     ObjProto            = Object.prototype,
