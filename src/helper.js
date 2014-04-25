@@ -64,6 +64,29 @@ var Helper = {
     },
 
     /**
+     * Adds or replaces properties on an object
+     * @param {...T} obj
+     * @returns {T}
+     * @template T
+     */
+    extend: function(obj) {
+        for (var i = 1, len = arguments.length; i < len; i++) {
+            var source = arguments[i];
+            for (var key in source) {
+                var current = obj[key],
+                    prop = source[key];
+                if (this.isObject(prop) && this.isObject(current)) {
+                    obj[key] = this.extend(current, prop);
+                } else {
+                    obj[key] = prop;
+                }
+            }
+        }
+
+        return obj;
+    },
+
+    /**
      * Does very basic inheritance for a class
      * @param {Function} Derived    - Class to do the inheriting
      * @param {Function} Base       - Base class
@@ -89,12 +112,21 @@ var Helper = {
             ctrl: false,
             alt: false
         };
-        modifiers = Helper.defaults(modifiers, defaultModifiers);
+        modifiers = this.defaults(modifiers, defaultModifiers);
         return (keysDown.hasOwnProperty(keyCode) &&
             keysDown[keyCode].pressed &&
             !(modifiers.shift && !keysDown[keyCode].shift) &&
             !(modifiers.ctrl && !keysDown[keyCode].ctrl) &&
             !(modifiers.alt && !keysDown[keyCode].alt));
+    },
+
+    /**
+     * Determines if the argument is an object
+     * @param obj
+     * @returns {boolean}
+     */
+    isObject: function(obj) {
+        return ObjProto.toString.call(obj) === '[object Object]';
     },
 
     /**
@@ -104,7 +136,7 @@ var Helper = {
     getKeysDown: function() {
         var keys = [];
         for (var keyCode in keysDown) {
-            if (Helper.has(keysDown, keyCode) && keysDown[keyCode].pressed) {
+            if (this.has(keysDown, keyCode) && keysDown[keyCode].pressed) {
                 keys.push(keyCode);
             }
         }
