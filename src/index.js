@@ -13,7 +13,8 @@ module.exports = {
         },
         Shape: {
             Rectangle: require('./components/shape/rectangle.js')
-        }
+        },
+        Text: require('./components/text.js')
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
@@ -34,7 +35,8 @@ module.exports = {
         },
         Render: {
             ColoredRect: require('./systems/render/colored-rect.js'),
-            Sprite: require('./systems/render/sprite.js')
+            Sprite: require('./systems/render/sprite.js'),
+            Text: require('./systems/render/text.js')
         }
     },
     World: require('./world.js')

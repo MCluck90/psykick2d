@@ -65,7 +65,7 @@ var Helper = {
 
     /**
      * Adds or replaces properties on an object
-     * @param {...T} obj
+     * @param {T, ...[Object]} obj
      * @returns {T}
      * @template T
      */
