@@ -490,10 +490,11 @@ Entity.prototype.hasComponent = function(componentName) {
 
 module.exports = Entity;
 },{"./component.js":4}],12:[function(require,module,exports){
-/* jshint strict: false */
+'use strict';
+
 var
     // Determine if we're running in a server environment or now
-    win = window || null,
+    win = (typeof window !== 'undefined') ? window : null,
 
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
@@ -1408,7 +1409,7 @@ Animate.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
         var entity = this.actionOrder[i],
             animation = entity.getComponent('Animation'),
-            frameTime = (1000 / animation.fps) / 1000;
+            frameTime = 1 / animation.fps;
         animation.lastFrameTime += delta;
         if (animation.lastFrameTime > frameTime) {
             animation.lastFrameTime = 0;
@@ -1774,7 +1775,7 @@ Text.prototype.draw = function(c) {
         var entity = this.drawOrder[i],
             textComponent = entity.getComponent('Text'),
             color = entity.getComponent('Color').colors[0];
-        
+
         c.font = textComponent.size + ' ' + textComponent.font;
         c.fillStyle = color;
         c.fillText(textComponent.text, textComponent.x, textComponent.y);
@@ -1986,7 +1987,7 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
-                layersInDrawOrder[i].draw(this.context);
+                layersInDrawOrder[i].draw();
             }
         }
 

@@ -201,7 +201,7 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
-                layersInDrawOrder[i].draw(this.context);
+                layersInDrawOrder[i].draw();
             }
         }
 

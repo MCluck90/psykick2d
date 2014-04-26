@@ -24,7 +24,7 @@ Animate.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
         var entity = this.actionOrder[i],
             animation = entity.getComponent('Animation'),
-            frameTime = (1000 / animation.fps) / 1000;
+            frameTime = 1 / animation.fps;
         animation.lastFrameTime += delta;
         if (animation.lastFrameTime > frameTime) {
             animation.lastFrameTime = 0;

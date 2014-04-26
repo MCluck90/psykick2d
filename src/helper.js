@@ -1,7 +1,8 @@
-/* jshint strict: false */
+'use strict';
+
 var
     // Determine if we're running in a server environment or now
-    win = window || null,
+    win = (typeof window !== 'undefined') ? window : null,
 
     // Save bytes in the minified version (see Underscore.js)
     ArrayProto          = Array.prototype,
