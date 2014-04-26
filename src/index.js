@@ -6,15 +6,15 @@ module.exports = {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
-            SpriteSheet: require('./components/gfx/sprite-sheet.js')
+            SpriteSheet: require('./components/gfx/sprite-sheet.js'),
+            Text: require('./components/gfx/text.js')
         },
         Physics: {
             RectPhysicsBody: require('./components/physics/rect-physics-body.js')
         },
         Shape: {
             Rectangle: require('./components/shape/rectangle.js')
-        },
-        Text: require('./components/text.js')
+        }
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),

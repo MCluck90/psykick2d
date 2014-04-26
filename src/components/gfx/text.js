@@ -1,7 +1,7 @@
 'use strict';
 
-var Component = require('../component.js'),
-    Helper = require('../helper.js');
+var Component = require('../../component.js'),
+    Helper = require('../../helper.js');
 
 /**
  * Represents some text

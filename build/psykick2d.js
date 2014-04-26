@@ -321,6 +321,38 @@ module.exports = SpriteSheet;
 var Component = require('../../component.js'),
     Helper = require('../../helper.js');
 
+/**
+ * Represents some text
+ * @param {object} [options]
+ * @param {string} [options.text]
+ * @param {number} [options.x]
+ * @param {number} [options.y]
+ * @param {string} [options.font]
+ * @param {string} [options.size]
+ * @inherit Component
+ * @constructor
+ */
+var Text = function(options) {
+    this.NAME = 'Text';
+    var defaults = {
+        text: '',
+        x: 0,
+        y: 0,
+        font: '',
+        size: '0px'
+    };
+    Helper.extend(this, defaults, options);
+};
+
+Helper.inherit(Text, Component);
+
+module.exports = Text;
+},{"../../component.js":4,"../../helper.js":12}],9:[function(require,module,exports){
+'use strict';
+
+var Component = require('../../component.js'),
+    Helper = require('../../helper.js');
+
 var RectPhysicsBody = function(options) {
     this.NAME = 'RectPhysicsBody';
 
@@ -352,7 +384,7 @@ var RectPhysicsBody = function(options) {
 Helper.inherit(RectPhysicsBody, Component);
 
 module.exports = RectPhysicsBody;
-},{"../../component.js":4,"../../helper.js":12}],9:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":12}],10:[function(require,module,exports){
 'use strict';
 
 var Component = require('../../component.js'),
@@ -385,39 +417,7 @@ var Rectangle = function(options) {
 Helper.inherit(Rectangle, Component);
 
 module.exports = Rectangle;
-},{"../../component.js":4,"../../helper.js":12}],10:[function(require,module,exports){
-'use strict';
-
-var Component = require('../component.js'),
-    Helper = require('../helper.js');
-
-/**
- * Represents some text
- * @param {object} [options]
- * @param {string} [options.text]
- * @param {number} [options.x]
- * @param {number} [options.y]
- * @param {string} [options.font]
- * @param {string} [options.size]
- * @inherit Component
- * @constructor
- */
-var Text = function(options) {
-    this.NAME = 'Text';
-    var defaults = {
-        text: '',
-        x: 0,
-        y: 0,
-        font: '',
-        size: '0px'
-    };
-    Helper.extend(this, defaults, options);
-};
-
-Helper.inherit(Text, Component);
-
-module.exports = Text;
-},{"../component.js":4,"../helper.js":12}],11:[function(require,module,exports){
+},{"../../component.js":4,"../../helper.js":12}],11:[function(require,module,exports){
 'use strict';
 
 var Component = require('./component.js');
@@ -1039,15 +1039,15 @@ module.exports = {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
-            SpriteSheet: require('./components/gfx/sprite-sheet.js')
+            SpriteSheet: require('./components/gfx/sprite-sheet.js'),
+            Text: require('./components/gfx/text.js')
         },
         Physics: {
             RectPhysicsBody: require('./components/physics/rect-physics-body.js')
         },
         Shape: {
             Rectangle: require('./components/shape/rectangle.js')
-        },
-        Text: require('./components/text.js')
+        }
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
@@ -1074,7 +1074,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":1,"./camera.js":3,"./component.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/physics/rect-physics-body.js":8,"./components/shape/rectangle.js":9,"./components/text.js":10,"./entity.js":11,"./helper.js":12,"./helpers/collision-grid.js":13,"./helpers/quad-tree.js":14,"./keys.js":16,"./layer.js":17,"./render-system.js":18,"./system.js":19,"./systems/behavior/animate.js":20,"./systems/behavior/physics/platformer.js":21,"./systems/render/colored-rect.js":22,"./systems/render/sprite.js":23,"./systems/render/text.js":24,"./world.js":25}],16:[function(require,module,exports){
+},{"./behavior-system.js":1,"./camera.js":3,"./component.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/gfx/text.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape/rectangle.js":10,"./entity.js":11,"./helper.js":12,"./helpers/collision-grid.js":13,"./helpers/quad-tree.js":14,"./keys.js":16,"./layer.js":17,"./render-system.js":18,"./system.js":19,"./systems/behavior/animate.js":20,"./systems/behavior/physics/platformer.js":21,"./systems/render/colored-rect.js":22,"./systems/render/sprite.js":23,"./systems/render/text.js":24,"./world.js":25}],16:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
