@@ -9,7 +9,6 @@ var Entity = require('./entity.js'),
  */
 var System = function() {
     this.entities = {};
-    this.parentLayer = null;
     this.requiredComponents = [];
     this.active = true;
 };

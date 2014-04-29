@@ -1175,14 +1175,6 @@ Layer.prototype.addSystem = function(system) {
         throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    if (system.parentLayer === null) {
-        system.parentLayer = this;
-    } else {
-        var err = new Error('System already belongs to another Layer');
-        err.system = system;
-        throw err;
-    }
-
     if (system instanceof BehaviorSystem && this.behaviorSystems.indexOf(system) === -1) {
         this.behaviorSystems.push(system);
     } else if (system instanceof RenderSystem && this.renderSystems.indexOf(system) === -1) {
@@ -1339,7 +1331,6 @@ var Entity = require('./entity.js'),
  */
 var System = function() {
     this.entities = {};
-    this.parentLayer = null;
     this.requiredComponents = [];
     this.active = true;
 };
