@@ -17,7 +17,8 @@ var RectPhysicsBody = function(options) {
         },
         mass: 0,
         bounciness: 0,
-        solid: true
+        solid: true,
+        rotation: 0
     };
 
     options = Helper.defaults(options, defaults);
@@ -29,6 +30,7 @@ var RectPhysicsBody = function(options) {
     this.mass = options.mass;
     this.bounciness = options.bounciness;
     this.solid = options.solid;
+    this.rotation = options.rotation;
 };
 
 Helper.inherit(RectPhysicsBody, Component);
