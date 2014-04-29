@@ -142,6 +142,17 @@ var Helper = {
             }
         }
         return keys;
+    },
+
+    /**
+     * Returns 1 if x is positive
+     * -1 if x is negative
+     * 0 if x is 0
+     * @param {number} x
+     */
+    sign: function(x) {
+        return (x > 0) ?  1 :
+               (x < 0) ? -1 : 0;
     }
 };
 
