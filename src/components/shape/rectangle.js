@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * A generic rectangle
@@ -26,7 +25,5 @@ var Rectangle = function(options) {
     this.h = options.h;
     this.rotation = options.rotation;
 };
-
-Helper.inherit(Rectangle, Component);
 
 module.exports = Rectangle;

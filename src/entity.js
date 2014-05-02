@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * A collection of Components which make up an object in the world
+ * A collection of components which make up an object in the world
  * @constructor
  * @param {number} id   Unique ID assigned by the World
  */
@@ -11,17 +11,17 @@ var Entity = function(id) {
 };
 
 /**
- * Add a new Component to the Entity
- * @param {Component|*} component
+ * Add a new component to the Entity
+ * @param {object} component
  */
 Entity.prototype.addComponent = function(component) {
     this.components[component.NAME] = component;
 };
 
 /**
- * Adds a Component marked as a given type
+ * Adds a component marked as a given type
  * This can be used to use one component for multiple things i.e. physics body and a rectangle
- * @param {Component} component
+ * @param {object} component
  * @param {string} componentType Type to mark it as
  */
 Entity.prototype.addComponentAs = function(component, componentType) {
@@ -29,8 +29,8 @@ Entity.prototype.addComponentAs = function(component, componentType) {
 };
 
 /**
- * Removes a Component from the Entity
- * @param {Component} component
+ * Removes a component from the Entity
+ * @param {object} component
  */
 Entity.prototype.removeComponent = function(component) {
     var componentName = '';
@@ -45,8 +45,8 @@ Entity.prototype.removeComponent = function(component) {
 
 /**
  * Returns the component with the matching name
- * @param {String} componentName
- * @return {Component|null}
+ * @param {string} componentName
+ * @return {object|null}
  */
 Entity.prototype.getComponent = function(componentName) {
     return this.components[componentName] || null;
@@ -54,7 +54,7 @@ Entity.prototype.getComponent = function(componentName) {
 
 /**
  * Determine if an Entity has a given component type
- * @param {String} componentName
+ * @param {string} componentName
  * @return {boolean}
  */
 Entity.prototype.hasComponent = function(componentName) {

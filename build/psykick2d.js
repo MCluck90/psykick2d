@@ -86,11 +86,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":14,"./system.js":21}],3:[function(require,module,exports){
+},{"./helper.js":13,"./system.js":20}],3:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":17}],4:[function(require,module,exports){
+},{"./index.js":16}],4:[function(require,module,exports){
 'use strict';
 
 /**
@@ -118,21 +118,7 @@ module.exports = Camera;
 },{}],5:[function(require,module,exports){
 'use strict';
 
-/**
- * The most basic component which all components should inherit from.
- * Each new Component should be given a unique name
- * @constructor
- */
-var Component = function() {
-    this.NAME = 'Component';
-};
-
-module.exports = Component;
-},{}],6:[function(require,module,exports){
-'use strict';
-
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * @desc        Used for keeping track of an animation cycle
@@ -143,7 +129,6 @@ var Component = require('../../component.js'),
  * @param       {number}    [options.currentFrame=0]     Current frame
  * @param       {number}    [options.lastFrameTime]      Time since last frame
  * @constructor
- * @inherit     Component
  */
 var Animation = function(options) {
     // Unique name for identifying in Entities
@@ -165,32 +150,11 @@ var Animation = function(options) {
     this.lastFrameTime = options.lastFrameTime;
 };
 
-Helper.inherit(Animation, Component);
-
-/**
- * @desc    Updates and returns the current frame
- * @param   {number} delta    Time since last update
- * @return  {number}
- */
-Animation.prototype.getFrame = function(delta) {
-    this.lastFrameTime += delta;
-
-    if (this.lastFrameTime > 1000 / this.fps) {
-        this.lastFrameTime = 0;
-        if (++this.currentFrame > this.maxFrame && this.maxFrame > -1) {
-            this.currentFrame = this.minFrame;
-        }
-    }
-
-    return this.currentFrame;
-};
-
 module.exports = Animation;
-},{"../../component.js":5,"../../helper.js":14}],7:[function(require,module,exports){
+},{"../../helper.js":13}],6:[function(require,module,exports){
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * A generic container for color information
@@ -209,19 +173,15 @@ var Color = function(options) {
     this.colors = options.colors;
 };
 
-Helper.inherit(Color, Component);
-
 module.exports = Color;
-},{"../../component.js":5,"../../helper.js":14}],8:[function(require,module,exports){
+},{"../../helper.js":13}],7:[function(require,module,exports){
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * Defines a sprite sheet
  * @constructor
- * @inherit Component
  * @param {Object} options
  * @param {String} [options.src=null]      Path to the image
  * @param {number} [options.width=0]       Width of the sprite sheet
@@ -261,8 +221,6 @@ var SpriteSheet = function(options) {
         self.loaded = true;
     };
 };
-
-Helper.inherit(SpriteSheet, Component);
 
 /**
  * Returns the width of the sheet
@@ -332,7 +290,7 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../component.js":5,"../../helper.js":14}],9:[function(require,module,exports){
+},{"../../helper.js":13}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -358,11 +316,10 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":14,"pixi.js":1}],10:[function(require,module,exports){
+},{"../../helper.js":13,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * Represents some text
@@ -372,7 +329,6 @@ var Component = require('../../component.js'),
  * @param {number} [options.y]
  * @param {string} [options.font]
  * @param {string} [options.size]
- * @inherit Component
  * @constructor
  */
 var Text = function(options) {
@@ -387,14 +343,11 @@ var Text = function(options) {
     Helper.extend(this, defaults, options);
 };
 
-Helper.inherit(Text, Component);
-
 module.exports = Text;
-},{"../../component.js":5,"../../helper.js":14}],11:[function(require,module,exports){
+},{"../../helper.js":13}],10:[function(require,module,exports){
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 var RectPhysicsBody = function(options) {
     this.NAME = 'RectPhysicsBody';
@@ -426,14 +379,11 @@ var RectPhysicsBody = function(options) {
     this.rotation = options.rotation;
 };
 
-Helper.inherit(RectPhysicsBody, Component);
-
 module.exports = RectPhysicsBody;
-},{"../../component.js":5,"../../helper.js":14}],12:[function(require,module,exports){
+},{"../../helper.js":13}],11:[function(require,module,exports){
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * A generic rectangle
@@ -459,14 +409,12 @@ var Rectangle = function(options) {
     this.rotation = options.rotation;
 };
 
-Helper.inherit(Rectangle, Component);
-
 module.exports = Rectangle;
-},{"../../component.js":5,"../../helper.js":14}],13:[function(require,module,exports){
+},{"../../helper.js":13}],12:[function(require,module,exports){
 'use strict';
 
 /**
- * A collection of Components which make up an object in the world
+ * A collection of components which make up an object in the world
  * @constructor
  * @param {number} id   Unique ID assigned by the World
  */
@@ -476,17 +424,17 @@ var Entity = function(id) {
 };
 
 /**
- * Add a new Component to the Entity
- * @param {Component|*} component
+ * Add a new component to the Entity
+ * @param {object} component
  */
 Entity.prototype.addComponent = function(component) {
     this.components[component.NAME] = component;
 };
 
 /**
- * Adds a Component marked as a given type
+ * Adds a component marked as a given type
  * This can be used to use one component for multiple things i.e. physics body and a rectangle
- * @param {Component} component
+ * @param {object} component
  * @param {string} componentType Type to mark it as
  */
 Entity.prototype.addComponentAs = function(component, componentType) {
@@ -494,8 +442,8 @@ Entity.prototype.addComponentAs = function(component, componentType) {
 };
 
 /**
- * Removes a Component from the Entity
- * @param {Component} component
+ * Removes a component from the Entity
+ * @param {object} component
  */
 Entity.prototype.removeComponent = function(component) {
     var componentName = '';
@@ -510,8 +458,8 @@ Entity.prototype.removeComponent = function(component) {
 
 /**
  * Returns the component with the matching name
- * @param {String} componentName
- * @return {Component|null}
+ * @param {string} componentName
+ * @return {object|null}
  */
 Entity.prototype.getComponent = function(componentName) {
     return this.components[componentName] || null;
@@ -519,7 +467,7 @@ Entity.prototype.getComponent = function(componentName) {
 
 /**
  * Determine if an Entity has a given component type
- * @param {String} componentName
+ * @param {string} componentName
  * @return {boolean}
  */
 Entity.prototype.hasComponent = function(componentName) {
@@ -527,7 +475,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var
@@ -713,7 +661,7 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -892,7 +840,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
 };
 
 module.exports = CollisionGrid;
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1105,11 +1053,10 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 };
 
 module.exports = QuadTree;
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
-    Component: require('./component.js'),
     Components: {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
@@ -1150,7 +1097,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./component.js":5,"./components/gfx/animation.js":6,"./components/gfx/color.js":7,"./components/gfx/sprite-sheet.js":8,"./components/gfx/sprite.js":9,"./components/gfx/text.js":10,"./components/physics/rect-physics-body.js":11,"./components/shape/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/colored-rect.js":24,"./systems/render/sprite.js":25,"./systems/render/text.js":26,"./world.js":27}],18:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/gfx/sprite.js":8,"./components/gfx/text.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape/rectangle.js":11,"./entity.js":12,"./helper.js":13,"./helpers/collision-grid.js":14,"./helpers/quad-tree.js":15,"./keys.js":17,"./layer.js":18,"./render-system.js":19,"./system.js":20,"./systems/behavior/animate.js":21,"./systems/behavior/physics/platformer.js":22,"./systems/render/colored-rect.js":23,"./systems/render/sprite.js":24,"./systems/render/text.js":25,"./world.js":26}],17:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1177,7 +1124,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1338,7 +1285,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./helper.js":14,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
+},{"./behavior-system.js":2,"./helper.js":13,"./render-system.js":19,"./system.js":20,"pixi.js":1}],19:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1408,7 +1355,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":14,"./system.js":21,"pixi.js":1}],21:[function(require,module,exports){
+},{"./helper.js":13,"./system.js":20,"pixi.js":1}],20:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1464,7 +1411,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":13,"./helper.js":14}],22:[function(require,module,exports){
+},{"./entity.js":12,"./helper.js":13}],21:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1504,7 +1451,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":14}],23:[function(require,module,exports){
+},{"../../behavior-system.js":2,"../../helper.js":13}],22:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -1696,7 +1643,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":14,"../../../helpers/quad-tree.js":16}],24:[function(require,module,exports){
+},{"../../../behavior-system.js":2,"../../../helper.js":13,"../../../helpers/quad-tree.js":15}],23:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1729,7 +1676,7 @@ ColoredRect.prototype.draw = function(c) {
 };
 
 module.exports = ColoredRect;
-},{"../../helper.js":14,"../../render-system.js":20}],25:[function(require,module,exports){
+},{"../../helper.js":13,"../../render-system.js":19}],24:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1781,7 +1728,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":14,"../../render-system.js":20}],26:[function(require,module,exports){
+},{"../../helper.js":13,"../../render-system.js":19}],25:[function(require,module,exports){
 'use strict';
 
 var RenderSystem = require('../../render-system.js'),
@@ -1817,7 +1764,7 @@ Text.prototype.draw = function(c) {
 };
 
 module.exports = Text;
-},{"../../helper.js":14,"../../render-system.js":20}],27:[function(require,module,exports){
+},{"../../helper.js":13,"../../render-system.js":19}],26:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -2085,4 +2032,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":13,"./helper.js":14,"./layer.js":19}]},{},[3]);
+},{"./entity.js":12,"./helper.js":13,"./layer.js":18}]},{},[3]);

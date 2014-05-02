@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 var RectPhysicsBody = function(options) {
     this.NAME = 'RectPhysicsBody';
@@ -32,7 +31,5 @@ var RectPhysicsBody = function(options) {
     this.solid = options.solid;
     this.rotation = options.rotation;
 };
-
-Helper.inherit(RectPhysicsBody, Component);
 
 module.exports = RectPhysicsBody;

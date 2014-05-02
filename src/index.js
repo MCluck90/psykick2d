@@ -1,7 +1,6 @@
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
-    Component: require('./component.js'),
     Components: {
         GFX: {
             Animation: require('./components/gfx/animation.js'),

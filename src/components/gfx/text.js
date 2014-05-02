@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * Represents some text
@@ -11,7 +10,6 @@ var Component = require('../../component.js'),
  * @param {number} [options.y]
  * @param {string} [options.font]
  * @param {string} [options.size]
- * @inherit Component
  * @constructor
  */
 var Text = function(options) {
@@ -25,7 +23,5 @@ var Text = function(options) {
     };
     Helper.extend(this, defaults, options);
 };
-
-Helper.inherit(Text, Component);
 
 module.exports = Text;

@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * A generic container for color information
@@ -19,7 +18,5 @@ var Color = function(options) {
     options = Helper.defaults(options, defaults);
     this.colors = options.colors;
 };
-
-Helper.inherit(Color, Component);
 
 module.exports = Color;

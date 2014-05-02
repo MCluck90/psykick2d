@@ -1,7 +1,6 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * @desc        Used for keeping track of an animation cycle
@@ -12,7 +11,6 @@ var Component = require('../../component.js'),
  * @param       {number}    [options.currentFrame=0]     Current frame
  * @param       {number}    [options.lastFrameTime]      Time since last frame
  * @constructor
- * @inherit     Component
  */
 var Animation = function(options) {
     // Unique name for identifying in Entities
@@ -32,26 +30,6 @@ var Animation = function(options) {
     this.maxFrame = options.maxFrame;
     this.currentFrame = options.currentFrame;
     this.lastFrameTime = options.lastFrameTime;
-};
-
-Helper.inherit(Animation, Component);
-
-/**
- * @desc    Updates and returns the current frame
- * @param   {number} delta    Time since last update
- * @return  {number}
- */
-Animation.prototype.getFrame = function(delta) {
-    this.lastFrameTime += delta;
-
-    if (this.lastFrameTime > 1000 / this.fps) {
-        this.lastFrameTime = 0;
-        if (++this.currentFrame > this.maxFrame && this.maxFrame > -1) {
-            this.currentFrame = this.minFrame;
-        }
-    }
-
-    return this.currentFrame;
 };
 
 module.exports = Animation;

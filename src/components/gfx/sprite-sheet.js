@@ -1,12 +1,10 @@
 'use strict';
 
-var Component = require('../../component.js'),
-    Helper = require('../../helper.js');
+var Helper = require('../../helper.js');
 
 /**
  * Defines a sprite sheet
  * @constructor
- * @inherit Component
  * @param {Object} options
  * @param {String} [options.src=null]      Path to the image
  * @param {number} [options.width=0]       Width of the sprite sheet
@@ -46,8 +44,6 @@ var SpriteSheet = function(options) {
         self.loaded = true;
     };
 };
-
-Helper.inherit(SpriteSheet, Component);
 
 /**
  * Returns the width of the sheet
