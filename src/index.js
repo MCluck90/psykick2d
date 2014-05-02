@@ -7,6 +7,7 @@ module.exports = {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             SpriteSheet: require('./components/gfx/sprite-sheet.js'),
+            Sprite: require('./components/gfx/sprite.js'),
             Text: require('./components/gfx/text.js')
         },
         Physics: {
