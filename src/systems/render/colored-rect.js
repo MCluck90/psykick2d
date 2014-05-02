@@ -19,6 +19,7 @@ Helper.inherit(ColoredRect, RenderSystem);
  * @param {CanvasRenderingContext2D} c
  */
 ColoredRect.prototype.draw = function(c) {
+    c = c.c;
     for (var i = 0, len = this.drawOrder.length; i < len; i++) {
         var entity = this.drawOrder[i],
             color = entity.getComponent('Color').colors[0],

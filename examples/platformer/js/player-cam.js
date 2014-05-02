@@ -14,9 +14,10 @@
 
     /**
      * Move the camera so that it follows the player
-     * @param {CanvasRenderingContext2D} c
+     * @param {DisplayObjectContainer} scene
+     * @param {number} delta
      */
-    PlayerCam.prototype.render = function(c, delta) {
+    PlayerCam.prototype.render = function(scene, delta) {
         if (P2D.Helper.isKeyDown(P2D.Keys.A)) {
             this.scale += 2 * delta;
         }
@@ -29,9 +30,10 @@
 
         this.x = -this.playerBody.x + (400 / this.scale) - (this.playerBody.w / 2);
         this.y = -this.playerBody.y + (300 / this.scale) - (this.playerBody.h / 2);
-
-        c.scale(this.scale, this.scale);
-        c.translate(this.x, this.y);
+        scene.scale.x = this.scale;
+        scene.scale.y = this.scale;
+        scene.position.x = this.x;
+        scene.position.y = this.y;
     };
 
     Game.PlayerCam = PlayerCam;

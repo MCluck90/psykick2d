@@ -44,6 +44,15 @@
     inputSystem.addEntity(player);
     physicsSystem.addEntity(player);
 
+    var grassEntity = P2D.World.createEntity();
+    grassEntity.addComponent(new P2D.Components.GFX.Sprite({
+        src: 'media/sprites/ground.png',
+        position: {
+            x: 0,
+            y: 0
+        }
+    }));
+
     physicsSystem.addCollisionHandler(player, function(other) {
         var otherBody = other.getComponent('RectPhysicsBody');
         if (otherBody.y + 1 >= playerBody.y + playerBody.h) {
@@ -64,7 +73,7 @@
         spriteSystem.addEntity(dirt);
     }
 
-    var grass = Game.Factory.createGrass(-1000, 600, 2000);
+    var grass = Game.Factory.createGrass(100, 100, 2000);
     physicsSystem.addEntity(grass);
     spriteSystem.addEntity(grass);
 

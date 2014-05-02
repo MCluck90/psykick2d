@@ -31,14 +31,12 @@
                     h: height
                 });
             grass.addComponent(bodyComponent);
-            grass.addComponentAs(bodyComponent, 'Rectangle');
-            grass.addComponent(new P2D.Components.GFX.SpriteSheet({
+            grass.addComponent(new P2D.Components.GFX.Sprite({
                 src: 'media/sprites/ground.png',
-                xOffset: 6,
-                yOffset: 0,
-                frameWidth: 59,
-                frameHeight: height,
-                repeat: 'repeat-x'
+                position: {
+                    x: x,
+                    y: y
+                }
             }));
             return grass;
         },
@@ -60,13 +58,8 @@
                 w: width,
                 h: height
             }));
-            grass.addComponent(new P2D.Components.GFX.SpriteSheet({
-                src: 'media/sprites/ground.png',
-                xOffset: xOffset,
-                yOffset: 0,
-                frameWidth: width,
-                frameHeight: height,
-                repeat: 'repeat-x'
+            grass.addComponent(new P2D.Components.GFX.Sprite({
+                src: 'media/sprites/ground.png'
             }));
             return grass;
         },
@@ -79,13 +72,12 @@
                 w: width,
                 h: height
             }));
-            dirt.addComponent(new P2D.Components.GFX.SpriteSheet({
+            dirt.addComponent(new P2D.Components.GFX.Sprite({
                 src: 'media/sprites/ground_dirt.png',
-                xOffset: 6,
-                yOffset: 5,
-                frameWidth: 59,
-                frameHeight: 60,
-                repeat: 'repeat'
+                position: {
+                    x: x,
+                    y: y
+                }
             }));
             return dirt;
         }
