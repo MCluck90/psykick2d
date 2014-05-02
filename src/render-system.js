@@ -1,7 +1,8 @@
 'use strict';
 
 var System = require('./system.js'),
-    Helper = require('./helper.js');
+    Helper = require('./helper.js'),
+    PIXI = require('pixi.js');
 
 /**
  * Controls how Entities are displayed.
@@ -12,6 +13,7 @@ var System = require('./system.js'),
 var RenderSystem = function() {
     System.call(this);
     this.drawOrder = [];
+    this.objectContainer = new PIXI.DisplayObjectContainer();
 };
 
 Helper.inherit(RenderSystem, System);
@@ -60,7 +62,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 /**
  * Draw all of the entities.
  * Should be defined for every RenderSystem
- * @param {CanvasRenderingContext2D} c
+ * @param {Layer} layer     Layer being drawn
  */
 RenderSystem.prototype.draw = function() {};
 

@@ -95,7 +95,7 @@ var World = {
         gameLoop = function() {
             var delta = (new Date() - gameTime) / 1000;
             self.update(delta);
-            self.draw();
+            self.draw(delta);
             gameTime = new Date();
             requestAnimationFrame(gameLoop);
         };
@@ -188,8 +188,9 @@ var World = {
 
     /**
      * Draws the World
+     * @param {number} delta    Time since previous update
      */
-    draw: function() {
+    draw: function(delta) {
         var beforeDraw = eventHandlers.beforeDraw,
             afterDraw = eventHandlers.afterDraw,
             i, len;
@@ -201,7 +202,7 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.visible) {
-                layersInDrawOrder[i].draw();
+                layersInDrawOrder[i].draw(delta);
             }
         }
 

@@ -2,15 +2,20 @@
 
 var System = require('./system.js'),
     BehaviorSystem = require('./behavior-system.js'),
-    RenderSystem = require('./render-system.js');
+    RenderSystem = require('./render-system.js'),
+    Helper = require('./helper.js'),
+
+    PIXI = require('pixi.js');
 
 /**
  * A layer houses a set of systems which are updated/drawn on each frame
  * @constructor
- * @param {Object}  options
- * @param {number}  options.id          - Unique ID assigned by the World
- * @param {Element} options.container   - Element which houses the Layer
- * @param {boolean} options.serverMode  - If true, a canvas will not be made
+ * @param {Object}        options
+ * @param {number}        options.id                         - Unique ID assigned by the World
+ * @param {Element}       options.container                  - Element which houses the Layer
+ * @param {boolean}       [options.serverMode=false]         - If true, a canvas will not be made
+ * @param {boolean}       [options.transparent=false]        - Should we render a background color?
+ * @param {number|string} [options.backgroundColor=0x000000] - Background color if the layer isn't transparent
  */
 var Layer = function(options) {
     this.id = options.id;
@@ -20,19 +25,28 @@ var Layer = function(options) {
     this.behaviorSystems = [];
     this.visible = true;
     this.active = true;
+    this.canvas = null;
 
     // Create a new canvas to draw on
     if (!options.serverMode) {
-    var canvas = document.createElement('canvas');
-        canvas.width = parseInt(options.container.style.width, 10);
-        canvas.height = parseInt(options.container.style.height, 10);
-        canvas.setAttribute('id', 'psykick-layer-' + options.id);
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
-        canvas.style.zIndex = 0;
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = parseInt(options.container.style.width, 10);
+        this.canvas.height = parseInt(options.container.style.height, 10);
+        this.canvas.setAttribute('id', 'psykick-layer-' + options.id);
+        this.canvas.style.position = 'absolute';
+        this.canvas.style.top = '0px';
+        this.canvas.style.left = '0px';
+        this.canvas.style.zIndex = 0;
 
-        this.c = canvas.getContext('2d');
+        // Create a pixi.js stage and renderer
+        var backgroundColor = options.backgroundColor;
+        if (typeof backgroundColor === 'string') {
+            backgroundColor = Helper.cssHexToNumber(backgroundColor);
+        }
+        this.stage = new PIXI.Stage(backgroundColor);
+        this.scene = new PIXI.DisplayObjectContainer();
+        this.stage.addChild(this.scene);
+        this.renderer = PIXI.autoDetectRenderer(this.canvas.width, this.canvas.height, this.canvas);
     }
 };
 
@@ -40,7 +54,7 @@ var Layer = function(options) {
  * Removes the canvas to ensure no additional drawing is done
  */
 Layer.prototype.removeCanvas = function() {
-    this.c.canvas.parentNode.removeChild(this.c.canvas);
+    this.canvas.parentNode.removeChild(this.canvas);
 };
 
 /**
@@ -48,7 +62,7 @@ Layer.prototype.removeCanvas = function() {
  */
 Layer.prototype.restoreCanvas = function() {
     if (document.getElementById('psykick-layer-' + this.id) === null) {
-        this.container.appendChild(this.c.canvas);
+        this.container.appendChild(this.canvas);
     }
 };
 
@@ -57,7 +71,7 @@ Layer.prototype.restoreCanvas = function() {
  * @param {number} zIndex
  */
 Layer.prototype.setZIndex = function(zIndex) {
-    this.c.canvas.style.zIndex = zIndex;
+    this.canvas.style.zIndex = zIndex;
 };
 
 /**
@@ -73,6 +87,9 @@ Layer.prototype.addSystem = function(system) {
         this.behaviorSystems.push(system);
     } else if (system instanceof RenderSystem && this.renderSystems.indexOf(system) === -1) {
         this.renderSystems.push(system);
+        if (system.objectContainer) {
+            this.scene.addChild(system.objectContainer);
+        }
     }
 };
 
@@ -85,47 +102,43 @@ Layer.prototype.removeSystem = function(system) {
         throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
-    system.parentLayer = null;
-
-    var systemCollection = (system instanceof BehaviorSystem) ? this.behaviorSystems : this.renderSystems,
+    var isRenderSystem = (system instanceof RenderSystem),
+        systemCollection = (isRenderSystem) ? this.renderSystems : this.behaviorSystems,
         systemIndex = systemCollection.indexOf(system);
     if (systemIndex !== -1) {
         systemCollection.splice(systemIndex, 1);
+        if (isRenderSystem) {
+            this.scene.removeChild(system.objectContainer);
+        }
     }
 };
 
 /**
  * Draw the layer
+ * @param {number} delta    Time since previous update
  */
-Layer.prototype.draw = function() {
+Layer.prototype.draw = function(delta) {
     // If the node doesn't exist, don't even try to draw
-    if (!this.c || this.c.canvas.parentNode === null) {
+    if (!this.canvas || this.canvas.parentNode === null) {
         return;
     }
 
-    this.c.clearRect(0, 0, this.c.canvas.width, this.c.canvas.height);
-
     // If the layer has a camera, use it
     if (this.camera !== null) {
-        this.c.save();
-        this.camera.render(this.c);
+        this.camera.render(this.scene, delta);
     }
 
     // Only draw if "visible" and have some kind of system for rendering
     if (this.visible && this.renderSystems.length > 0) {
-        this.c.save();
         for (var i = 0, len = this.renderSystems.length; i < len; i++) {
             var system = this.renderSystems[i];
-            if (system.active) {
-                system.draw(this.c);
+            if (system.visible) {
+                system.draw(this);
             }
         }
-        this.c.restore();
     }
 
-    if (this.camera !== null) {
-        this.c.restore();
-    }
+    this.renderer.render(this.stage);
 };
 
 /**
