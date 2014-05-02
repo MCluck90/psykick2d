@@ -1,7 +1,5 @@
 'use strict';
 
-var Component = require('./component.js');
-
 /**
  * A collection of Components which make up an object in the world
  * @constructor
@@ -17,9 +15,7 @@ var Entity = function(id) {
  * @param {Component|*} component
  */
 Entity.prototype.addComponent = function(component) {
-    if (component instanceof Component) {
-        this.components[component.NAME] = component;
-    }
+    this.components[component.NAME] = component;
 };
 
 /**
@@ -29,18 +25,19 @@ Entity.prototype.addComponent = function(component) {
  * @param {string} componentType Type to mark it as
  */
 Entity.prototype.addComponentAs = function(component, componentType) {
-    if (component instanceof Component) {
-        this.components[componentType] = component;
-    }
+    this.components[componentType] = component;
 };
 
 /**
  * Removes a Component from the Entity
- * @param {Component} componentName
+ * @param {Component} component
  */
-Entity.prototype.removeComponent = function(componentName) {
-    if (componentName instanceof Component) {
-        componentName = componentName.NAME;
+Entity.prototype.removeComponent = function(component) {
+    var componentName = '';
+    if (typeof component === 'string') {
+        componentName = component;
+    } else {
+        componentName = component.NAME;
     }
 
     delete this.components[componentName];
@@ -52,11 +49,7 @@ Entity.prototype.removeComponent = function(componentName) {
  * @return {Component|null}
  */
 Entity.prototype.getComponent = function(componentName) {
-    if (componentName in this.components) {
-        return this.components[componentName];
-    } else {
-        return null;
-    }
+    return this.components[componentName] || null;
 };
 
 /**
