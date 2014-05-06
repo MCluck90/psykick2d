@@ -20,12 +20,12 @@ var Layer = function(options) {
     this.camera = null;
     this.renderSystems = [];
     this.behaviorSystems = [];
-    this.visible = true;
     this.active = true;
     this.canvas = null;
+    this._serverMode = options.serverMode;
 
     // Create a new canvas to draw on
-    if (!options.serverMode) {
+    if (!this._serverMode) {
         this.canvas = document.createElement('canvas');
         this.canvas.width = parseInt(options.container.style.width, 10);
         this.canvas.height = parseInt(options.container.style.height, 10);
@@ -37,6 +37,7 @@ var Layer = function(options) {
 
         // Create a pixi.js stage and renderer
         this.stage = new PIXI.Stage(0xFFFFFF);
+        this.stage.visible = true;
         this.scene = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.scene);
         this.renderer = PIXI.autoDetectRenderer(
@@ -46,7 +47,24 @@ var Layer = function(options) {
             true
         );
     }
+
+    // Visibility relies on having the stage initialized
+    this.visible = true;
 };
+
+// Tie in the layer visiblity with the stages visibility
+Object.defineProperty(Layer.prototype, 'visible', {
+    get: function() {
+        return !this._serverMode && this.stage.visible;
+    },
+    set: function(visible) {
+        if (!this._serverMode) {
+            this.stage.visible = visible;
+            // Make sure the stage is invalidated
+            this.renderer.render(this.stage);
+        }
+    }
+});
 
 /**
  * Removes the canvas to ensure no additional drawing is done
@@ -136,6 +154,9 @@ Layer.prototype.draw = function(delta) {
         }
     }
 
+    if (!this.stage.visible) {
+        debugger;
+    }
     this.renderer.render(this.stage);
 };
 
