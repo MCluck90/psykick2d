@@ -111,7 +111,7 @@ var World = {
     },
 
     /**
-     * Creats a new Layer
+     * Creates a new Layer
      * @returns {Layer}
      */
     createLayer: function() {

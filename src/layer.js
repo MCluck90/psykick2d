@@ -3,7 +3,6 @@
 var System = require('./system.js'),
     BehaviorSystem = require('./behavior-system.js'),
     RenderSystem = require('./render-system.js'),
-    Helper = require('./helper.js'),
 
     PIXI = require('pixi.js');
 
@@ -14,8 +13,6 @@ var System = require('./system.js'),
  * @param {number}        options.id                         - Unique ID assigned by the World
  * @param {Element}       options.container                  - Element which houses the Layer
  * @param {boolean}       [options.serverMode=false]         - If true, a canvas will not be made
- * @param {boolean}       [options.transparent=false]        - Should we render a background color?
- * @param {number|string} [options.backgroundColor=0x000000] - Background color if the layer isn't transparent
  */
 var Layer = function(options) {
     this.id = options.id;
@@ -39,14 +36,15 @@ var Layer = function(options) {
         this.canvas.style.zIndex = 0;
 
         // Create a pixi.js stage and renderer
-        var backgroundColor = options.backgroundColor;
-        if (typeof backgroundColor === 'string') {
-            backgroundColor = Helper.cssHexToNumber(backgroundColor);
-        }
-        this.stage = new PIXI.Stage(backgroundColor);
+        this.stage = new PIXI.Stage(0xFFFFFF);
         this.scene = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.scene);
-        this.renderer = PIXI.autoDetectRenderer(this.canvas.width, this.canvas.height, this.canvas);
+        this.renderer = PIXI.autoDetectRenderer(
+            this.canvas.width,
+            this.canvas.height,
+            this.canvas,
+            true
+        );
     }
 };
 
