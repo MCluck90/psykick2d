@@ -25,7 +25,7 @@ var System = require('./system.js'),
  * Controls the behavior of entities.
  * Called during the "update" stage of a frame
  * @constructor
- * @inherit System
+ * @extends {System}
  * @property    {Entity[]}  actionOrder Order in which the entites will be acted upon
  */
 var BehaviorSystem = function() {
@@ -86,11 +86,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":13,"./system.js":20}],3:[function(require,module,exports){
+},{"./helper.js":14,"./system.js":21}],3:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":16}],4:[function(require,module,exports){
+},{"./index.js":17}],4:[function(require,module,exports){
 'use strict';
 
 /**
@@ -151,7 +151,7 @@ var Animation = function(options) {
 };
 
 module.exports = Animation;
-},{"../../helper.js":13}],6:[function(require,module,exports){
+},{"../../helper.js":14}],6:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -174,7 +174,7 @@ var Color = function(options) {
 };
 
 module.exports = Color;
-},{"../../helper.js":13}],7:[function(require,module,exports){
+},{"../../helper.js":14}],7:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -290,7 +290,7 @@ SpriteSheet.prototype.getOffset = function(frameX, frameY) {
 };
 
 module.exports = SpriteSheet;
-},{"../../helper.js":13}],8:[function(require,module,exports){
+},{"../../helper.js":14}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -316,7 +316,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":13,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../helper.js":14,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -344,7 +344,7 @@ var Text = function(options) {
 };
 
 module.exports = Text;
-},{"../../helper.js":13}],10:[function(require,module,exports){
+},{"../../helper.js":14}],10:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -380,14 +380,60 @@ var RectPhysicsBody = function(options) {
 };
 
 module.exports = RectPhysicsBody;
-},{"../../helper.js":13}],11:[function(require,module,exports){
+},{"../../helper.js":14}],11:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js');
+var Helper = require('../helper.js'),
+    PIXI = require('pixi.js');
+
+var Shape = function(options) {
+    this._initializing = true;
+    PIXI.Graphics.call(this);
+    delete this._initializing;
+    var defaults = {
+        color: null,
+        x: 0,
+        y: 0,
+        rotation: 0
+    };
+    options = Helper.defaults(options, defaults);
+    this._color = null;
+    this.color = options.color;
+    this.x = options.x;
+    this.y = options.y;
+    this.rotation = options.rotation;
+};
+
+Helper.inherit(Shape, PIXI.Graphics);
+
+Object.defineProperty(Shape.prototype, 'color', {
+    get: function() {
+        return this._color;
+    },
+    set: function(val) {
+        if (this._color === val || this._initializing) {
+            return;
+        }
+
+        this._color = val;
+        var colorIsSet = (val !== null);
+        if (colorIsSet) {
+            this._setShape();
+        }
+    }
+});
+
+module.exports = Shape;
+},{"../helper.js":14,"pixi.js":1}],12:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
+    Shape = require('../shape.js');
 
 /**
  * A generic rectangle
  * @constructor
+ * @extends {Shape}
  * @param {Object}  options
  */
 var Rectangle = function(options) {
@@ -397,20 +443,53 @@ var Rectangle = function(options) {
         x: 0,
         y: 0,
         w: 0,
-        h: 0,
-        rotation: 0
+        h: 0
     };
 
     options = Helper.defaults(options, defaults);
+    Shape.call(this, options);
+
     this.x = options.x;
     this.y = options.y;
+    this._w = 0;
     this.w = options.w;
+    this._h = 0;
     this.h = options.h;
-    this.rotation = options.rotation;
+};
+
+Helper.inherit(Rectangle, Shape);
+
+Object.defineProperties(Rectangle.prototype, {
+    w: {
+        get: function() {
+            return this._w;
+        },
+        set: function(val) {
+            this._w = val;
+            this._setShape();
+        }
+    },
+    h: {
+        get: function() {
+            return this._h;
+        },
+        set: function(val) {
+            this._h = val;
+            this._setShape();
+        }
+    }
+});
+
+Rectangle.prototype._setShape = function() {
+    if (this._color !== null) {
+        this.beginFill(this.color);
+        this.drawRect(this.x, this.y, this.w, this.w);
+        this.endFill();
+    }
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":13}],12:[function(require,module,exports){
+},{"../../helper.js":14,"../shape.js":11}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -475,7 +554,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var
@@ -661,7 +740,7 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -840,7 +919,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
 };
 
 module.exports = CollisionGrid;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1053,7 +1132,7 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 };
 
 module.exports = QuadTree;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
@@ -1068,8 +1147,9 @@ module.exports = {
         Physics: {
             RectPhysicsBody: require('./components/physics/rect-physics-body.js')
         },
-        Shape: {
-            Rectangle: require('./components/shape/rectangle.js')
+        Shape: require('./components/shape.js'),
+        Shapes: {
+            Rectangle: require('./components/shapes/rectangle.js')
         }
     },
     Entity: require('./entity.js'),
@@ -1090,14 +1170,14 @@ module.exports = {
             }
         },
         Render: {
-            ColoredRect: require('./systems/render/colored-rect.js'),
+            Rectangle: require('./systems/render/rectangle.js'),
             Sprite: require('./systems/render/sprite.js'),
             Text: require('./systems/render/text.js')
         }
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/gfx/sprite.js":8,"./components/gfx/text.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape/rectangle.js":11,"./entity.js":12,"./helper.js":13,"./helpers/collision-grid.js":14,"./helpers/quad-tree.js":15,"./keys.js":17,"./layer.js":18,"./render-system.js":19,"./system.js":20,"./systems/behavior/animate.js":21,"./systems/behavior/physics/platformer.js":22,"./systems/render/colored-rect.js":23,"./systems/render/sprite.js":24,"./systems/render/text.js":25,"./world.js":26}],17:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/gfx/sprite.js":8,"./components/gfx/text.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/rectangle.js":24,"./systems/render/sprite.js":25,"./systems/render/text.js":26,"./world.js":27}],18:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1124,7 +1204,7 @@ module.exports = {
     // Common keys
     Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
 };
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1285,7 +1365,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./helper.js":13,"./render-system.js":19,"./system.js":20,"pixi.js":1}],19:[function(require,module,exports){
+},{"./behavior-system.js":2,"./helper.js":14,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1296,7 +1376,7 @@ var System = require('./system.js'),
  * Controls how Entities are displayed.
  * Called during the "draw" stage of a frame
  * @constructor
- * @inherit System
+ * @extends {System}
  */
 var RenderSystem = function() {
     System.call(this);
@@ -1355,7 +1435,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":13,"./system.js":20,"pixi.js":1}],20:[function(require,module,exports){
+},{"./helper.js":14,"./system.js":21,"pixi.js":1}],21:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1411,7 +1491,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":12,"./helper.js":13}],21:[function(require,module,exports){
+},{"./entity.js":13,"./helper.js":14}],22:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1420,7 +1500,7 @@ var Helper = require('../../helper.js'),
 /**
  * Updates animations
  *
- * @inherit BehaviorSystem
+ * @extends {BehaviorSystem}
  * @constructor
  */
 var Animate = function() {
@@ -1451,7 +1531,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":13}],22:[function(require,module,exports){
+},{"../../behavior-system.js":2,"../../helper.js":14}],23:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -1490,7 +1570,7 @@ function callEventHandlers(entity, other) {
 
 /**
  * Handles essential physics
- * @inherits BehaviorSystem
+ * @extends {BehaviorSystem}
  * @constructor
  */
 var Platformer = function(options) {
@@ -1632,8 +1712,6 @@ Platformer.prototype.update = function(delta) {
                     // Coming from the right
                     deltaPosition.x = fromRight;
                     movingBody.velocity.x = 0;
-                } else {
-                    //debugger;
                 }
 
                 this._quadTree.moveEntity(movingEntity, deltaPosition);
@@ -1643,40 +1721,48 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":13,"../../../helpers/quad-tree.js":15}],23:[function(require,module,exports){
+},{"../../../behavior-system.js":2,"../../../helper.js":14,"../../../helpers/quad-tree.js":16}],24:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
     RenderSystem = require('../../render-system.js');
 
 /**
- * Renders colored rectangles
+ * Renders rectangles
  * @constructor
+ * @extends {RenderSystem}
  */
-var ColoredRect = function() {
+var Rectangle = function() {
     RenderSystem.call(this);
-    this.requiredComponents = ['Color', 'Rectangle'];
+    this.requiredComponents = ['Rectangle'];
 };
 
-Helper.inherit(ColoredRect, RenderSystem);
+Helper.inherit(Rectangle, RenderSystem);
 
-/**
- * Draws all the rectangles
- * @param {CanvasRenderingContext2D} c
- */
-ColoredRect.prototype.draw = function(c) {
-    c = c.c;
-    for (var i = 0, len = this.drawOrder.length; i < len; i++) {
-        var entity = this.drawOrder[i],
-            color = entity.getComponent('Color').colors[0],
-            rect = entity.getComponent('Rectangle');
-        c.fillStyle = color;
-        c.fillRect(rect.x, rect.y, rect.w, rect.h);
+Rectangle.prototype.addEntity = function(entity) {
+    if (RenderSystem.prototype.addEntity.call(this, entity)) {
+        this.objectContainer.addChild(entity.getComponent('Rectangle'));
+        return true;
+    } else {
+        return false;
     }
 };
 
-module.exports = ColoredRect;
-},{"../../helper.js":13,"../../render-system.js":19}],24:[function(require,module,exports){
+Rectangle.prototype.removeEntity = function(entity) {
+    if (typeof entity === 'number') {
+        entity = this.entities[entity];
+    }
+
+    if (RenderSystem.prototype.removeEntity.call(this, entity)) {
+        this.objectContainer.removeChild(entity.getComponent('Rectangle'));
+        return true;
+    } else {
+        return false;
+    }
+};
+
+module.exports = Rectangle;
+},{"../../helper.js":14,"../../render-system.js":20}],25:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1686,7 +1772,7 @@ var Helper = require('../../helper.js'),
  * Renders an animated sprite
  *
  * @constructor
- * @inherit RenderSystem
+ * @extends {RenderSystem}
  */
 var Sprite = function() {
     RenderSystem.call(this);
@@ -1728,7 +1814,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":13,"../../render-system.js":19}],25:[function(require,module,exports){
+},{"../../helper.js":14,"../../render-system.js":20}],26:[function(require,module,exports){
 'use strict';
 
 var RenderSystem = require('../../render-system.js'),
@@ -1737,7 +1823,7 @@ var RenderSystem = require('../../render-system.js'),
 /**
  * Renders text
  *
- * @inherit RenderSystem
+ * @extends {RenderSystem}
  * @constructor
  */
 var Text = function() {
@@ -1764,7 +1850,7 @@ Text.prototype.draw = function(c) {
 };
 
 module.exports = Text;
-},{"../../helper.js":13,"../../render-system.js":19}],26:[function(require,module,exports){
+},{"../../helper.js":14,"../../render-system.js":20}],27:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -2032,4 +2118,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":12,"./helper.js":13,"./layer.js":18}]},{},[3]);
+},{"./entity.js":13,"./helper.js":14,"./layer.js":19}]},{},[3]);

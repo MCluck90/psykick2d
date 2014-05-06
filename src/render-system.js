@@ -8,7 +8,7 @@ var System = require('./system.js'),
  * Controls how Entities are displayed.
  * Called during the "draw" stage of a frame
  * @constructor
- * @inherit System
+ * @extends {System}
  */
 var RenderSystem = function() {
     System.call(this);
