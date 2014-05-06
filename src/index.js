@@ -35,7 +35,6 @@ module.exports = {
             }
         },
         Render: {
-            ColoredRect: require('./systems/render/colored-rect.js'),
             Rectangle: require('./systems/render/rectangle.js'),
             Sprite: require('./systems/render/sprite.js'),
             Text: require('./systems/render/text.js')

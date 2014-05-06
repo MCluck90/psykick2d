@@ -7,7 +7,7 @@ var System = require('./system.js'),
  * Controls the behavior of entities.
  * Called during the "update" stage of a frame
  * @constructor
- * @inherit System
+ * @extends {System}
  * @property    {Entity[]}  actionOrder Order in which the entites will be acted upon
  */
 var BehaviorSystem = function() {

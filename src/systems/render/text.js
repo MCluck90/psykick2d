@@ -6,7 +6,7 @@ var RenderSystem = require('../../render-system.js'),
 /**
  * Renders text
  *
- * @inherit RenderSystem
+ * @extends {RenderSystem}
  * @constructor
  */
 var Text = function() {

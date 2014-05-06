@@ -6,7 +6,7 @@ var Helper = require('../../helper.js'),
 /**
  * Updates animations
  *
- * @inherit BehaviorSystem
+ * @extends {BehaviorSystem}
  * @constructor
  */
 var Animate = function() {

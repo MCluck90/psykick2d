@@ -36,7 +36,7 @@ function callEventHandlers(entity, other) {
 
 /**
  * Handles essential physics
- * @inherits BehaviorSystem
+ * @extends {BehaviorSystem}
  * @constructor
  */
 var Platformer = function(options) {
@@ -178,8 +178,6 @@ Platformer.prototype.update = function(delta) {
                     // Coming from the right
                     deltaPosition.x = fromRight;
                     movingBody.velocity.x = 0;
-                } else {
-                    //debugger;
                 }
 
                 this._quadTree.moveEntity(movingEntity, deltaPosition);

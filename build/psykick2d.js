@@ -602,32 +602,6 @@ var Helper = {
     },
 
     /**
-     * Converts a valid CSS hex string into a number
-     * @param {string} hex
-     * @returns {Number}
-     */
-    cssHexToNumber: function(hex) {
-        var origHex = hex;
-        hex = hex.replace('#', '');
-        var length = hex.length;
-        if (length !== 3 && length !== 6) {
-            throw new Error('Invalid CSS hex value: ' + origHex);
-        }
-
-        if (length === 3) {
-            hex = hex.split('').reduce(function(prev, current, index) {
-                return (index === 0) ? prev + prev : prev + current + current;
-            }, hex[0]);
-        }
-
-        hex = parseInt(hex, 16);
-        if (isNaN(hex)) {
-            throw new Error('Invalid CSS hex value: ' + origHex);
-        }
-        return hex;
-    },
-
-    /**
      * Adds default properties to an object
      * @param {...Object} obj
      * @returns {Object}
@@ -1210,7 +1184,6 @@ module.exports = {
 var System = require('./system.js'),
     BehaviorSystem = require('./behavior-system.js'),
     RenderSystem = require('./render-system.js'),
-    Helper = require('./helper.js'),
 
     PIXI = require('pixi.js');
 
@@ -1221,8 +1194,6 @@ var System = require('./system.js'),
  * @param {number}        options.id                         - Unique ID assigned by the World
  * @param {Element}       options.container                  - Element which houses the Layer
  * @param {boolean}       [options.serverMode=false]         - If true, a canvas will not be made
- * @param {boolean}       [options.transparent=false]        - Should we render a background color?
- * @param {number|string} [options.backgroundColor=0x000000] - Background color if the layer isn't transparent
  */
 var Layer = function(options) {
     this.id = options.id;
@@ -1230,12 +1201,12 @@ var Layer = function(options) {
     this.camera = null;
     this.renderSystems = [];
     this.behaviorSystems = [];
-    this.visible = true;
     this.active = true;
     this.canvas = null;
+    this._serverMode = options.serverMode;
 
     // Create a new canvas to draw on
-    if (!options.serverMode) {
+    if (!this._serverMode) {
         this.canvas = document.createElement('canvas');
         this.canvas.width = parseInt(options.container.style.width, 10);
         this.canvas.height = parseInt(options.container.style.height, 10);
@@ -1246,16 +1217,35 @@ var Layer = function(options) {
         this.canvas.style.zIndex = 0;
 
         // Create a pixi.js stage and renderer
-        var backgroundColor = options.backgroundColor;
-        if (typeof backgroundColor === 'string') {
-            backgroundColor = Helper.cssHexToNumber(backgroundColor);
-        }
-        this.stage = new PIXI.Stage(backgroundColor);
+        this.stage = new PIXI.Stage(0xFFFFFF);
+        this.stage.visible = true;
         this.scene = new PIXI.DisplayObjectContainer();
         this.stage.addChild(this.scene);
-        this.renderer = PIXI.autoDetectRenderer(this.canvas.width, this.canvas.height, this.canvas);
+        this.renderer = PIXI.autoDetectRenderer(
+            this.canvas.width,
+            this.canvas.height,
+            this.canvas,
+            true
+        );
     }
+
+    // Visibility relies on having the stage initialized
+    this.visible = true;
 };
+
+// Tie in the layer visiblity with the stages visibility
+Object.defineProperty(Layer.prototype, 'visible', {
+    get: function() {
+        return !this._serverMode && this.stage.visible;
+    },
+    set: function(visible) {
+        if (!this._serverMode) {
+            this.stage.visible = visible;
+            // Make sure the stage is invalidated
+            this.renderer.render(this.stage);
+        }
+    }
+});
 
 /**
  * Removes the canvas to ensure no additional drawing is done
@@ -1345,6 +1335,9 @@ Layer.prototype.draw = function(delta) {
         }
     }
 
+    if (!this.stage.visible) {
+        debugger;
+    }
     this.renderer.render(this.stage);
 };
 
@@ -1365,7 +1358,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./helper.js":14,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
+},{"./behavior-system.js":2,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1964,7 +1957,7 @@ var World = {
     },
 
     /**
-     * Creats a new Layer
+     * Creates a new Layer
      * @returns {Layer}
      */
     createLayer: function() {

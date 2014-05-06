@@ -7,7 +7,7 @@ var Helper = require('../../helper.js'),
  * Renders an animated sprite
  *
  * @constructor
- * @inherit RenderSystem
+ * @extends {RenderSystem}
  */
 var Sprite = function() {
     RenderSystem.call(this);

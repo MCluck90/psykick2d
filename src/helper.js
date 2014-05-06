@@ -45,32 +45,6 @@ var Helper = {
     },
 
     /**
-     * Converts a valid CSS hex string into a number
-     * @param {string} hex
-     * @returns {Number}
-     */
-    cssHexToNumber: function(hex) {
-        var origHex = hex;
-        hex = hex.replace('#', '');
-        var length = hex.length;
-        if (length !== 3 && length !== 6) {
-            throw new Error('Invalid CSS hex value: ' + origHex);
-        }
-
-        if (length === 3) {
-            hex = hex.split('').reduce(function(prev, current, index) {
-                return (index === 0) ? prev + prev : prev + current + current;
-            }, hex[0]);
-        }
-
-        hex = parseInt(hex, 16);
-        if (isNaN(hex)) {
-            throw new Error('Invalid CSS hex value: ' + origHex);
-        }
-        return hex;
-    },
-
-    /**
      * Adds default properties to an object
      * @param {...Object} obj
      * @returns {Object}

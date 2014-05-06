@@ -6,18 +6,17 @@
          */
         createPlayer: function() {
             var player = P2D.World.createEntity(),
-                body = new P2D.Components.Physics.RectPhysicsBody({
+                rect = new P2D.Components.Shapes.Rectangle({
+                    color: 0xFF0000,
                     x: 100,
                     y: 10,
-                    w: 64,
-                    h: 128,
-                    mass: 3
+                    width: 64,
+                    height: 128
                 });
-            player.addComponent(body);
-            player.addComponentAs(body, 'Rectangle');
-            player.addComponent(new P2D.Components.GFX.Color({
-                colors: ['#F00']
-            }));
+            rect.mass = 3;
+            rect.velocity = { x: 0, y: 0 };
+            player.addComponent(rect);
+            player.addComponentAs(rect, 'RectPhysicsBody');
             return player;
         },
 
@@ -52,7 +51,7 @@
                 w: width,
                 h: height
             }));
-            grass.addComponent(new P2D.Components.Shape.Rectangle({
+            grass.addComponent(new P2D.Components.Shapes.Rectangle({
                 x: x,
                 y: y,
                 w: width,
@@ -66,7 +65,7 @@
 
         createDirt: function(x, y, width, height) {
             var dirt = P2D.World.createEntity();
-            dirt.addComponent(new P2D.Components.Shape.Rectangle({
+            dirt.addComponent(new P2D.Components.Shapes.Rectangle({
                 x: x,
                 y: y,
                 w: width,
