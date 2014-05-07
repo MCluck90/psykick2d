@@ -38,7 +38,10 @@ module.exports = function(grunt) {
                     'build/psykick2d-debug.js': ['src/browser.js']
                 },
                 options: {
-                    debug: true
+                    debug: true,
+                    alias: [
+                        'pixi.js/bin/pixi.dev.js:pixi.js'
+                    ]
                 }
             },
             release: {

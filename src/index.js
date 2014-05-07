@@ -5,9 +5,9 @@ module.exports = {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
-            SpriteSheet: require('./components/gfx/sprite-sheet.js'),
             Sprite: require('./components/gfx/sprite.js'),
-            Text: require('./components/gfx/text.js')
+            Text: require('./components/gfx/text.js'),
+            TiledSprite: require('./components/gfx/tiled-sprite.js')
         },
         Physics: {
             RectPhysicsBody: require('./components/physics/rect-physics-body.js')

@@ -177,122 +177,6 @@ module.exports = Color;
 },{"../../helper.js":14}],7:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js');
-
-/**
- * Defines a sprite sheet
- * @constructor
- * @param {Object} options
- * @param {String} [options.src=null]      Path to the image
- * @param {number} [options.width=0]       Width of the sprite sheet
- * @param {number} [options.height=0]      Height of the sprite sheet
- * @param {number} [options.frameWidth=0]  Width of the individual frames
- * @param {number} [options.frameHeight=0] Height of the individual frames
- * @param {number} [options.xOffset=0]     Initial x offset
- * @param {number} [options.yOffset=0]     Initial y offset
- * @param {string} [options.repeat=null]   Type of repeating pattern to use
- */
-var SpriteSheet = function(options) {
-    // Unique name for reference in Entities
-    this.NAME = 'SpriteSheet';
-
-    var self = this,
-        defaults = {
-            src: null,
-            frameWidth: 0,
-            frameHeight: 0,
-            xOffset: 0,
-            yOffset: 0,
-            repeat: null
-        };
-
-    options = Helper.defaults(options, defaults);
-    this.img = new Image();
-    this.img.src = options.src;
-    this.frameWidth = options.frameWidth;
-    this.frameHeight = options.frameHeight;
-    this.xOffset = options.xOffset;
-    this.yOffset = options.yOffset;
-    this.repeat = options.repeat;
-
-    // Flag when the image has been loaded
-    this.loaded = false;
-    this.img.onload = function() {
-        self.loaded = true;
-    };
-};
-
-/**
- * Returns the width of the sheet
- * @return {number}
- */
-SpriteSheet.prototype.getWidth = function() {
-    return this.img.width;
-};
-
-/**
- * Returns the height of the sheet
- * @return {number}
- */
-SpriteSheet.prototype.getHeight = function() {
-    return this.img.height;
-};
-
-/**
- * Sets the width of the sheet
- * @param {number} width
- */
-SpriteSheet.prototype.setWidth = function(width) {
-    this.img.width = width;
-};
-
-/**
- * Sets the height of the sheet
- * @param {number} height
- */
-SpriteSheet.prototype.setHeight = function(height) {
-    this.img.height = height;
-};
-
-/**
- * Changes the sheet image
- * @param {String} path
- */
-SpriteSheet.prototype.changeImage = function(path) {
-    this.img.src = path;
-};
-
-/**
- * Returns the offset for a given frame
- * @param {number}  [frameX=0]
- * @param {number}  [frameY=0]
- * @return {{x:number, y:number}}
- */
-SpriteSheet.prototype.getOffset = function(frameX, frameY) {
-    if (this.img.src === null) {
-        return null;
-    }
-
-    frameX = frameX || 0;
-    frameY = frameY || 0;
-
-    var offsetX = (this.frameWidth * frameX) + this.xOffset,
-        offsetY = (this.frameHeight * frameY) + this.yOffset;
-
-    if (offsetX > this.img.width || offsetY > this.img.height) {
-        return null;
-    } else {
-        return {
-            x: offsetX,
-            y: offsetY
-        };
-    }
-};
-
-module.exports = SpriteSheet;
-},{"../../helper.js":14}],8:[function(require,module,exports){
-'use strict';
-
 var Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
@@ -301,22 +185,31 @@ var Sprite = function(options) {
 
     var defaults = {
         src: '',
-        position: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        rotation: 0,
+        pivot: {
             x: 0,
             y: 0
-        },
-        rotation: 0
+        }
     };
     options = Helper.defaults(options, defaults);
     PIXI.Sprite.call(this, PIXI.Texture.fromImage(options.src));
-    this.position = options.position;
+    this.x = options.x;
+    this.y = options.y;
+    this.width = options.width;
+    this.height = options.height;
     this.rotation = options.rotation;
+    this.pivot.x = options.pivot.x;
+    this.pivot.y = options.pivot.y;
 };
 
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":14,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../helper.js":14,"pixi.js":1}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -344,7 +237,97 @@ var Text = function(options) {
 };
 
 module.exports = Text;
-},{"../../helper.js":14}],10:[function(require,module,exports){
+},{"../../helper.js":14}],9:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
+    PIXI = require('pixi.js');
+
+/**
+ * Optimized for rendering tiled sprites
+ * @param options
+ * @constructor
+ * @implements {Sprite}
+ * @extends {TilingSprite}
+ */
+var TiledSprite = function(options) {
+    this.NAME = 'TiledSprite';
+    var defaults = {
+        src: null,
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        frame: {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0
+        }
+    };
+
+    options = Helper.defaults(options, defaults);
+    this.frame = new PIXI.Rectangle(
+        options.frame.x,
+        options.frame.y,
+        options.frame.width,
+        options.frame.height
+    );
+    this._src = options.src;
+    var texture = PIXI.Texture.fromImage(options.src);
+    PIXI.TilingSprite.call(this, texture, options.width, options.height);
+    this.tilePosition.x = -this.frame.x;
+    this.tilePosition.y = -this.frame.y;
+    var self = this;
+    this.texture.baseTexture.on('loaded', function() {
+        self.texture.setFrame(self.frame);
+        self.generateTilingTexture();
+    });
+};
+
+Helper.inherit(TiledSprite, PIXI.TilingSprite);
+
+// Update the texture when the image is changed
+Object.defineProperty(TiledSprite.prototype, 'src', {
+    get: function() {
+        return this._src;
+    },
+    set: function(src) {
+        this._src = src;
+        var texture = PIXI.Texture.fromImage(src);
+        texture.setFrame(this.frame);
+    }
+});
+
+/**
+ * Update the tile frame
+ * @param {object} options
+ * @param {number} [options.x]
+ * @param {number} [options.y]
+ * @param {number} [options.width]
+ * @param {number} [options.height]
+ */
+TiledSprite.prototype.setFrame = function(options) {
+    var defaults = {
+        x: this.frame.x,
+        y: this.frame.y,
+        width: this.frame.width,
+        height: this.frame.height
+    };
+    options = Helper.defaults(options, defaults);
+    this.frame.x = options.x;
+    this.frame.y = options.y;
+    this.frame.width = options.width;
+    this.frame.height = options.height;
+    this.tilePosition.x = -options.x;
+    this.tilePosition.y = -options.y;
+
+    // Make sure the texture gets updated
+    this.src = this._src;
+};
+
+module.exports = TiledSprite;
+},{"../../helper.js":14,"pixi.js":1}],10:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -1114,9 +1097,9 @@ module.exports = {
         GFX: {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
-            SpriteSheet: require('./components/gfx/sprite-sheet.js'),
             Sprite: require('./components/gfx/sprite.js'),
-            Text: require('./components/gfx/text.js')
+            Text: require('./components/gfx/text.js'),
+            TiledSprite: require('./components/gfx/tiled-sprite.js')
         },
         Physics: {
             RectPhysicsBody: require('./components/physics/rect-physics-body.js')
@@ -1151,7 +1134,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite-sheet.js":7,"./components/gfx/sprite.js":8,"./components/gfx/text.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/rectangle.js":24,"./systems/render/sprite.js":25,"./systems/render/text.js":26,"./world.js":27}],18:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/text.js":8,"./components/gfx/tiled-sprite.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/rectangle.js":24,"./systems/render/sprite.js":25,"./systems/render/text.js":26,"./world.js":27}],18:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
