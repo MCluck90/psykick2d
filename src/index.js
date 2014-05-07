@@ -6,7 +6,6 @@ module.exports = {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             Sprite: require('./components/gfx/sprite.js'),
-            Text: require('./components/gfx/text.js'),
             TiledSprite: require('./components/gfx/tiled-sprite.js')
         },
         Physics: {
@@ -36,8 +35,7 @@ module.exports = {
         },
         Render: {
             Rectangle: require('./systems/render/rectangle.js'),
-            Sprite: require('./systems/render/sprite.js'),
-            Text: require('./systems/render/text.js')
+            Sprite: require('./systems/render/sprite.js')
         }
     },
     World: require('./world.js')
