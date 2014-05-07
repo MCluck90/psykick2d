@@ -1,6 +1,6 @@
 {
   "name": "psykick2d",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
@@ -8,7 +8,7 @@
   },
   "keywords": [
     "game",
-    "engine",
+    "game engine",
     "2d"
   ],
   "contributors": [
