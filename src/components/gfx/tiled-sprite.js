@@ -5,9 +5,19 @@ var Helper = require('../../helper.js'),
 
 /**
  * Optimized for rendering tiled sprites
- * @param options
+ * @param {object} [options]
+ * @param {string} [options.src]    Source of the texture
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.width=0]
+ * @param {number} [options.height=0]
+ * @param {object} [options.frame]  Settings for the frame of the texture
+ * @param {number} [options.frame.x=0]
+ * @param {number} [options.frame.y=0]
+ * @param {number} [options.frame.width=0]
+ * @param {number} [options.frame.height=0]
  * @constructor
- * @implements {Sprite}
+ * @implements {PIXI.Sprite}
  * @extends {TilingSprite}
  */
 var TiledSprite = function(options) {

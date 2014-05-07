@@ -4,8 +4,7 @@ var Helper = require('../../helper.js'),
     RenderSystem = require('../../render-system.js');
 
 /**
- * Renders an animated sprite
- *
+ * Renders sprites
  * @constructor
  * @extends {RenderSystem}
  */
@@ -17,7 +16,7 @@ var Sprite = function() {
 Helper.inherit(Sprite, RenderSystem);
 
 /**
- * Adds an entity to the display container
+ * Adds a sprite to the display container
  * @param {Entity} entity
  * @returns {boolean}
  */
@@ -31,7 +30,7 @@ Sprite.prototype.addEntity = function(entity) {
 };
 
 /**
- * Removes an Entity
+ * Remove a sprite
  * @param {Entity|number} entity
  * @return {boolean}
  */

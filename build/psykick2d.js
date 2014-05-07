@@ -121,8 +121,8 @@ module.exports = Camera;
 var Helper = require('../../helper.js');
 
 /**
- * @desc        Used for keeping track of an animation cycle
- * @param       {Object}    options
+ * Used for keeping track of an animation cycle
+ * @param       {object}    [options]
  * @param       {number}    [options.fps=24]             Frame per second
  * @param       {number}    [options.minFrame=0]         First frame in the animation
  * @param       {number}    [options.maxFrame=0]         Final frame in the animation
@@ -159,8 +159,8 @@ var Helper = require('../../helper.js');
 /**
  * A generic container for color information
  * @constructor
- * @param {Object}      options
- * @param {String[]}    [options.colors=[]] CSS-compatible color codes
+ * @param {object}      [options]
+ * @param {string[]}    [options.colors=[]] CSS-compatible color codes
  */
 var Color = function(options) {
     this.NAME = 'Color';
@@ -180,6 +180,21 @@ module.exports = Color;
 var Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
+/**
+ * Represents a sprite
+ * @param {object} [options]
+ * @param {string} [options.src]        Source of the texture
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.width=0]
+ * @param {number} [options.height=0]
+ * @param {number} [options.rotation=0]
+ * @param {object} [options.pivot]      Origin point
+ * @param {number} [options.pivot.x=0]
+ * @param {number} [options.pivot.y=0]
+ * @constructor
+ * @extends {PIXI.Sprite}
+ */
 var Sprite = function(options) {
     this.NAME = 'Sprite';
 
@@ -217,9 +232,19 @@ var Helper = require('../../helper.js'),
 
 /**
  * Optimized for rendering tiled sprites
- * @param options
+ * @param {object} [options]
+ * @param {string} [options.src]    Source of the texture
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.width=0]
+ * @param {number} [options.height=0]
+ * @param {object} [options.frame]  Settings for the frame of the texture
+ * @param {number} [options.frame.x=0]
+ * @param {number} [options.frame.y=0]
+ * @param {number} [options.frame.width=0]
+ * @param {number} [options.frame.height=0]
  * @constructor
- * @implements {Sprite}
+ * @implements {PIXI.Sprite}
  * @extends {TilingSprite}
  */
 var TiledSprite = function(options) {
@@ -304,6 +329,22 @@ module.exports = TiledSprite;
 
 var Helper = require('../../helper.js');
 
+/**
+ * A rectangular physics body
+ * @param {object}  [options]
+ * @param {number}  [options.x=0]
+ * @param {number}  [options.y=0]
+ * @param {number}  [options.w=0]            Width
+ * @param {number}  [options.h=0]            Height
+ * @param {object}  [options.velocity]
+ * @param {number}  [options.velocity.x=0]
+ * @param {number}  [options.velocity.y=0]
+ * @param {number}  [options.mass=0]
+ * @param {number}  [options.bounciness=0]
+ * @param {boolean} [options.solid=true]
+ * @param {number}  [options.rotation=0]
+ * @constructor
+ */
 var RectPhysicsBody = function(options) {
     this.NAME = 'RectPhysicsBody';
 
@@ -341,7 +382,18 @@ module.exports = RectPhysicsBody;
 var Helper = require('../helper.js'),
     PIXI = require('pixi.js');
 
+/**
+ * Base class for any shape components
+ * @param {object} [options]
+ * @param {string} [options.color=null]
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.rotation=0]
+ * @constructor
+ * @extends {PIXI.Graphics}
+ */
 var Shape = function(options) {
+    // We use _initializing to ensure the color property doesn't mess up during initialization
     this._initializing = true;
     PIXI.Graphics.call(this);
     delete this._initializing;
@@ -361,6 +413,7 @@ var Shape = function(options) {
 
 Helper.inherit(Shape, PIXI.Graphics);
 
+// Update the state of the shape when the color changes
 Object.defineProperty(Shape.prototype, 'color', {
     get: function() {
         return this._color;
@@ -387,9 +440,13 @@ var Helper = require('../../helper.js'),
 
 /**
  * A generic rectangle
+ * @param {object} [options]
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.w=0]    Width
+ * @param {number} [options.h=0]    Height
  * @constructor
  * @extends {Shape}
- * @param {Object}  options
  */
 var Rectangle = function(options) {
     this.NAME = 'Rectangle';
@@ -414,6 +471,7 @@ var Rectangle = function(options) {
 
 Helper.inherit(Rectangle, Shape);
 
+// Update the PIXI shape when the width and height change
 Object.defineProperties(Rectangle.prototype, {
     w: {
         get: function() {
@@ -1685,6 +1743,11 @@ var Rectangle = function() {
 
 Helper.inherit(Rectangle, RenderSystem);
 
+/**
+ * Add the rectangles to the scene
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
 Rectangle.prototype.addEntity = function(entity) {
     if (RenderSystem.prototype.addEntity.call(this, entity)) {
         this.objectContainer.addChild(entity.getComponent('Rectangle'));
@@ -1694,6 +1757,11 @@ Rectangle.prototype.addEntity = function(entity) {
     }
 };
 
+/**
+ * Remove rectangles from the scene
+ * @param {Entity|number} entity
+ * @returns {boolean}
+ */
 Rectangle.prototype.removeEntity = function(entity) {
     if (typeof entity === 'number') {
         entity = this.entities[entity];
@@ -1715,8 +1783,7 @@ var Helper = require('../../helper.js'),
     RenderSystem = require('../../render-system.js');
 
 /**
- * Renders an animated sprite
- *
+ * Renders sprites
  * @constructor
  * @extends {RenderSystem}
  */
@@ -1728,7 +1795,7 @@ var Sprite = function() {
 Helper.inherit(Sprite, RenderSystem);
 
 /**
- * Adds an entity to the display container
+ * Adds a sprite to the display container
  * @param {Entity} entity
  * @returns {boolean}
  */
@@ -1742,7 +1809,7 @@ Sprite.prototype.addEntity = function(entity) {
 };
 
 /**
- * Removes an Entity
+ * Remove a sprite
  * @param {Entity|number} entity
  * @return {boolean}
  */

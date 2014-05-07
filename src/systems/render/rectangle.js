@@ -15,6 +15,11 @@ var Rectangle = function() {
 
 Helper.inherit(Rectangle, RenderSystem);
 
+/**
+ * Add the rectangles to the scene
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
 Rectangle.prototype.addEntity = function(entity) {
     if (RenderSystem.prototype.addEntity.call(this, entity)) {
         this.objectContainer.addChild(entity.getComponent('Rectangle'));
@@ -24,6 +29,11 @@ Rectangle.prototype.addEntity = function(entity) {
     }
 };
 
+/**
+ * Remove rectangles from the scene
+ * @param {Entity|number} entity
+ * @returns {boolean}
+ */
 Rectangle.prototype.removeEntity = function(entity) {
     if (typeof entity === 'number') {
         entity = this.entities[entity];

@@ -1,4 +1,6 @@
 (function(P2D) {
+    throw new Error('This example has not been updated to match the API change. Revert to 0.3.* to play');
+
     var stats = new Stats();
     stats.setMode(0);
     stats.domElement.style.position = 'absolute';
@@ -26,7 +28,7 @@
     };
 
     var layer = P2D.World.createLayer(),
-        drawSystem = new P2D.Systems.Render.ColoredRect(),
+        drawSystem = new P2D.Systems.Render.Rectangle(),
         inputSystem = new Game.Systems.PlayerInput(),
         physicsSystem = new P2D.Systems.Behavior.Physics.Platformer({ cellSize: 100 }),
         spriteSystem = new P2D.Systems.Render.Sprite(),

@@ -3,7 +3,18 @@
 var Helper = require('../helper.js'),
     PIXI = require('pixi.js');
 
+/**
+ * Base class for any shape components
+ * @param {object} [options]
+ * @param {string} [options.color=null]
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.rotation=0]
+ * @constructor
+ * @extends {PIXI.Graphics}
+ */
 var Shape = function(options) {
+    // We use _initializing to ensure the color property doesn't mess up during initialization
     this._initializing = true;
     PIXI.Graphics.call(this);
     delete this._initializing;
@@ -23,6 +34,7 @@ var Shape = function(options) {
 
 Helper.inherit(Shape, PIXI.Graphics);
 
+// Update the state of the shape when the color changes
 Object.defineProperty(Shape.prototype, 'color', {
     get: function() {
         return this._color;

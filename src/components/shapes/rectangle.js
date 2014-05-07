@@ -5,9 +5,13 @@ var Helper = require('../../helper.js'),
 
 /**
  * A generic rectangle
+ * @param {object} [options]
+ * @param {number} [options.x=0]
+ * @param {number} [options.y=0]
+ * @param {number} [options.w=0]    Width
+ * @param {number} [options.h=0]    Height
  * @constructor
  * @extends {Shape}
- * @param {Object}  options
  */
 var Rectangle = function(options) {
     this.NAME = 'Rectangle';
@@ -32,6 +36,7 @@ var Rectangle = function(options) {
 
 Helper.inherit(Rectangle, Shape);
 
+// Update the PIXI shape when the width and height change
 Object.defineProperties(Rectangle.prototype, {
     w: {
         get: function() {

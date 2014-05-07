@@ -3,8 +3,8 @@
 var Helper = require('../../helper.js');
 
 /**
- * @desc        Used for keeping track of an animation cycle
- * @param       {Object}    options
+ * Used for keeping track of an animation cycle
+ * @param       {object}    [options]
  * @param       {number}    [options.fps=24]             Frame per second
  * @param       {number}    [options.minFrame=0]         First frame in the animation
  * @param       {number}    [options.maxFrame=0]         Final frame in the animation

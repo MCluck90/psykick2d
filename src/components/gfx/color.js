@@ -5,8 +5,8 @@ var Helper = require('../../helper.js');
 /**
  * A generic container for color information
  * @constructor
- * @param {Object}      options
- * @param {String[]}    [options.colors=[]] CSS-compatible color codes
+ * @param {object}      [options]
+ * @param {string[]}    [options.colors=[]] CSS-compatible color codes
  */
 var Color = function(options) {
     this.NAME = 'Color';
