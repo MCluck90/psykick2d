@@ -1171,6 +1171,8 @@ module.exports = {
 var // Determine if we're running on the server
     win = (typeof window !== 'undefined') ? window : null,
 
+    nav = (typeof navigator !== 'undefined') ? navigator : null,
+
     // Store the keys current pressed
     keysPressed = {},
 
@@ -1184,7 +1186,22 @@ var // Determine if we're running on the server
     },
 
     // Contains the position of the game window
-    gamePosition = null;
+    gamePosition = null,
+
+    // Attempt to add gamepad support
+    gamepadSupportAvailable = !!(nav.webkitGetGamepads || nav.getGamepads),
+    getGamepads = function() {
+        if (!gamepadSupportAvailable) {
+            return null;
+        }
+        if (nav.webkitGetGamepads) {
+            return nav.webkitGetGamepads();
+        } else if (nav.getGamepads) {
+            return nav.getGamepads();
+        }
+    },
+
+    currentPadIndex = 0;
 
 /**
  * Keeps track of all user input
@@ -1336,7 +1353,129 @@ var Input = {
         }
     },
     Gamepad: {
+        /**
+         * Returns true if gamepad support is available
+         * @returns {boolean}
+         */
+        isSupported: function() {
+            return gamepadSupportAvailable;
+        },
 
+        /**
+         * Returns true if a given gamepad is connected
+         * Defaults to the currently selected pad
+         * @param {number} [index=currentPadIndex]
+         * @returns {boolean}
+         */
+        isConnected: function(index) {
+            if (!gamepadSupportAvailable) {
+                return false;
+            }
+
+            index = (index === undefined) ? currentPadIndex : index;
+            var gamepad = getGamepads()[index];
+
+            return (gamepad && gamepad.connected);
+        },
+
+        /**
+         * Returns the current gamepad, if it's connected
+         * @returns {Gamepad|null}
+         */
+        current: function() {
+            if (!gamepadSupportAvailable) {
+                return null;
+            }
+
+            var gamepads = getGamepads();
+            return gamepads[currentPadIndex] || null;
+        },
+
+        /**
+         * Moves to the next gamepad in the collection and returns it
+         * @returns {Gamepad|null}
+         */
+        next: function() {
+            if (!gamepadSupportAvailable) {
+                return null;
+            }
+
+            currentPadIndex += 1;
+            var gamepads = getGamepads(),
+                numOfPossiblePads = gamepads.length;
+            while (!gamepads[currentPadIndex]) {
+                currentPadIndex += 1;
+                if (currentPadIndex === numOfPossiblePads) {
+                    currentPadIndex = 0;
+                    break;
+                }
+            }
+
+            return gamepads[currentPadIndex] || null;
+        },
+
+        /**
+         * Moves to the previous gamepad in the collection and returns it
+         * @returns {Gamepad|null}
+         */
+        prev: function() {
+            if (!gamepadSupportAvailable) {
+                return null;
+            }
+
+            currentPadIndex -= 1;
+            var gamepads = getGamepads();
+            while (!gamepads[currentPadIndex]) {
+                currentPadIndex -= 1;
+                if (currentPadIndex === 0) {
+                    break;
+                }
+            }
+
+            return gamepads[currentPadIndex] || null;
+        },
+
+        /**
+         * Returns the value for a given button input
+         * @param {number} buttonID
+         * @returns {number}
+         */
+        getButton: function(buttonID) {
+            var gamepad = Input.Gamepad.current(),
+                button = (gamepad) ? gamepad.buttons[buttonID] : null;
+            if (!button) {
+                return 0;
+            }
+
+            return button.value || button || 0;
+        },
+
+        /**
+         * Returns the value for a given axis
+         * @param {number} axisID
+         * @returns {number}
+         */
+        getAxis: function(axisID) {
+            var gamepad = Input.Gamepad.current(),
+                axis = (gamepad) ? gamepad.axes[axisID] : null;
+            if (!axis) {
+                return 0;
+            }
+
+            return axis;
+        },
+
+        /**
+         * Returns all available gamepads
+         * @returns {GamepadList|Array}
+         */
+        getGamepads: function() {
+            if (gamepadSupportAvailable) {
+                return getGamepads();
+            } else {
+                return [];
+            }
+        }
     }
 };
 
@@ -1373,6 +1512,36 @@ module.exports = {
         Left: 0,
         Middle: 1,
         Right: 2
+    },
+
+    // Gamepad buttons for known pads
+    Gamepad: {
+        Xbox: {
+            A: 0,
+            B: 1,
+            X: 2,
+            Y: 3,
+            LeftBumper: 4,
+            RightBumper: 5,
+            LeftTrigger: 6,
+            RightTrigger: 7,
+            Back: 8,
+            Start: 9,
+            DPadUp: 12,
+            DPadDown: 13,
+            DPadLeft: 14,
+            DPadRight: 15,
+            LeftStick: {
+                Click: 10,
+                X: 0,
+                Y: 1
+            },
+            RightStick: {
+                Click: 11,
+                X: 2,
+                Y: 3
+            }
+        }
     }
 };
 },{}],19:[function(require,module,exports){

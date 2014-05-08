@@ -29,5 +29,35 @@ module.exports = {
         Left: 0,
         Middle: 1,
         Right: 2
+    },
+
+    // Gamepad buttons for known pads
+    Gamepad: {
+        Xbox: {
+            A: 0,
+            B: 1,
+            X: 2,
+            Y: 3,
+            LeftBumper: 4,
+            RightBumper: 5,
+            LeftTrigger: 6,
+            RightTrigger: 7,
+            Back: 8,
+            Start: 9,
+            DPadUp: 12,
+            DPadDown: 13,
+            DPadLeft: 14,
+            DPadRight: 15,
+            LeftStick: {
+                Click: 10,
+                X: 0,
+                Y: 1
+            },
+            RightStick: {
+                Click: 11,
+                X: 2,
+                Y: 3
+            }
+        }
     }
 };
