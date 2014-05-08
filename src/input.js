@@ -40,18 +40,38 @@ var Input = {
         };
 
         // Make sure that we only pay attention to the mouse when it's on screen
-        gameContainer.addEventListener('mousemove', function(evt) {
+        function onMouseMove(evt) {
             evt.preventDefault();
             globalMouseState = globalMouseState || {
                 x: 0,
                 y: 0,
-                button: null
+                buttons: []
             };
             globalMouseState.x = evt.clientX - gamePosition.x;
             globalMouseState.y = evt.clientY - gamePosition.y;
-        });
+        }
+
+        gameContainer.addEventListener('mousemove', onMouseMove);
+        gameContainer.addEventListener('mouseover', onMouseMove);
+
         gameContainer.addEventListener('mouseleave', function() {
             globalMouseState = null;
+        });
+
+        gameContainer.addEventListener('mousedown', function(evt) {
+            var button = evt.button,
+                index = globalMouseState.buttons.indexOf(button);
+            if (index === -1) {
+                globalMouseState.buttons.push(button);
+            }
+        });
+
+        gameContainer.addEventListener('mouseup', function(evt) {
+            var button = evt.button,
+                index = globalMouseState.buttons.indexOf(button);
+            if (index !== -1) {
+                globalMouseState.buttons.splice(index, 1);
+            }
         });
     },
     Mouse: {
@@ -80,6 +100,15 @@ var Input = {
          */
         get Y() {
             return (globalMouseState !== null) ? layerMousePosition.y : null;
+        },
+
+        /**
+         * Checks to see if a mouse button is clicked
+         * @param {number} button
+         * @returns {boolean}
+         */
+        isButtonDown: function(button) {
+            return (globalMouseState !== null && globalMouseState.buttons.indexOf(button) !== -1);
         }
     },
     Keyboard: {

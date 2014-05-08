@@ -1177,6 +1177,7 @@ var // Determine if we're running on the server
     // Store the state of the mouse
     globalMouseState = null,
 
+    // Stores the position relative to the active layer
     layerMousePosition = {
         x: 0,
         y: 0
@@ -1206,36 +1207,76 @@ var Input = {
             y: Math.ceil(rect.top)
         };
 
-        gameContainer.addEventListener('mousemove', function(evt) {
+        // Make sure that we only pay attention to the mouse when it's on screen
+        function onMouseMove(evt) {
             evt.preventDefault();
             globalMouseState = globalMouseState || {
                 x: 0,
                 y: 0,
-                button: null
+                buttons: []
             };
             globalMouseState.x = evt.clientX - gamePosition.x;
             globalMouseState.y = evt.clientY - gamePosition.y;
-        });
+        }
+
+        gameContainer.addEventListener('mousemove', onMouseMove);
+        gameContainer.addEventListener('mouseover', onMouseMove);
+
         gameContainer.addEventListener('mouseleave', function() {
             globalMouseState = null;
         });
+
+        gameContainer.addEventListener('mousedown', function(evt) {
+            var button = evt.button,
+                index = globalMouseState.buttons.indexOf(button);
+            if (index === -1) {
+                globalMouseState.buttons.push(button);
+            }
+        });
+
+        gameContainer.addEventListener('mouseup', function(evt) {
+            var button = evt.button,
+                index = globalMouseState.buttons.indexOf(button);
+            if (index !== -1) {
+                globalMouseState.buttons.splice(index, 1);
+            }
+        });
     },
     Mouse: {
-        setLayerPosition: function(x, y) {
+        /**
+         * Adjusts the mouse position relative to a container
+         * @param {DisplayObjectContainer} objectContainer
+         */
+        setRelativePosition: function(objectContainer) {
             if (globalMouseState) {
-                layerMousePosition.x = globalMouseState.x - x || 0;
-                layerMousePosition.y = globalMouseState.y - y || 0;
+                layerMousePosition.x = globalMouseState.x - objectContainer.x;
+                layerMousePosition.y = globalMouseState.y - objectContainer.y;
             }
         },
-        setSystemPosition: function(x, y) {
-            layerMousePosition.x -= x || 0;
-            layerMousePosition.y -= y || 0;
-        },
+
+        /**
+         * X position
+         * @returns {number}
+         */
         get X() {
             return (globalMouseState !== null) ? layerMousePosition.x : null;
         },
+
+        /**
+         * Y position
+         * @returns {number}
+         */
         get Y() {
             return (globalMouseState !== null) ? layerMousePosition.y : null;
+        },
+
+        /**
+         * Checks to see if a mouse button is clicked
+         * @param {number} button
+         * @returns {boolean}
+         */
+        isButtonDown: function(button) {
+            return (globalMouseState !== null && globalMouseState.buttons.indexOf(button) !== -1);
         }
     },
     Keyboard: {
@@ -2102,9 +2143,7 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
-                var scene = layer.scene;
-                Input.Mouse.setLayerPosition(scene.x, scene.y);
-                console.log(Input.Mouse.X + ', ' + Input.Mouse.Y);
+                Input.Mouse.setRelativePosition(layer.scene);
                 layer.update(delta);
             }
         }
