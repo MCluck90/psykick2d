@@ -1,7 +1,7 @@
 'use strict';
 
 var
-    // Determine if we're running in a server environment or now
+    // Determine if we're running in a server environment or not
     win = (typeof window !== 'undefined') ? window : null,
 
     // Save bytes in the minified version (see Underscore.js)
@@ -105,6 +105,7 @@ var Helper = {
      * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
      * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
      * @return {boolean}
+     * @deprecated Use Input.Keyboard.isKeyDown
      */
     isKeyDown: function(keyCode, modifiers) {
         modifiers = modifiers || {};
@@ -133,6 +134,7 @@ var Helper = {
     /**
      * Returns all of the keys currently pressed
      * @return {Array}
+     * @deprecated Use Input.Keyboard.getKeysDown
      */
     getKeysDown: function() {
         var keys = [];

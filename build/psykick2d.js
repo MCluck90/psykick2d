@@ -675,7 +675,7 @@ var Helper = {
      * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
      * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
      * @return {boolean}
-     * @deprecated Use Input.isKeyDown
+     * @deprecated Use Input.Keyboard.isKeyDown
      */
     isKeyDown: function(keyCode, modifiers) {
         modifiers = modifiers || {};
@@ -704,7 +704,7 @@ var Helper = {
     /**
      * Returns all of the keys currently pressed
      * @return {Array}
-     * @deprecated Use Input.getKeysDown
+     * @deprecated Use Input.Keyboard.getKeysDown
      */
     getKeysDown: function() {
         var keys = [];
@@ -1207,7 +1207,7 @@ var Input = {
             y: Math.ceil(rect.top)
         };
 
-        // Make sure that we only pay attention to the mouse when it's on screen
+        // Setup mouse tracking
         function onMouseMove(evt) {
             evt.preventDefault();
             globalMouseState = globalMouseState || {
@@ -1239,6 +1239,23 @@ var Input = {
                 index = globalMouseState.buttons.indexOf(button);
             if (index !== -1) {
                 globalMouseState.buttons.splice(index, 1);
+            }
+        });
+
+        // Setup keyboard tracking
+        gameContainer.addEventListener('keydown', function(evt) {
+            keysPressed[evt.keyCode] = {
+                pressed: true,
+                shift:   evt.shiftKey,
+                ctrl:    evt.ctrlKey,
+                alt:     evt.altKey
+            };
+        });
+
+        gameContainer.addEventListener('keyup', function(evt) {
+            var keyCode = evt.keyCode;
+            if (keysPressed[keyCode]) {
+                keysPressed[keyCode].pressed = false;
             }
         });
     },
@@ -1280,7 +1297,43 @@ var Input = {
         }
     },
     Keyboard: {
+        /**
+         * Returns if a given key is pressed
+         * @param {number}   keyCode                Key code. Usually obtained from Keys
+         * @param {object}  [modifiers]
+         * @param {boolean} [modifiers.shift=false] If true, will check if shift was held at the time
+         * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
+         * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
+         * @returns {boolean}
+         */
+        isKeyDown: function(keyCode, modifiers) {
+            modifiers = modifiers || {};
+            var defaultModifiers = {
+                    shift: false,
+                    ctrl: false,
+                    alt: false
+                },
+                keyInfo = keysPressed[keyCode];
+            modifiers = this.defaults(modifiers, defaultModifiers);
+            return  (keyInfo && keyInfo.pressed)        &&
+                   !(modifiers.shift && !keyInfo.shift) &&
+                   !(modifiers.ctrl  && !keyInfo.ctrl)  &&
+                   !(modifiers.alt   && !keyInfo.alt);
+        },
 
+        /**
+         * Returns all of the keys current pressed
+         * @returns {number[]}
+         */
+        getKeysDown: function() {
+            var keys = [];
+            for (var keyCode in keysPressed) {
+                if (keysPressed[keyCode].pressed) {
+                    keys.push(keyCode);
+                }
+            }
+            return keys;
+        }
     },
     Gamepad: {
 
