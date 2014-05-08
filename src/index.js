@@ -13,6 +13,7 @@ module.exports = {
         },
         Shape: require('./components/shape.js'),
         Shapes: {
+            Circle: require('./components/shapes/circle.js'),
             Rectangle: require('./components/shapes/rectangle.js')
         }
     },

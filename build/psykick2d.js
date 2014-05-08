@@ -86,11 +86,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":13,"./system.js":21}],3:[function(require,module,exports){
+},{"./helper.js":14,"./system.js":22}],3:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":16}],4:[function(require,module,exports){
+},{"./index.js":17}],4:[function(require,module,exports){
 'use strict';
 
 /**
@@ -151,7 +151,7 @@ var Animation = function(options) {
 };
 
 module.exports = Animation;
-},{"../../helper.js":13}],6:[function(require,module,exports){
+},{"../../helper.js":14}],6:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -174,7 +174,7 @@ var Color = function(options) {
 };
 
 module.exports = Color;
-},{"../../helper.js":13}],7:[function(require,module,exports){
+},{"../../helper.js":14}],7:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -224,7 +224,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":13,"pixi.js":1}],8:[function(require,module,exports){
+},{"../../helper.js":14,"pixi.js":1}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -324,7 +324,7 @@ TiledSprite.prototype.setFrame = function(options) {
 };
 
 module.exports = TiledSprite;
-},{"../../helper.js":13,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../helper.js":14,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -376,7 +376,7 @@ var RectPhysicsBody = function(options) {
 };
 
 module.exports = RectPhysicsBody;
-},{"../../helper.js":13}],10:[function(require,module,exports){
+},{"../../helper.js":14}],10:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../helper.js'),
@@ -432,7 +432,58 @@ Object.defineProperty(Shape.prototype, 'color', {
 });
 
 module.exports = Shape;
-},{"../helper.js":13,"pixi.js":1}],11:[function(require,module,exports){
+},{"../helper.js":14,"pixi.js":1}],11:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
+    Shape = require('../shape.js');
+
+/**
+ * A generic circle
+ * @param {object} options
+ * @constructor
+ * @extends {Shape}
+ */
+var Circle = function(options) {
+    this.NAME = 'Circle';
+
+    var defaults = {
+        x: 0,
+        y: 0,
+        radius: 0
+    };
+
+    options = Helper.defaults(options, defaults);
+    Shape.call(this, options);
+
+    this.x = options.x;
+    this.y = options.y;
+    this._radius = 0;
+    this.radius = options.radius;
+};
+
+Helper.inherit(Circle, Shape);
+
+Object.defineProperty(Circle.prototype, 'radius', {
+    get: function() {
+        return this._radius;
+    },
+    set: function(val) {
+        this._radius = val;
+        this._setShape();
+    }
+});
+
+Circle.prototype._setShape = function() {
+    if (this._color !== null) {
+        this.beginFill(this.color);
+        this.drawCircle(this.x, this.y, this._radius);
+        this.endFill();
+    }
+};
+
+module.exports = Circle;
+},{"../../helper.js":14,"../shape.js":10}],12:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -496,13 +547,13 @@ Object.defineProperties(Rectangle.prototype, {
 Rectangle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawRect(this.x, this.y, this.w, this.w);
+        this.drawRect(this.x, this.y, this._w, this._h);
         this.endFill();
     }
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":13,"../shape.js":10}],12:[function(require,module,exports){
+},{"../../helper.js":14,"../shape.js":10}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -567,7 +618,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var
@@ -729,7 +780,7 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -908,7 +959,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
 };
 
 module.exports = CollisionGrid;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1121,7 +1172,7 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 };
 
 module.exports = QuadTree;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
@@ -1137,6 +1188,7 @@ module.exports = {
         },
         Shape: require('./components/shape.js'),
         Shapes: {
+            Circle: require('./components/shapes/circle.js'),
             Rectangle: require('./components/shapes/rectangle.js')
         }
     },
@@ -1165,7 +1217,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/rectangle.js":11,"./entity.js":12,"./helper.js":13,"./helpers/collision-grid.js":14,"./helpers/quad-tree.js":15,"./input.js":17,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/rectangle.js":24,"./systems/render/sprite.js":25,"./world.js":26}],17:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./input.js":18,"./keys.js":19,"./layer.js":20,"./render-system.js":21,"./system.js":22,"./systems/behavior/animate.js":23,"./systems/behavior/physics/platformer.js":24,"./systems/render/rectangle.js":25,"./systems/render/sprite.js":26,"./world.js":27}],18:[function(require,module,exports){
 'use strict';
 
 var // Determine if we're running on the server
@@ -1480,7 +1532,7 @@ var Input = {
 };
 
 module.exports = Input;
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1544,7 +1596,7 @@ module.exports = {
         }
     }
 };
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1724,7 +1776,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
+},{"./behavior-system.js":2,"./render-system.js":21,"./system.js":22,"pixi.js":1}],21:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1794,7 +1846,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":13,"./system.js":21,"pixi.js":1}],21:[function(require,module,exports){
+},{"./helper.js":14,"./system.js":22,"pixi.js":1}],22:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1850,7 +1902,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":12,"./helper.js":13}],22:[function(require,module,exports){
+},{"./entity.js":13,"./helper.js":14}],23:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1890,7 +1942,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":13}],23:[function(require,module,exports){
+},{"../../behavior-system.js":2,"../../helper.js":14}],24:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -2080,7 +2132,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":13,"../../../helpers/quad-tree.js":15}],24:[function(require,module,exports){
+},{"../../../behavior-system.js":2,"../../../helper.js":14,"../../../helpers/quad-tree.js":16}],25:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2131,7 +2183,7 @@ Rectangle.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":13,"../../render-system.js":20}],25:[function(require,module,exports){
+},{"../../helper.js":14,"../../render-system.js":21}],26:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2182,7 +2234,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":13,"../../render-system.js":20}],26:[function(require,module,exports){
+},{"../../helper.js":14,"../../render-system.js":21}],27:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -2454,4 +2506,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":12,"./helper.js":13,"./input.js":17,"./layer.js":19}]},{},[3]);
+},{"./entity.js":13,"./helper.js":14,"./input.js":18,"./layer.js":20}]},{},[3]);
