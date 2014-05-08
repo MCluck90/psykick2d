@@ -22,5 +22,12 @@ module.exports = {
     Left: 37, Up: 38, Right: 39, Down: 40,
 
     // Common keys
-    Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
+    Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8,
+
+    // Mouse buttons/wheel
+    Mouse: {
+        Left: 0,
+        Middle: 1,
+        Right: 2
+    }
 };

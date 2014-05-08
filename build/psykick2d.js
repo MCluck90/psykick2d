@@ -86,7 +86,7 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":13,"./system.js":20}],3:[function(require,module,exports){
+},{"./helper.js":13,"./system.js":21}],3:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
@@ -571,7 +571,7 @@ module.exports = Entity;
 'use strict';
 
 var
-    // Determine if we're running in a server environment or now
+    // Determine if we're running in a server environment or not
     win = (typeof window !== 'undefined') ? window : null,
 
     // Save bytes in the minified version (see Underscore.js)
@@ -675,6 +675,7 @@ var Helper = {
      * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
      * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
      * @return {boolean}
+     * @deprecated Use Input.isKeyDown
      */
     isKeyDown: function(keyCode, modifiers) {
         modifiers = modifiers || {};
@@ -703,6 +704,7 @@ var Helper = {
     /**
      * Returns all of the keys currently pressed
      * @return {Array}
+     * @deprecated Use Input.getKeysDown
      */
     getKeysDown: function() {
         var keys = [];
@@ -1144,6 +1146,7 @@ module.exports = {
         CollisionGrid: require('./helpers/collision-grid.js'),
         QuadTree: require('./helpers/quad-tree.js')
     },
+    Input: require('./input.js'),
     Keys: require('./keys.js'),
     Layer: require('./layer.js'),
     RenderSystem: require('./render-system.js'),
@@ -1162,7 +1165,89 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/rectangle.js":11,"./entity.js":12,"./helper.js":13,"./helpers/collision-grid.js":14,"./helpers/quad-tree.js":15,"./keys.js":17,"./layer.js":18,"./render-system.js":19,"./system.js":20,"./systems/behavior/animate.js":21,"./systems/behavior/physics/platformer.js":22,"./systems/render/rectangle.js":23,"./systems/render/sprite.js":24,"./world.js":25}],17:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/rectangle.js":11,"./entity.js":12,"./helper.js":13,"./helpers/collision-grid.js":14,"./helpers/quad-tree.js":15,"./input.js":17,"./keys.js":18,"./layer.js":19,"./render-system.js":20,"./system.js":21,"./systems/behavior/animate.js":22,"./systems/behavior/physics/platformer.js":23,"./systems/render/rectangle.js":24,"./systems/render/sprite.js":25,"./world.js":26}],17:[function(require,module,exports){
+'use strict';
+
+var // Determine if we're running on the server
+    win = (typeof window !== 'undefined') ? window : null,
+
+    // Store the keys current pressed
+    keysPressed = {},
+
+    // Store the state of the mouse
+    globalMouseState = null,
+
+    layerMousePosition = {
+        x: 0,
+        y: 0
+    },
+
+    // Contains the position of the game window
+    gamePosition = null;
+
+/**
+ * Keeps track of all user input
+ */
+var Input = {
+    /**
+     * Initializes the event handlers
+     * @param {HTMLElement} gameContainer
+     * @private
+     */
+    _init: function(gameContainer) {
+        if (!win) {
+            return;
+        }
+        keysPressed = {};
+
+        var rect = gameContainer.getBoundingClientRect();
+        gamePosition = {
+            x: Math.ceil(rect.left),
+            y: Math.ceil(rect.top)
+        };
+
+        gameContainer.addEventListener('mousemove', function(evt) {
+            evt.preventDefault();
+            globalMouseState = globalMouseState || {
+                x: 0,
+                y: 0,
+                button: null
+            };
+            globalMouseState.x = evt.clientX - gamePosition.x;
+            globalMouseState.y = evt.clientY - gamePosition.y;
+        });
+        gameContainer.addEventListener('mouseleave', function() {
+            globalMouseState = null;
+        });
+    },
+    Mouse: {
+        setLayerPosition: function(x, y) {
+            if (globalMouseState) {
+                layerMousePosition.x = globalMouseState.x - x || 0;
+                layerMousePosition.y = globalMouseState.y - y || 0;
+            }
+        },
+        setSystemPosition: function(x, y) {
+            layerMousePosition.x -= x || 0;
+            layerMousePosition.y -= y || 0;
+        },
+        get X() {
+            return (globalMouseState !== null) ? layerMousePosition.x : null;
+        },
+        get Y() {
+            return (globalMouseState !== null) ? layerMousePosition.y : null;
+        }
+    },
+    Keyboard: {
+
+    },
+    Gamepad: {
+
+    }
+};
+
+module.exports = Input;
+},{}],18:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1187,9 +1272,16 @@ module.exports = {
     Left: 37, Up: 38, Right: 39, Down: 40,
 
     // Common keys
-    Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8
+    Space: 32, Enter: 13, Tab: 9, Esc: 27, Backspace: 8,
+
+    // Mouse buttons/wheel
+    Mouse: {
+        Left: 0,
+        Middle: 1,
+        Right: 2
+    }
 };
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1369,7 +1461,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./render-system.js":19,"./system.js":20,"pixi.js":1}],19:[function(require,module,exports){
+},{"./behavior-system.js":2,"./render-system.js":20,"./system.js":21,"pixi.js":1}],20:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1439,7 +1531,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":13,"./system.js":20,"pixi.js":1}],20:[function(require,module,exports){
+},{"./helper.js":13,"./system.js":21,"pixi.js":1}],21:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1495,7 +1587,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":12,"./helper.js":13}],21:[function(require,module,exports){
+},{"./entity.js":12,"./helper.js":13}],22:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1535,7 +1627,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":13}],22:[function(require,module,exports){
+},{"../../behavior-system.js":2,"../../helper.js":13}],23:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -1725,7 +1817,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":13,"../../../helpers/quad-tree.js":15}],23:[function(require,module,exports){
+},{"../../../behavior-system.js":2,"../../../helper.js":13,"../../../helpers/quad-tree.js":15}],24:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1776,7 +1868,7 @@ Rectangle.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":13,"../../render-system.js":19}],24:[function(require,module,exports){
+},{"../../helper.js":13,"../../render-system.js":20}],25:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1827,11 +1919,12 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":13,"../../render-system.js":19}],25:[function(require,module,exports){
+},{"../../helper.js":13,"../../render-system.js":20}],26:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
     Helper = require('./helper.js'),
+    Input = require('./input.js'),
     Layer = require('./layer.js'),
 
 
@@ -1916,6 +2009,8 @@ var World = {
                 window.mozRequestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
                 window.msRequestAnimationFrame;
+
+            Input._init(canvasContainer);
         } else {
             requestAnimationFrame = function(callback) {
                 setTimeout(callback, 1000 / 60);
@@ -2007,7 +2102,10 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
-                layersInDrawOrder[i].update(delta);
+                var scene = layer.scene;
+                Input.Mouse.setLayerPosition(scene.x, scene.y);
+                console.log(Input.Mouse.X + ', ' + Input.Mouse.Y);
+                layer.update(delta);
             }
         }
 
@@ -2095,4 +2193,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":12,"./helper.js":13,"./layer.js":18}]},{},[3]);
+},{"./entity.js":12,"./helper.js":13,"./input.js":17,"./layer.js":19}]},{},[3]);

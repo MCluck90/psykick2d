@@ -22,6 +22,7 @@ module.exports = {
         CollisionGrid: require('./helpers/collision-grid.js'),
         QuadTree: require('./helpers/quad-tree.js')
     },
+    Input: require('./input.js'),
     Keys: require('./keys.js'),
     Layer: require('./layer.js'),
     RenderSystem: require('./render-system.js'),

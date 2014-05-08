@@ -2,6 +2,7 @@
 
 var Entity = require('./entity.js'),
     Helper = require('./helper.js'),
+    Input = require('./input.js'),
     Layer = require('./layer.js'),
 
 
@@ -86,6 +87,8 @@ var World = {
                 window.mozRequestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
                 window.msRequestAnimationFrame;
+
+            Input._init(canvasContainer);
         } else {
             requestAnimationFrame = function(callback) {
                 setTimeout(callback, 1000 / 60);
@@ -177,7 +180,8 @@ var World = {
         for (i = 0, len = layersInDrawOrder.length; i < len; i++) {
             var layer = layersInDrawOrder[i];
             if (layer.active) {
-                layersInDrawOrder[i].update(delta);
+                Input.Mouse.setRelativePosition(layer.scene);
+                layer.update(delta);
             }
         }
 
