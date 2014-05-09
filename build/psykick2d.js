@@ -1212,12 +1212,13 @@ module.exports = {
         },
         Render: {
             Rectangle: require('./systems/render/rectangle.js'),
+            Shape: require('./systems/render/shape.js'),
             Sprite: require('./systems/render/sprite.js')
         }
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./input.js":18,"./keys.js":19,"./layer.js":20,"./render-system.js":21,"./system.js":22,"./systems/behavior/animate.js":23,"./systems/behavior/physics/platformer.js":24,"./systems/render/rectangle.js":25,"./systems/render/sprite.js":26,"./world.js":27}],18:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./input.js":18,"./keys.js":19,"./layer.js":20,"./render-system.js":21,"./system.js":22,"./systems/behavior/animate.js":23,"./systems/behavior/physics/platformer.js":24,"./systems/render/rectangle.js":25,"./systems/render/shape.js":26,"./systems/render/sprite.js":27,"./world.js":28}],18:[function(require,module,exports){
 'use strict';
 
 var // Determine if we're running on the server
@@ -2190,6 +2191,66 @@ var Helper = require('../../helper.js'),
     RenderSystem = require('../../render-system.js');
 
 /**
+ * Renders arbitrary shapes
+ * @constructor
+ * @extends {RenderSystem}
+ */
+var Shape = function() {
+    RenderSystem.call(this);
+    this.shapeComponents = ['Shape', 'Rectangle', 'Circle'];
+    this._componentTypeByEntity = {};
+};
+
+Helper.inherit(Shape, RenderSystem);
+
+/**
+ * Add shapes to the scene
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
+Shape.prototype.addEntity = function(entity) {
+    for (var i = 0, len = this.shapeComponents.length; i < len; i++) {
+        var componentType = this.shapeComponents[i],
+            component = entity.getComponent(componentType);
+        if (component) {
+            this._componentTypeByEntity[entity.id] = componentType;
+            this.objectContainer.addChild(component);
+            this.entities[entity.id] = entity;
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
+ * Remove shapes from the scene
+ * @param {Entity|number} entity
+ * @returns {boolean}
+ */
+Shape.prototype.removeEntity = function(entity) {
+    if (typeof entity === 'number') {
+        entity = this.entities[entity];
+    }
+
+    if (RenderSystem.prototype.removeEntity.call(this, entity)) {
+        var componentType = this._componentTypeByEntity[entity.id],
+            component = entity.getComponent(componentType);
+        this.objectContainer.removeChild(component);
+        delete this._componentTypeByEntity[entity.id];
+        return true;
+    } else {
+        return false;
+    }
+};
+
+module.exports = Shape;
+},{"../../helper.js":14,"../../render-system.js":21}],27:[function(require,module,exports){
+'use strict';
+
+var Helper = require('../../helper.js'),
+    RenderSystem = require('../../render-system.js');
+
+/**
  * Renders sprites
  * @constructor
  * @extends {RenderSystem}
@@ -2234,7 +2295,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":14,"../../render-system.js":21}],27:[function(require,module,exports){
+},{"../../helper.js":14,"../../render-system.js":21}],28:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),

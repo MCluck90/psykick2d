@@ -37,6 +37,7 @@ module.exports = {
         },
         Render: {
             Rectangle: require('./systems/render/rectangle.js'),
+            Shape: require('./systems/render/shape.js'),
             Sprite: require('./systems/render/sprite.js')
         }
     },
