@@ -17,6 +17,10 @@ module.exports = {
             Rectangle: require('./components/shapes/rectangle.js')
         }
     },
+    DataStructures: {
+        CollisionGrid: require('./data-structures/collision-grid.js'),
+        QuadTree: require('./data-structures/quad-tree.js')
+    },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
     Helpers: {

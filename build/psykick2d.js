@@ -86,11 +86,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":14,"./system.js":22}],3:[function(require,module,exports){
+},{"./helper.js":16,"./system.js":24}],3:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":17}],4:[function(require,module,exports){
+},{"./index.js":19}],4:[function(require,module,exports){
 'use strict';
 
 /**
@@ -151,7 +151,7 @@ var Animation = function(options) {
 };
 
 module.exports = Animation;
-},{"../../helper.js":14}],6:[function(require,module,exports){
+},{"../../helper.js":16}],6:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -174,7 +174,7 @@ var Color = function(options) {
 };
 
 module.exports = Color;
-},{"../../helper.js":14}],7:[function(require,module,exports){
+},{"../../helper.js":16}],7:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -224,7 +224,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":14,"pixi.js":1}],8:[function(require,module,exports){
+},{"../../helper.js":16,"pixi.js":1}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -324,7 +324,7 @@ TiledSprite.prototype.setFrame = function(options) {
 };
 
 module.exports = TiledSprite;
-},{"../../helper.js":14,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../helper.js":16,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -376,7 +376,7 @@ var RectPhysicsBody = function(options) {
 };
 
 module.exports = RectPhysicsBody;
-},{"../../helper.js":14}],10:[function(require,module,exports){
+},{"../../helper.js":16}],10:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../helper.js'),
@@ -432,7 +432,7 @@ Object.defineProperty(Shape.prototype, 'color', {
 });
 
 module.exports = Shape;
-},{"../helper.js":14,"pixi.js":1}],11:[function(require,module,exports){
+},{"../helper.js":16,"pixi.js":1}],11:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -483,7 +483,7 @@ Circle.prototype._setShape = function() {
 };
 
 module.exports = Circle;
-},{"../../helper.js":14,"../shape.js":10}],12:[function(require,module,exports){
+},{"../../helper.js":16,"../shape.js":10}],12:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -553,234 +553,7 @@ Rectangle.prototype._setShape = function() {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":14,"../shape.js":10}],13:[function(require,module,exports){
-'use strict';
-
-/**
- * A collection of components which make up an object in the world
- * @constructor
- * @param {number} id   Unique ID assigned by the World
- */
-var Entity = function(id) {
-    this.id = id;
-    this.components = {};
-};
-
-/**
- * Add a new component to the Entity
- * @param {object} component
- */
-Entity.prototype.addComponent = function(component) {
-    this.components[component.NAME] = component;
-};
-
-/**
- * Adds a component marked as a given type
- * This can be used to use one component for multiple things i.e. physics body and a rectangle
- * @param {object} component
- * @param {string} componentType Type to mark it as
- */
-Entity.prototype.addComponentAs = function(component, componentType) {
-    this.components[componentType] = component;
-};
-
-/**
- * Removes a component from the Entity
- * @param {object} component
- */
-Entity.prototype.removeComponent = function(component) {
-    var componentName = '';
-    if (typeof component === 'string') {
-        componentName = component;
-    } else {
-        componentName = component.NAME;
-    }
-
-    delete this.components[componentName];
-};
-
-/**
- * Returns the component with the matching name
- * @param {string} componentName
- * @return {object|null}
- */
-Entity.prototype.getComponent = function(componentName) {
-    return this.components[componentName] || null;
-};
-
-/**
- * Determine if an Entity has a given component type
- * @param {string} componentName
- * @return {boolean}
- */
-Entity.prototype.hasComponent = function(componentName) {
-    return this.getComponent(componentName) !== null;
-};
-
-module.exports = Entity;
-},{}],14:[function(require,module,exports){
-'use strict';
-
-var
-    // Determine if we're running in a server environment or not
-    win = (typeof window !== 'undefined') ? window : null,
-
-    // Save bytes in the minified version (see Underscore.js)
-    ArrayProto          = Array.prototype,
-    ObjProto            = Object.prototype,
-
-    // Quick references for common core functions
-    slice               = ArrayProto.slice,
-    hasOwnProp          = ObjProto.hasOwnProperty,
-
-    // Store the currently pressed keys
-    keysDown = {};
-
-// Capture keyboard events
-if (win) {
-    win.addEventListener('keydown', function(e) {
-        keysDown[e.keyCode] = {
-            pressed: true,
-            shift:   e.shiftKey,
-            ctrl:    e.ctrlKey,
-            alt:     e.altKey
-        };
-    });
-
-    win.addEventListener('keyup', function(e) {
-        if (keysDown.hasOwnProperty(e.keyCode)) {
-            keysDown[e.keyCode].pressed = false;
-        }
-    });
-}
-
-var Helper = {
-    /**
-     * Determine if an object has a property (not on the prototype chain)
-     * @param {Object} obj
-     * @param {*}      key
-     * @returns {boolean}
-     */
-    has: function(obj, key) {
-        return hasOwnProp.call(obj, key);
-    },
-
-    /**
-     * Adds default properties to an object
-     * @param {...Object} obj
-     * @returns {Object}
-     */
-    defaults: function(obj) {
-        obj = obj || {};
-        slice.call(arguments, 1).forEach(function(source) {
-            if (source) {
-                for (var prop in source) {
-                    if (obj[prop] === void 0) {
-                        obj[prop] = source[prop];
-                    }
-                }
-            }
-        });
-
-        return obj;
-    },
-
-    /**
-     * Adds or replaces properties on an object
-     * @param {T, ...[Object]} obj
-     * @returns {T}
-     * @template T
-     */
-    extend: function(obj) {
-        for (var i = 1, len = arguments.length; i < len; i++) {
-            var source = arguments[i];
-            for (var key in source) {
-                var current = obj[key],
-                    prop = source[key];
-                if (this.isObject(prop) && this.isObject(current)) {
-                    obj[key] = this.extend(current, prop);
-                } else {
-                    obj[key] = prop;
-                }
-            }
-        }
-
-        return obj;
-    },
-
-    /**
-     * Does very basic inheritance for a class
-     * @param {Function} Derived    - Class to do the inheriting
-     * @param {Function} Base       - Base class
-     */
-    inherit: function(Derived, Base) {
-        Derived.prototype = Object.create(Base.prototype);
-        Derived.constructor = Derived;
-    },
-
-    /**
-     * Returns if a given key is pressed
-     * @param {number}  keyCode                 Key code. Usually obtained from Keys
-     * @param {Object}  modifiers
-     * @param {boolean} [modifiers.shift=false] If true, will check if shift was held at the time
-     * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
-     * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
-     * @return {boolean}
-     * @deprecated Use Input.Keyboard.isKeyDown
-     */
-    isKeyDown: function(keyCode, modifiers) {
-        modifiers = modifiers || {};
-        var defaultModifiers = {
-            shift: false,
-            ctrl: false,
-            alt: false
-        };
-        modifiers = this.defaults(modifiers, defaultModifiers);
-        return (keysDown.hasOwnProperty(keyCode) &&
-            keysDown[keyCode].pressed &&
-            !(modifiers.shift && !keysDown[keyCode].shift) &&
-            !(modifiers.ctrl && !keysDown[keyCode].ctrl) &&
-            !(modifiers.alt && !keysDown[keyCode].alt));
-    },
-
-    /**
-     * Determines if the argument is an object
-     * @param obj
-     * @returns {boolean}
-     */
-    isObject: function(obj) {
-        return ObjProto.toString.call(obj) === '[object Object]';
-    },
-
-    /**
-     * Returns all of the keys currently pressed
-     * @return {Array}
-     * @deprecated Use Input.Keyboard.getKeysDown
-     */
-    getKeysDown: function() {
-        var keys = [];
-        for (var keyCode in keysDown) {
-            if (this.has(keysDown, keyCode) && keysDown[keyCode].pressed) {
-                keys.push(keyCode);
-            }
-        }
-        return keys;
-    },
-
-    /**
-     * Returns 1 if x is positive
-     * -1 if x is negative
-     * 0 if x is 0
-     * @param {number} x
-     */
-    sign: function(x) {
-        return (x > 0) ?  1 :
-               (x < 0) ? -1 : 0;
-    }
-};
-
-module.exports = Helper;
-},{}],15:[function(require,module,exports){
+},{"../../helper.js":16,"../shape.js":10}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -959,7 +732,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
 };
 
 module.exports = CollisionGrid;
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1172,7 +945,247 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 };
 
 module.exports = QuadTree;
+},{}],15:[function(require,module,exports){
+'use strict';
+
+/**
+ * A collection of components which make up an object in the world
+ * @constructor
+ * @param {number} id   Unique ID assigned by the World
+ */
+var Entity = function(id) {
+    this.id = id;
+    this.components = {};
+};
+
+/**
+ * Add a new component to the Entity
+ * @param {object} component
+ */
+Entity.prototype.addComponent = function(component) {
+    this.components[component.NAME] = component;
+};
+
+/**
+ * Adds a component marked as a given type
+ * This can be used to use one component for multiple things i.e. physics body and a rectangle
+ * @param {object} component
+ * @param {string} componentType Type to mark it as
+ */
+Entity.prototype.addComponentAs = function(component, componentType) {
+    this.components[componentType] = component;
+};
+
+/**
+ * Removes a component from the Entity
+ * @param {object} component
+ */
+Entity.prototype.removeComponent = function(component) {
+    var componentName = '';
+    if (typeof component === 'string') {
+        componentName = component;
+    } else {
+        componentName = component.NAME;
+    }
+
+    delete this.components[componentName];
+};
+
+/**
+ * Returns the component with the matching name
+ * @param {string} componentName
+ * @return {object|null}
+ */
+Entity.prototype.getComponent = function(componentName) {
+    return this.components[componentName] || null;
+};
+
+/**
+ * Determine if an Entity has a given component type
+ * @param {string} componentName
+ * @return {boolean}
+ */
+Entity.prototype.hasComponent = function(componentName) {
+    return this.getComponent(componentName) !== null;
+};
+
+module.exports = Entity;
+},{}],16:[function(require,module,exports){
+'use strict';
+
+var
+    // Determine if we're running in a server environment or not
+    win = (typeof window !== 'undefined') ? window : null,
+
+    // Save bytes in the minified version (see Underscore.js)
+    ArrayProto          = Array.prototype,
+    ObjProto            = Object.prototype,
+
+    // Quick references for common core functions
+    slice               = ArrayProto.slice,
+    hasOwnProp          = ObjProto.hasOwnProperty,
+
+    // Store the currently pressed keys
+    keysDown = {};
+
+// Capture keyboard events
+if (win) {
+    win.addEventListener('keydown', function(e) {
+        keysDown[e.keyCode] = {
+            pressed: true,
+            shift:   e.shiftKey,
+            ctrl:    e.ctrlKey,
+            alt:     e.altKey
+        };
+    });
+
+    win.addEventListener('keyup', function(e) {
+        if (keysDown.hasOwnProperty(e.keyCode)) {
+            keysDown[e.keyCode].pressed = false;
+        }
+    });
+}
+
+var Helper = {
+    /**
+     * Determine if an object has a property (not on the prototype chain)
+     * @param {Object} obj
+     * @param {*}      key
+     * @returns {boolean}
+     */
+    has: function(obj, key) {
+        return hasOwnProp.call(obj, key);
+    },
+
+    /**
+     * Adds default properties to an object
+     * @param {...Object} obj
+     * @returns {Object}
+     */
+    defaults: function(obj) {
+        obj = obj || {};
+        slice.call(arguments, 1).forEach(function(source) {
+            if (source) {
+                for (var prop in source) {
+                    if (obj[prop] === void 0) {
+                        obj[prop] = source[prop];
+                    }
+                }
+            }
+        });
+
+        return obj;
+    },
+
+    /**
+     * Adds or replaces properties on an object
+     * @param {T, ...[Object]} obj
+     * @returns {T}
+     * @template T
+     */
+    extend: function(obj) {
+        for (var i = 1, len = arguments.length; i < len; i++) {
+            var source = arguments[i];
+            for (var key in source) {
+                var current = obj[key],
+                    prop = source[key];
+                if (this.isObject(prop) && this.isObject(current)) {
+                    obj[key] = this.extend(current, prop);
+                } else {
+                    obj[key] = prop;
+                }
+            }
+        }
+
+        return obj;
+    },
+
+    /**
+     * Does very basic inheritance for a class
+     * @param {Function} Derived    - Class to do the inheriting
+     * @param {Function} Base       - Base class
+     */
+    inherit: function(Derived, Base) {
+        Derived.prototype = Object.create(Base.prototype);
+        Derived.constructor = Derived;
+    },
+
+    /**
+     * Returns if a given key is pressed
+     * @param {number}  keyCode                 Key code. Usually obtained from Keys
+     * @param {Object}  modifiers
+     * @param {boolean} [modifiers.shift=false] If true, will check if shift was held at the time
+     * @param {boolean} [modifiers.ctrl=false]  If true, will check if control was held at the time
+     * @param {boolean} [modifiers.alt=false]   If true, will check if alt was held at the time
+     * @return {boolean}
+     * @deprecated Use Input.Keyboard.isKeyDown
+     */
+    isKeyDown: function(keyCode, modifiers) {
+        modifiers = modifiers || {};
+        var defaultModifiers = {
+            shift: false,
+            ctrl: false,
+            alt: false
+        };
+        modifiers = this.defaults(modifiers, defaultModifiers);
+        return (keysDown.hasOwnProperty(keyCode) &&
+            keysDown[keyCode].pressed &&
+            !(modifiers.shift && !keysDown[keyCode].shift) &&
+            !(modifiers.ctrl && !keysDown[keyCode].ctrl) &&
+            !(modifiers.alt && !keysDown[keyCode].alt));
+    },
+
+    /**
+     * Determines if the argument is an object
+     * @param obj
+     * @returns {boolean}
+     */
+    isObject: function(obj) {
+        return ObjProto.toString.call(obj) === '[object Object]';
+    },
+
+    /**
+     * Returns all of the keys currently pressed
+     * @return {Array}
+     * @deprecated Use Input.Keyboard.getKeysDown
+     */
+    getKeysDown: function() {
+        var keys = [];
+        for (var keyCode in keysDown) {
+            if (this.has(keysDown, keyCode) && keysDown[keyCode].pressed) {
+                keys.push(keyCode);
+            }
+        }
+        return keys;
+    },
+
+    /**
+     * Returns 1 if x is positive
+     * -1 if x is negative
+     * 0 if x is 0
+     * @param {number} x
+     */
+    sign: function(x) {
+        return (x > 0) ?  1 :
+               (x < 0) ? -1 : 0;
+    }
+};
+
+module.exports = Helper;
 },{}],17:[function(require,module,exports){
+/**
+ * Used to keep backwards compatibility until v0.5.0
+ * @type {CollisionGrid|exports}
+ * @deprecated Use DataStructures.CollisionGrid
+ */
+module.exports = require('../data-structures/collision-grid.js');
+},{"../data-structures/collision-grid.js":13}],18:[function(require,module,exports){
+/**
+ * Used to keep backwards compatibility until v0.5.0
+ * @type {QuadTree|exports}
+ */
+module.exports = require('../data-structures/quad-tree.js');
+},{"../data-structures/quad-tree.js":14}],19:[function(require,module,exports){
 module.exports = {
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
@@ -1191,6 +1204,10 @@ module.exports = {
             Circle: require('./components/shapes/circle.js'),
             Rectangle: require('./components/shapes/rectangle.js')
         }
+    },
+    DataStructures: {
+        CollisionGrid: require('./data-structures/collision-grid.js'),
+        QuadTree: require('./data-structures/quad-tree.js')
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
@@ -1218,7 +1235,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./entity.js":13,"./helper.js":14,"./helpers/collision-grid.js":15,"./helpers/quad-tree.js":16,"./input.js":18,"./keys.js":19,"./layer.js":20,"./render-system.js":21,"./system.js":22,"./systems/behavior/animate.js":23,"./systems/behavior/physics/platformer.js":24,"./systems/render/rectangle.js":25,"./systems/render/shape.js":26,"./systems/render/sprite.js":27,"./world.js":28}],18:[function(require,module,exports){
+},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./data-structures/collision-grid.js":13,"./data-structures/quad-tree.js":14,"./entity.js":15,"./helper.js":16,"./helpers/collision-grid.js":17,"./helpers/quad-tree.js":18,"./input.js":20,"./keys.js":21,"./layer.js":22,"./render-system.js":23,"./system.js":24,"./systems/behavior/animate.js":25,"./systems/behavior/physics/platformer.js":26,"./systems/render/rectangle.js":27,"./systems/render/shape.js":28,"./systems/render/sprite.js":29,"./world.js":30}],20:[function(require,module,exports){
 'use strict';
 
 var // Determine if we're running on the server
@@ -1533,7 +1550,7 @@ var Input = {
 };
 
 module.exports = Input;
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1597,7 +1614,7 @@ module.exports = {
         }
     }
 };
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1777,7 +1794,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./render-system.js":21,"./system.js":22,"pixi.js":1}],21:[function(require,module,exports){
+},{"./behavior-system.js":2,"./render-system.js":23,"./system.js":24,"pixi.js":1}],23:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1847,7 +1864,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":14,"./system.js":22,"pixi.js":1}],22:[function(require,module,exports){
+},{"./helper.js":16,"./system.js":24,"pixi.js":1}],24:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1903,7 +1920,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":13,"./helper.js":14}],23:[function(require,module,exports){
+},{"./entity.js":15,"./helper.js":16}],25:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1943,7 +1960,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":14}],24:[function(require,module,exports){
+},{"../../behavior-system.js":2,"../../helper.js":16}],26:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -2133,7 +2150,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":14,"../../../helpers/quad-tree.js":16}],25:[function(require,module,exports){
+},{"../../../behavior-system.js":2,"../../../helper.js":16,"../../../helpers/quad-tree.js":18}],27:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2184,7 +2201,7 @@ Rectangle.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":14,"../../render-system.js":21}],26:[function(require,module,exports){
+},{"../../helper.js":16,"../../render-system.js":23}],28:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2244,7 +2261,7 @@ Shape.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Shape;
-},{"../../helper.js":14,"../../render-system.js":21}],27:[function(require,module,exports){
+},{"../../helper.js":16,"../../render-system.js":23}],29:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2295,7 +2312,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":14,"../../render-system.js":21}],28:[function(require,module,exports){
+},{"../../helper.js":16,"../../render-system.js":23}],30:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -2567,4 +2584,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":13,"./helper.js":14,"./input.js":18,"./layer.js":20}]},{},[3]);
+},{"./entity.js":15,"./helper.js":16,"./input.js":20,"./layer.js":22}]},{},[3]);
