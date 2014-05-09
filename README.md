@@ -3,6 +3,8 @@ Psykick2D
 
 An HTML5 game engine. Built as an entity-component framework.
 
+[![NPM](https://nodei.co/npm/psykick2d.png)](https://nodei.co/npm/psykick2d/)
+
 ----------
 
 ### Building Psykick2D
