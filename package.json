@@ -1,6 +1,6 @@
 {
   "name": "psykick2d",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Psykick 2D game engine",
   "repository": {
     "type": "git",
@@ -15,10 +15,6 @@
     {
       "name": "Mike Cluck",
       "email": "mcluck90@gmail.com"
-    },
-    {
-      "name": "Jon Holt",
-      "email": "jonathanholt92@gmail.com"
     }
   ],
   "main": "./src/index.js",
