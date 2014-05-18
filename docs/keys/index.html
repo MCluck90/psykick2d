@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <base href="http://localhost:63342/mcluck90.github.io/psykick2d/docs/">
+
+    <title>Psykick2D - Keys</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/documentation/bootstrap.min.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/css/pygment_trac.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/documentation/style.css">
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Psykick2D</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" role="main">
+        <div class="row">
+            <!-- Side navigation -->
+            <div class="col-md-3">
+                <ul class="list-group">
+                    <li class="list-group-item">Psykick2D</li>
+                    <li class="list-group-item">
+                        <ul class="nav nav-list">
+                            
+                            <li><label class="tree-toggler nav-header">Components</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">GFX</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/gfx/animation/">Animation</a></li>
+                                    
+                                    <li><a href="./components/gfx/color/">Color</a></li>
+                                    
+                                    <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Physics</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/physics/rect-physics-body/">RectPhysicsBody</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Shapes</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/shapes/circle/">Circle</a></li>
+                                    
+                                    <li><a href="./components/shapes/rectangle/">Rectangle</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                    <li><a href="./components/shape/">Shape</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">DataStructures</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
+                                    
+                                    <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Helpers</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
+                                    
+                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Input</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./input/gamepad/">Gamepad</a></li>
+                                    
+                                    <li><a href="./input/keyboard/">Keyboard</a></li>
+                                    
+                                    <li><a href="./input/mouse/">Mouse</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Systems</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">Behavior</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">Physics</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./systems/behavior/physics/platformer/">Platformer</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                    <li><a href="./systems/behavior/animate/">Animate</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Render</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./systems/render/rectangle/">Rectangle</a></li>
+                                    
+                                    <li><a href="./systems/render/shape/">Shape</a></li>
+                                    
+                                    <li><a href="./systems/render/sprite/">Sprite</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                </ul>
+                            </li>
+                            
+                            
+                                <li><a href="./asset-manager/">AssetManager</a></li>
+                            
+                                <li><a href="./behavior-system/">BehaviorSystem</a></li>
+                            
+                                <li><a href="./camera/">Camera</a></li>
+                            
+                                <li><a href="./entity/">Entity</a></li>
+                            
+                                <li><a href="./helper/">Helper</a></li>
+                            
+                                <li><a href="./input/">Input</a></li>
+                            
+                                <li><a href="./keys/">Keys</a></li>
+                            
+                                <li><a href="./layer/">Layer</a></li>
+                            
+                                <li><a href="./render-system/">RenderSystem</a></li>
+                            
+                                <li><a href="./system/">System</a></li>
+                            
+                                <li><a href="./world/">World</a></li>
+                            
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /Side navigation -->
+            <div class="col-md-9">
+                <!-- Breadcrumb -->
+                <ul class="breadcrumb">
+                    
+                    <li class="active">Keys</li>
+                </ul>
+                <!-- /Breadcrumb -->
+                <div class="panel panel-default">
+                    <!-- Component header -->
+                    <div class="panel-heading">
+                        <h3>Keys</h3>
+                        <em>A simple reference point for key codes</em>
+                    </div>
+                    <div class="panel-body">
+                        
+                            <em>static</em> <span>Keys</span>
+                        
+
+                        
+                    </div>
+                    <!-- /Component header -->
+                </div>
+
+                <!-- Component description -->
+                
+
+                
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Properties</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                
+                                <tr>
+                                    <td>A</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>65</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>B</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>66</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>C</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>67</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>D</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>68</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>E</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>69</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>F</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>70</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>G</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>61</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>H</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>72</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>I</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>73</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>J</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>74</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>K</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>75</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>L</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>76</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>M</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>77</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>N</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>78</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>O</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>79</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>P</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>80</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Q</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>81</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>R</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>82</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>S</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>83</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>T</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>84</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>U</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>85</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>V</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>86</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>W</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>87</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>X</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>88</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Y</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>89</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Z</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>90</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Shift</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>16</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Ctrl</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>17</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Alt</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>18</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>CapsLock</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>20</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>NumLock</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>144</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Zero</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>48</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>One</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>49</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Two</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>50</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Three</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>51</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Four</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>52</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Five</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>53</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Six</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>54</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Seven</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>55</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Eight</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>56</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Nine</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>57</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Left</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>37</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Up</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>38</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Right</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>39</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Down</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>40</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Space</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>32</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Enter</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>13</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Tab</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>9</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Esc</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>27</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Backspace</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>8</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>Mouse</td>
+                                    <td class="default-type">Object</td>
+                                    <td>
+                                        Mouse button codes
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Left</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Middle</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Right</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        
+    
+                                
+                                
+                                <tr>
+                                    <td>Gamepad</td>
+                                    <td class="default-type">Object</td>
+                                    <td>
+                                        Gamepad buttons for known pad configurations
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Xbox</td>
+            <td class="default-type">Object</td>
+            <td>
+                Standard Xbox 360 controller
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>A</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>B</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>3</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftBumper</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>4</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightBumper</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>5</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftTrigger</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>6</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightTrigger</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>7</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Back</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>8</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Start</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>9</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadUp</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>12</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadDown</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>13</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadLeft</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>14</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadRight</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>15</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftStick</td>
+            <td class="default-type">Object</td>
+            <td>
+                Axes/button for the left stick
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Click</td>
+            <td class="default-type">Number</td>
+            <td>
+                When you press the stick in
+                
+            </td>
+            <td>10</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightStick</td>
+            <td class="default-type">Object</td>
+            <td>
+                Axes/button for the right stick
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Click</td>
+            <td class="default-type">Number</td>
+            <td>
+                When you press the stick in
+                
+            </td>
+            <td>11</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>3</td>
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        
+    
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+
+                
+            </div>
+        </div>
+    </div>
+
+    <script name="propertyList" type="text/x-handlebars-template">
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>A</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>65</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>B</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>66</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>C</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>67</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>D</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>68</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>E</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>69</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>F</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>70</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>G</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>61</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>H</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>72</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>I</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>73</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>J</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>74</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>K</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>75</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>L</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>76</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>M</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>77</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>N</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>78</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>O</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>79</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>P</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>80</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Q</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>81</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>R</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>82</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>S</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>83</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>T</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>84</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>U</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>85</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>V</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>86</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>W</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>87</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>88</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>89</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Z</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>90</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Shift</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>16</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Ctrl</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>17</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Alt</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>18</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>CapsLock</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>20</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>NumLock</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>144</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Zero</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>48</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>One</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>49</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Two</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>50</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Three</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>51</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Four</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>52</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Five</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>53</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Six</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>54</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Seven</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>55</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Eight</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>56</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Nine</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>57</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Left</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>37</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Up</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>38</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Right</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>39</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Down</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>40</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Space</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>32</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Enter</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>13</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Tab</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>9</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Esc</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>27</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Backspace</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>8</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Mouse</td>
+            <td class="default-type">Object</td>
+            <td>
+                Mouse button codes
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Left</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Middle</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Right</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>Gamepad</td>
+            <td class="default-type">Object</td>
+            <td>
+                Gamepad buttons for known pad configurations
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Xbox</td>
+            <td class="default-type">Object</td>
+            <td>
+                Standard Xbox 360 controller
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>A</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>B</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>3</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftBumper</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>4</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightBumper</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>5</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftTrigger</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>6</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightTrigger</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>7</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Back</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>8</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Start</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>9</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadUp</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>12</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadDown</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>13</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadLeft</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>14</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>DPadRight</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>15</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>LeftStick</td>
+            <td class="default-type">Object</td>
+            <td>
+                Axes/button for the left stick
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Click</td>
+            <td class="default-type">Number</td>
+            <td>
+                When you press the stick in
+                
+            </td>
+            <td>10</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>1</td>
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>RightStick</td>
+            <td class="default-type">Object</td>
+            <td>
+                Axes/button for the right stick
+                
+            </td>
+            <td></td>
+            
+                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Click</td>
+            <td class="default-type">Number</td>
+            <td>
+                When you press the stick in
+                
+            </td>
+            <td>11</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>X</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>2</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+                <td class="indent"></td>
+            
+            <td>Y</td>
+            <td class="default-type">Number</td>
+            <td>
+                
+                
+            </td>
+            <td>3</td>
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        
+    
+            
+        </tr>
+        
+        
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/mcluck90.github.io/psykick2d/documentation/js/main.js"></script>
+</body>
+</html>

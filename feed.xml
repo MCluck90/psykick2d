@@ -3,16 +3,16 @@
   <channel>
     <title>Psykick2D</title>
     <description>Psykick2D: A 2D HTML5 game engine</description>
-    <link>http://mcluck90.github.io/psykick2d/</link>
-    <atom:link href="http://mcluck90.github.io/psykick2d/feed.xml" rel="self" type="application/rss+xml" />
+    <link>http://mcluck90.github.io/</link>
+    <atom:link href="http://mcluck90.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
         <title>Introduction to Psykick2D</title>
         <description>&lt;p&gt;Here’s a basic introduction to Psykick2D.&lt;/p&gt;
 </description>
         <pubDate>Sun, 11 May 2014 04:45:00 -0600</pubDate>
-        <link>http://mcluck90.github.io/psykick2d/introduction/2014/05/11/introduction-to-psykick2d/</link>
-        <guid isPermaLink="true">http://mcluck90.github.io/psykick2d/introduction/2014/05/11/introduction-to-psykick2d/</guid>
+        <link>http://mcluck90.github.io/getting-started/2014/05/11/introduction-to-psykick2d/</link>
+        <guid isPermaLink="true">http://mcluck90.github.io/getting-started/2014/05/11/introduction-to-psykick2d/</guid>
       </item>
     
   </channel>

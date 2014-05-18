@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <base href="http://localhost:63342/mcluck90.github.io/psykick2d/docs/">
+
+    <title>Psykick2D - Animation</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/documentation/bootstrap.min.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/css/pygment_trac.css">
+    <link rel="stylesheet" href="/mcluck90.github.io/psykick2d/documentation/style.css">
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Psykick2D</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" role="main">
+        <div class="row">
+            <!-- Side navigation -->
+            <div class="col-md-3">
+                <ul class="list-group">
+                    <li class="list-group-item">Psykick2D</li>
+                    <li class="list-group-item">
+                        <ul class="nav nav-list">
+                            
+                            <li><label class="tree-toggler nav-header">Components</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">GFX</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/gfx/animation/">Animation</a></li>
+                                    
+                                    <li><a href="./components/gfx/color/">Color</a></li>
+                                    
+                                    <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Physics</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/physics/rect-physics-body/">RectPhysicsBody</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Shapes</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./components/shapes/circle/">Circle</a></li>
+                                    
+                                    <li><a href="./components/shapes/rectangle/">Rectangle</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                    <li><a href="./components/shape/">Shape</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">DataStructures</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
+                                    
+                                    <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Helpers</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
+                                    
+                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Input</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./input/gamepad/">Gamepad</a></li>
+                                    
+                                    <li><a href="./input/keyboard/">Keyboard</a></li>
+                                    
+                                    <li><a href="./input/mouse/">Mouse</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Systems</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">Behavior</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                        
+                            <li><label class="tree-toggler nav-header">Physics</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./systems/behavior/physics/platformer/">Platformer</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                    <li><a href="./systems/behavior/animate/">Animate</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                            <li><label class="tree-toggler nav-header">Render</label>
+                                <ul class="nav nav-list tree">
+                                    
+                                    
+                                    <li><a href="./systems/render/rectangle/">Rectangle</a></li>
+                                    
+                                    <li><a href="./systems/render/shape/">Shape</a></li>
+                                    
+                                    <li><a href="./systems/render/sprite/">Sprite</a></li>
+                                    
+                                </ul>
+                            </li>
+                            
+                                    
+                                    
+                                </ul>
+                            </li>
+                            
+                            
+                                <li><a href="./asset-manager/">AssetManager</a></li>
+                            
+                                <li><a href="./behavior-system/">BehaviorSystem</a></li>
+                            
+                                <li><a href="./camera/">Camera</a></li>
+                            
+                                <li><a href="./entity/">Entity</a></li>
+                            
+                                <li><a href="./helper/">Helper</a></li>
+                            
+                                <li><a href="./input/">Input</a></li>
+                            
+                                <li><a href="./keys/">Keys</a></li>
+                            
+                                <li><a href="./layer/">Layer</a></li>
+                            
+                                <li><a href="./render-system/">RenderSystem</a></li>
+                            
+                                <li><a href="./system/">System</a></li>
+                            
+                                <li><a href="./world/">World</a></li>
+                            
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /Side navigation -->
+            <div class="col-md-9">
+                <!-- Breadcrumb -->
+                <ul class="breadcrumb">
+                    
+                        
+                            <li>Components</li>
+                        
+                            <li>GFX</li>
+                        
+                    
+                    <li class="active">Animation</li>
+                </ul>
+                <!-- /Breadcrumb -->
+                <div class="panel panel-default">
+                    <!-- Component header -->
+                    <div class="panel-heading">
+                        <h3>Animation</h3>
+                        <em>Used for keeping track of an animation cycle</em>
+                    </div>
+                    <div class="panel-body">
+                        
+                            <span class="keyword">new</span> <span>Animation</span>(
+                            
+                                
+                                <span class="param">options</span>
+                            
+                            )
+                        
+
+                        
+                    </div>
+                    <!-- /Component header -->
+                </div>
+
+                <!-- Component description -->
+                
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Parameters</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                
+                                <tr>
+                                    <td class="param">options</td>
+                                    <td class="default-type">Object</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>fps</td>
+            <td class="default-type">Number</td>
+            <td>
+                Frames per second
+                
+            </td>
+            <td>24</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>minFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                First frame in the animation
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>maxFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                Final frame in the animation
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>currentFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                Current frame
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>lastFrameTime</td>
+            <td class="default-type">Number</td>
+            <td>
+                Time since last frame change
+                
+            </td>
+            <td>0</td>
+            
+        </tr>
+        
+        
+    
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+
+                
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Properties</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                
+                                <tr>
+                                    <td>fps</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        Frames per second
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>minFrame</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        First frame in the animation
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>maxFrame</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        Final frame in the animation
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>currentFrame</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        Current frame
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>lastFrameTime</td>
+                                    <td class="default-type">Number</td>
+                                    <td>
+                                        Time since last frame change
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+
+                
+            </div>
+        </div>
+    </div>
+
+    <script name="propertyList" type="text/x-handlebars-template">
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>fps</td>
+            <td class="default-type">Number</td>
+            <td>
+                Frames per second
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>minFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                First frame in the animation
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>maxFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                Final frame in the animation
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>currentFrame</td>
+            <td class="default-type">Number</td>
+            <td>
+                Current frame
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>lastFrameTime</td>
+            <td class="default-type">Number</td>
+            <td>
+                Time since last frame change
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/mcluck90.github.io/psykick2d/documentation/js/main.js"></script>
+</body>
+</html>
