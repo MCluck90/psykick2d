@@ -6,7 +6,8 @@ var Helper = require('./helper.js'),
     isClientSide = (doc !== null),
 
     // Local shortcuts
-    audioManager = null;
+    audioManager = null,
+    gfxManager = null;
 
 // Detect audio support
 var audioEl = null,
@@ -35,6 +36,12 @@ if (isClientSide) {
     } catch(e) {}
 }
 
+/**
+ * Loads up an audio source
+ * @param {string}      src
+ * @param {Function}    cb  Callback for when it's ready
+ * @private
+ */
 function _loadAudioSource(src, cb) {
     cb = cb || function(){};
     var audio = new Audio(src);
@@ -43,6 +50,23 @@ function _loadAudioSource(src, cb) {
         cb(audio);
     });
     audioManager._cache[src] = audio;
+}
+
+/**
+ * Loads up an image
+ * @param {string}      src
+ * @param {Function}    cb  Callback for when it's ready
+ * @private
+ */
+function _loadGFXSource(src, cb) {
+    cb = cb || function(){};
+    var img = new Image();
+    img.src = src;
+    img.onload = function() {
+        img.loaded = true;
+        cb(img);
+    };
+    gfxManager._cache[src] = img;
 }
 
 var AssetManager = {
@@ -89,9 +113,46 @@ var AssetManager = {
         getAudio: function(src) {
             return audioManager._cache[src] || null;
         }
+    },
+    GFX: {
+        _cache: {},
+
+        /**
+         * Loads up one or more images
+         * @param {string|string[]} sources Sources to load
+         * @param {Function}        cb      Callback one each image as they're loaded
+         */
+        load: function(sources, cb) {
+            if (!Helper.isArray(sources)) {
+                sources = [sources];
+            }
+
+            for (var i = 0, len = sources.length; i < len; i++) {
+                _loadGFXSource(sources[i], cb);
+            }
+        },
+
+        /**
+         * Determines if the given image is loaded
+         * @param {string} src
+         * @returns {boolean}
+         */
+        isLoaded: function(src) {
+            return (gfxManager._cache[src]) ? gfxManager._cache[src].loaded : false;
+        },
+
+        /**
+         * Gets an image
+         * @param {string} src
+         * @returns {Image|null}
+         */
+        getImage: function(src) {
+            return gfxManager._cache[src] || null;
+        }
     }
 };
 
 audioManager = AssetManager.Audio;
+gfxManager = AssetManager.GFX;
 
 module.exports = AssetManager;
