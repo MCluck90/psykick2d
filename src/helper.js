@@ -132,6 +132,15 @@ var Helper = {
     },
 
     /**
+     * Determines if the arguments in an array
+     * @param obj
+     * @returns {boolean}
+     */
+    isArray: function(obj) {
+        return ObjProto.toString.call(obj) === '[object Array]';
+    },
+
+    /**
      * Returns all of the keys currently pressed
      * @return {Array}
      * @deprecated Use Input.Keyboard.getKeysDown

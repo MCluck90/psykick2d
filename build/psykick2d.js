@@ -18,6 +18,104 @@ this.updateFrame=!0,d.Texture.frameUpdates.push(this)},d.Texture.prototype._upda
 },{}],2:[function(require,module,exports){
 'use strict';
 
+var Helper = require('./helper.js'),
+
+    doc = (typeof document !== 'undefined') ? document : null,
+    isClientSide = (doc !== null),
+
+    // Local shortcuts
+    audioManager = null;
+
+// Detect audio support
+var audioEl = null,
+    canPlayAudioType = {
+        ogg: false,
+        mp3: false,
+        opus: false,
+        wav: false,
+        m4a: false
+    };
+
+if (isClientSide) {
+    audioEl = doc.createElement('audio');
+
+    // Logic here taken from Modernizr
+    try {
+        var noRegEx = /^no$/,
+            m4aType = audioEl.canPlayType('audio/x-m4a;') || audioEl.canPlayType('audio/aac;');
+        canPlayAudioType = {
+            ogg:  audioEl.canPlayType('audio/ogg; codecs="vorbis"').replace(noRegEx, ''),
+            mp3:  audioEl.canPlayType('audio/mpeg;')               .replace(noRegEx, ''),
+            opus: audioEl.canPlayType('audio/ogg; codecs="opus"')  .replace(noRegEx, ''),
+            wav:  audioEl.canPlayType('audio/wav; codes="1"')      .replace(noRegEx, ''),
+            m4a:  m4aType                                          .replace(noRegEx, '')
+        };
+    } catch(e) {}
+}
+
+function _loadAudioSource(src, cb) {
+    cb = cb || function(){};
+    var audio = new Audio(src);
+    audio.addEventListener('canplaythrough', function() {
+        audio.loaded = true;
+        cb(audio);
+    });
+    audioManager._cache[src] = audio;
+}
+
+var AssetManager = {
+    Audio: {
+        _cache: {},
+
+        /**
+         * Tells the user if they can play different types of audio
+         * @returns {object}
+         */
+        get canPlayType() {
+            return canPlayAudioType;
+        },
+
+        /**
+         * Starts loading one or more audio sources
+         * @param {string|string[]} sources Sources to load
+         * @param {Function}        [cb]    Callback for when each source is loaded
+         */
+        load: function(sources, cb) {
+            if (!Helper.isArray(sources)) {
+                sources = [sources];
+            }
+
+            for (var i = 0, len = sources.length; i < len; i++) {
+                _loadAudioSource(sources[i], cb);
+            }
+        },
+
+        /**
+         * Tells if an audio source has been loaded
+         * @param {string} src
+         * @returns {boolean}
+         */
+        isLoaded: function(src) {
+            return (audioManager._cache[src]) ? audioManager._cache[src].loaded : false;
+        },
+
+        /**
+         * Returns an audio element
+         * @param {string} src
+         * @returns {Audio|null}
+         */
+        getAudio: function(src) {
+            return audioManager._cache[src] || null;
+        }
+    }
+};
+
+audioManager = AssetManager.Audio;
+
+module.exports = AssetManager;
+},{"./helper.js":17}],3:[function(require,module,exports){
+'use strict';
+
 var System = require('./system.js'),
     Helper = require('./helper.js');
 
@@ -86,11 +184,11 @@ BehaviorSystem.prototype.removeEntity = function(entity) {
 BehaviorSystem.prototype.update = function() {};
 
 module.exports = BehaviorSystem;
-},{"./helper.js":16,"./system.js":24}],3:[function(require,module,exports){
+},{"./helper.js":17,"./system.js":25}],4:[function(require,module,exports){
 'use strict';
 
 window.Psykick2D = require('./index.js');
-},{"./index.js":19}],4:[function(require,module,exports){
+},{"./index.js":20}],5:[function(require,module,exports){
 'use strict';
 
 /**
@@ -115,7 +213,7 @@ Camera.prototype.toString = function() {
 };
 
 module.exports = Camera;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -151,7 +249,7 @@ var Animation = function(options) {
 };
 
 module.exports = Animation;
-},{"../../helper.js":16}],6:[function(require,module,exports){
+},{"../../helper.js":17}],7:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -174,7 +272,7 @@ var Color = function(options) {
 };
 
 module.exports = Color;
-},{"../../helper.js":16}],7:[function(require,module,exports){
+},{"../../helper.js":17}],8:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -224,7 +322,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":16,"pixi.js":1}],8:[function(require,module,exports){
+},{"../../helper.js":17,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -324,7 +422,7 @@ TiledSprite.prototype.setFrame = function(options) {
 };
 
 module.exports = TiledSprite;
-},{"../../helper.js":16,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../helper.js":17,"pixi.js":1}],10:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -376,7 +474,7 @@ var RectPhysicsBody = function(options) {
 };
 
 module.exports = RectPhysicsBody;
-},{"../../helper.js":16}],10:[function(require,module,exports){
+},{"../../helper.js":17}],11:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../helper.js'),
@@ -432,7 +530,7 @@ Object.defineProperty(Shape.prototype, 'color', {
 });
 
 module.exports = Shape;
-},{"../helper.js":16,"pixi.js":1}],11:[function(require,module,exports){
+},{"../helper.js":17,"pixi.js":1}],12:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -483,7 +581,7 @@ Circle.prototype._setShape = function() {
 };
 
 module.exports = Circle;
-},{"../../helper.js":16,"../shape.js":10}],12:[function(require,module,exports){
+},{"../../helper.js":17,"../shape.js":11}],13:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -553,7 +651,7 @@ Rectangle.prototype._setShape = function() {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":16,"../shape.js":10}],13:[function(require,module,exports){
+},{"../../helper.js":17,"../shape.js":11}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -732,7 +830,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
 };
 
 module.exports = CollisionGrid;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -945,7 +1043,7 @@ QuadTree.prototype.getCollisions = function(entity, body) {
 };
 
 module.exports = QuadTree;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1010,7 +1108,7 @@ Entity.prototype.hasComponent = function(componentName) {
 };
 
 module.exports = Entity;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var
@@ -1145,6 +1243,15 @@ var Helper = {
     },
 
     /**
+     * Determines if the arguments in an array
+     * @param obj
+     * @returns {boolean}
+     */
+    isArray: function(obj) {
+        return ObjProto.toString.call(obj) === '[object Array]';
+    },
+
+    /**
      * Returns all of the keys currently pressed
      * @return {Array}
      * @deprecated Use Input.Keyboard.getKeysDown
@@ -1172,21 +1279,23 @@ var Helper = {
 };
 
 module.exports = Helper;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Used to keep backwards compatibility until v0.5.0
  * @type {CollisionGrid|exports}
  * @deprecated Use DataStructures.CollisionGrid
  */
 module.exports = require('../data-structures/collision-grid.js');
-},{"../data-structures/collision-grid.js":13}],18:[function(require,module,exports){
+},{"../data-structures/collision-grid.js":14}],19:[function(require,module,exports){
 /**
  * Used to keep backwards compatibility until v0.5.0
  * @type {QuadTree|exports}
+ * @deprecated Use DataStructures.QuadTree
  */
 module.exports = require('../data-structures/quad-tree.js');
-},{"../data-structures/quad-tree.js":14}],19:[function(require,module,exports){
+},{"../data-structures/quad-tree.js":15}],20:[function(require,module,exports){
 module.exports = {
+    AssetManager: require('./asset-manager.js'),
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
     Components: {
@@ -1235,7 +1344,7 @@ module.exports = {
     },
     World: require('./world.js')
 };
-},{"./behavior-system.js":2,"./camera.js":4,"./components/gfx/animation.js":5,"./components/gfx/color.js":6,"./components/gfx/sprite.js":7,"./components/gfx/tiled-sprite.js":8,"./components/physics/rect-physics-body.js":9,"./components/shape.js":10,"./components/shapes/circle.js":11,"./components/shapes/rectangle.js":12,"./data-structures/collision-grid.js":13,"./data-structures/quad-tree.js":14,"./entity.js":15,"./helper.js":16,"./helpers/collision-grid.js":17,"./helpers/quad-tree.js":18,"./input.js":20,"./keys.js":21,"./layer.js":22,"./render-system.js":23,"./system.js":24,"./systems/behavior/animate.js":25,"./systems/behavior/physics/platformer.js":26,"./systems/render/rectangle.js":27,"./systems/render/shape.js":28,"./systems/render/sprite.js":29,"./world.js":30}],20:[function(require,module,exports){
+},{"./asset-manager.js":2,"./behavior-system.js":3,"./camera.js":5,"./components/gfx/animation.js":6,"./components/gfx/color.js":7,"./components/gfx/sprite.js":8,"./components/gfx/tiled-sprite.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape.js":11,"./components/shapes/circle.js":12,"./components/shapes/rectangle.js":13,"./data-structures/collision-grid.js":14,"./data-structures/quad-tree.js":15,"./entity.js":16,"./helper.js":17,"./helpers/collision-grid.js":18,"./helpers/quad-tree.js":19,"./input.js":21,"./keys.js":22,"./layer.js":23,"./render-system.js":24,"./system.js":25,"./systems/behavior/animate.js":26,"./systems/behavior/physics/platformer.js":27,"./systems/render/rectangle.js":28,"./systems/render/shape.js":29,"./systems/render/sprite.js":30,"./world.js":31}],21:[function(require,module,exports){
 'use strict';
 
 var // Determine if we're running on the server
@@ -1550,7 +1659,7 @@ var Input = {
 };
 
 module.exports = Input;
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
@@ -1614,7 +1723,7 @@ module.exports = {
         }
     }
 };
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1794,7 +1903,7 @@ Layer.prototype.update = function(delta) {
 };
 
 module.exports = Layer;
-},{"./behavior-system.js":2,"./render-system.js":23,"./system.js":24,"pixi.js":1}],23:[function(require,module,exports){
+},{"./behavior-system.js":3,"./render-system.js":24,"./system.js":25,"pixi.js":1}],24:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -1864,7 +1973,7 @@ RenderSystem.prototype.removeEntity = function(entity) {
 RenderSystem.prototype.draw = function() {};
 
 module.exports = RenderSystem;
-},{"./helper.js":16,"./system.js":24,"pixi.js":1}],24:[function(require,module,exports){
+},{"./helper.js":17,"./system.js":25,"pixi.js":1}],25:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -1920,7 +2029,7 @@ System.prototype.removeEntity = function(entity) {
 };
 
 module.exports = System;
-},{"./entity.js":15,"./helper.js":16}],25:[function(require,module,exports){
+},{"./entity.js":16,"./helper.js":17}],26:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -1960,7 +2069,7 @@ Animate.prototype.update = function(delta) {
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":2,"../../helper.js":16}],26:[function(require,module,exports){
+},{"../../behavior-system.js":3,"../../helper.js":17}],27:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -2150,7 +2259,7 @@ Platformer.prototype.update = function(delta) {
 };
 
 module.exports = Platformer;
-},{"../../../behavior-system.js":2,"../../../helper.js":16,"../../../helpers/quad-tree.js":18}],27:[function(require,module,exports){
+},{"../../../behavior-system.js":3,"../../../helper.js":17,"../../../helpers/quad-tree.js":19}],28:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2201,7 +2310,7 @@ Rectangle.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Rectangle;
-},{"../../helper.js":16,"../../render-system.js":23}],28:[function(require,module,exports){
+},{"../../helper.js":17,"../../render-system.js":24}],29:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2261,7 +2370,7 @@ Shape.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Shape;
-},{"../../helper.js":16,"../../render-system.js":23}],29:[function(require,module,exports){
+},{"../../helper.js":17,"../../render-system.js":24}],30:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -2312,7 +2421,7 @@ Sprite.prototype.removeEntity = function(entity) {
 };
 
 module.exports = Sprite;
-},{"../../helper.js":16,"../../render-system.js":23}],30:[function(require,module,exports){
+},{"../../helper.js":17,"../../render-system.js":24}],31:[function(require,module,exports){
 'use strict';
 
 var Entity = require('./entity.js'),
@@ -2584,4 +2693,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":15,"./helper.js":16,"./input.js":20,"./layer.js":22}]},{},[3]);
+},{"./entity.js":16,"./helper.js":17,"./input.js":21,"./layer.js":23}]},{},[4]);

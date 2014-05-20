@@ -1,4 +1,5 @@
 module.exports = {
+    AssetManager: require('./asset-manager.js'),
     BehaviorSystem: require('./behavior-system.js'),
     Camera: require('./camera.js'),
     Components: {
