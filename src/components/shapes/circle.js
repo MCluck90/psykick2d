@@ -42,7 +42,7 @@ Object.defineProperty(Circle.prototype, 'radius', {
 Circle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawCircle(this.x, this.y, this._radius);
+        this.drawCircle(0, 0, this._radius);
         this.endFill();
     }
 };
