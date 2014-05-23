@@ -1,5 +1,7 @@
 'use strict';
 
+var Helper = require('./helper.js');
+
 var // Determine if we're running on the server
     win = (typeof window !== 'undefined') ? window : null,
 
@@ -163,7 +165,7 @@ var Input = {
                     alt: false
                 },
                 keyInfo = keysPressed[keyCode];
-            modifiers = this.defaults(modifiers, defaultModifiers);
+            modifiers = Helper.defaults(modifiers, defaultModifiers);
             return  (keyInfo && keyInfo.pressed)        &&
                    !(modifiers.shift && !keyInfo.shift) &&
                    !(modifiers.ctrl  && !keyInfo.ctrl)  &&

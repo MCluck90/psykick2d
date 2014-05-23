@@ -1408,6 +1408,8 @@ module.exports = {
 },{"./asset-manager.js":2,"./behavior-system.js":3,"./camera.js":5,"./components/gfx/animation.js":6,"./components/gfx/color.js":7,"./components/gfx/sprite.js":8,"./components/gfx/tiled-sprite.js":9,"./components/physics/rect-physics-body.js":10,"./components/shape.js":11,"./components/shapes/circle.js":12,"./components/shapes/rectangle.js":13,"./data-structures/collision-grid.js":14,"./data-structures/quad-tree.js":15,"./entity.js":16,"./helper.js":17,"./helpers/collision-grid.js":18,"./helpers/quad-tree.js":19,"./input.js":21,"./keys.js":22,"./layer.js":23,"./render-system.js":24,"./system.js":25,"./systems/behavior/animate.js":26,"./systems/behavior/physics/platformer.js":27,"./systems/render/rectangle.js":28,"./systems/render/shape.js":29,"./systems/render/sprite.js":30,"./world.js":31}],21:[function(require,module,exports){
 'use strict';
 
+var Helper = require('./helper.js');
+
 var // Determine if we're running on the server
     win = (typeof window !== 'undefined') ? window : null,
 
@@ -1571,7 +1573,7 @@ var Input = {
                     alt: false
                 },
                 keyInfo = keysPressed[keyCode];
-            modifiers = this.defaults(modifiers, defaultModifiers);
+            modifiers = Helper.defaults(modifiers, defaultModifiers);
             return  (keyInfo && keyInfo.pressed)        &&
                    !(modifiers.shift && !keyInfo.shift) &&
                    !(modifiers.ctrl  && !keyInfo.ctrl)  &&
@@ -1720,7 +1722,7 @@ var Input = {
 };
 
 module.exports = Input;
-},{}],22:[function(require,module,exports){
+},{"./helper.js":17}],22:[function(require,module,exports){
 /**
  * A simple reference point for key codes
  * @type {Object}
