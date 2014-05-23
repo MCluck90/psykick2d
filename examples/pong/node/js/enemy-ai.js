@@ -1,0 +1,28 @@
+'use strict';
+
+var Helper = require('psykick2d').Helper,
+    BehaviorSystem = require('psykick2d').BehaviorSystem,
+
+    SPEED = 200;
+
+var EnemyAI = function(enemy, ball) {
+    BehaviorSystem.call(this);
+    this.enemyRect = enemy.getComponent('Rectangle');
+    this.ballRect = ball.getComponent('Rectangle');
+};
+
+Helper.inherit(EnemyAI, BehaviorSystem);
+
+/**
+ * Makes the enemy chase the ball
+ * @param {number} delta    Time since last update
+ */
+EnemyAI.prototype.update = function(delta) {
+    var distance = Math.abs(Math.abs(this.enemyRect.y + (this.enemyRect.h / 2)) - Math.abs(this.ballRect.y)),
+        sign = (this.enemyRect.y < this.ballRect.y) ? 1 : -1;
+    if (distance >= this.enemyRect.h / 4) {
+        this.enemyRect.y += SPEED * delta * sign;
+    }
+};
+
+module.exports = EnemyAI;
