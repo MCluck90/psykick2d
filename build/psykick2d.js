@@ -636,7 +636,7 @@ Object.defineProperty(Circle.prototype, 'radius', {
 Circle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawCircle(this.x, this.y, this._radius);
+        this.drawCircle(0, 0, this._radius);
         this.endFill();
     }
 };
@@ -706,7 +706,7 @@ Object.defineProperties(Rectangle.prototype, {
 Rectangle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawRect(this.x, this.y, this._w, this._h);
+        this.drawRect(0, 0, this._w, this._h);
         this.endFill();
     }
 };
@@ -1413,6 +1413,8 @@ var Helper = require('./helper.js');
 var // Determine if we're running on the server
     win = (typeof window !== 'undefined') ? window : null,
 
+    doc = (win) ? document : null,
+
     nav = (typeof navigator !== 'undefined') ? navigator : null,
 
     // Store the keys current pressed
@@ -1478,12 +1480,12 @@ var Input = {
             globalMouseState.y = evt.clientY - gamePosition.y;
         }
 
-        gameContainer.addEventListener('mousemove', onMouseMove);
-        gameContainer.addEventListener('mouseover', onMouseMove);
+        gameContainer.addEventListener('mousemove', onMouseMove, false);
+        gameContainer.addEventListener('mouseover', onMouseMove, false);
 
         gameContainer.addEventListener('mouseleave', function() {
             globalMouseState = null;
-        });
+        }, false);
 
         gameContainer.addEventListener('mousedown', function(evt) {
             var button = evt.button,
@@ -1491,7 +1493,7 @@ var Input = {
             if (index === -1) {
                 globalMouseState.buttons.push(button);
             }
-        });
+        }, false);
 
         gameContainer.addEventListener('mouseup', function(evt) {
             var button = evt.button,
@@ -1499,24 +1501,24 @@ var Input = {
             if (index !== -1) {
                 globalMouseState.buttons.splice(index, 1);
             }
-        });
+        }, false);
 
         // Setup keyboard tracking
-        gameContainer.addEventListener('keydown', function(evt) {
+        doc.addEventListener('keydown', function(evt) {
             keysPressed[evt.keyCode] = {
                 pressed: true,
                 shift:   evt.shiftKey,
                 ctrl:    evt.ctrlKey,
                 alt:     evt.altKey
             };
-        });
+        }, false);
 
-        gameContainer.addEventListener('keyup', function(evt) {
+        doc.addEventListener('keyup', function(evt) {
             var keyCode = evt.keyCode;
             if (keysPressed[keyCode]) {
                 keysPressed[keyCode].pressed = false;
             }
-        });
+        }, false);
     },
     Mouse: {
         /**
@@ -2517,7 +2519,10 @@ var Entity = require('./entity.js'),
     },
 
     // If true, will not access the window or DOM
-    serverMode = false;
+    serverMode = false,
+
+    // Maximum amount of time between each step i.e. the minimum fps
+    maxTimeStep = 1 / 30;
 
 var World = {
     /**
@@ -2536,12 +2541,14 @@ var World = {
                 width: 800,
                 height: 600,
                 backgroundColor: '#000',
-                serverMode: false
+                serverMode: false,
+                minFPS: 30
             },
             backgroundEl,
             requestAnimationFrame;
 
         options = Helper.defaults(options, defaults);
+        maxTimeStep = 1 / options.minFPS;
         serverMode = options.serverMode;
         if (!serverMode) {
             backgroundEl = document.createElement('div');
@@ -2583,7 +2590,7 @@ var World = {
         }
 
         gameLoop = function() {
-            var delta = (new Date() - gameTime) / 1000;
+            var delta = Math.min((new Date() - gameTime) / 1000, maxTimeStep);
             self.update(delta);
             self.draw(delta);
             gameTime = new Date();
@@ -2716,6 +2723,10 @@ var World = {
         if (listenerList.indexOf(listener) === -1) {
             listenerList.push(listener);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.addEventListener(eventType, listener, false);
+        }
     },
 
     /**
@@ -2732,6 +2743,10 @@ var World = {
         if (index !== -1) {
             eventHandlers[eventType].splice(index, 1);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.removeEventListener(eventType, listener);
+        }
     },
 
     /**
@@ -2739,6 +2754,12 @@ var World = {
      * @param {string} eventType    Event to no longer listen for
      */
     removeAllListeners: function(eventType) {
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            var listeners = eventHandlers[eventType];
+            for (var i = 0, len = listeners.length; i < len; i++) {
+                window.removeEventListener(eventType, listeners[i]);
+            }
+        }
         eventHandlers[eventType] = [];
     },
 
