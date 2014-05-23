@@ -21,6 +21,9 @@ Or you can use [Grunt][2] to build it
 grunt build
 ```
 
+[API Reference][3] - Tutorials coming soon
+
 
   [1]: https://github.com/substack/node-browserify
   [2]: http://gruntjs.com/
+  [3]: http://mcluck90.github.io/psykick2d/docs/world/
