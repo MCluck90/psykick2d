@@ -229,6 +229,10 @@ var World = {
         if (listenerList.indexOf(listener) === -1) {
             listenerList.push(listener);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.addEventListener(eventType, listener, false);
+        }
     },
 
     /**
@@ -245,6 +249,10 @@ var World = {
         if (index !== -1) {
             eventHandlers[eventType].splice(index, 1);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.removeEventListener(eventType, listener);
+        }
     },
 
     /**
@@ -252,6 +260,12 @@ var World = {
      * @param {string} eventType    Event to no longer listen for
      */
     removeAllListeners: function(eventType) {
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            var listeners = eventHandlers[eventType];
+            for (var i = 0, len = listeners.length; i < len; i++) {
+                window.removeEventListener(eventType, listeners[i]);
+            }
+        }
         eventHandlers[eventType] = [];
     },
 
