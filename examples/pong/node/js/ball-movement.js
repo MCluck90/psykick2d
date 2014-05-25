@@ -7,14 +7,13 @@ var Helper = require('psykick2d').Helper,
 
 var BallMovement = function(ball) {
     BehaviorSystem.call(this);
+    this.speed = MAX_SPEED / 2;
     this.ballRect = ball.getComponent('Rectangle');
 };
 
 Helper.inherit(BallMovement, BehaviorSystem);
 
 BallMovement.prototype.update = function(delta) {
-    this.ballRect.x += this.ballRect.velocity.x * delta;
-    this.ballRect.y += this.ballRect.velocity.y * delta;
 };
 
 module.exports = BallMovement;

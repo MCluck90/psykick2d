@@ -14,7 +14,7 @@ var BehaviorSystem = require('psykick2d').BehaviorSystem,
  */
 var PlayerInput = function(player) {
     BehaviorSystem.call(this);
-    this._playerRect = player.getComponent('Rectangle');
+    this._playerRect = player.getComponent('RectPhysicsBody');
 };
 
 Helper.inherit(PlayerInput, BehaviorSystem);
@@ -24,12 +24,16 @@ Helper.inherit(PlayerInput, BehaviorSystem);
  * @param {number} delta    Time change
  */
 PlayerInput.prototype.update = function(delta) {
-    var deltaSpeed = SPEED * delta;
-    if (Keyboard.isKeyDown(Keys.Up)) {
-        this._playerRect.y -= deltaSpeed;
+    var isUpPressed = Keyboard.isKeyDown(Keys.Up),
+        isDownPressed = Keyboard.isKeyDown(Keys.Down);
+    if (isUpPressed) {
+        this._playerRect.velocity.y = -SPEED;
     }
-    if (Keyboard.isKeyDown(Keys.Down)) {
-        this._playerRect.y += deltaSpeed;
+    if (isDownPressed) {
+        this._playerRect.velocity.y = SPEED;
+    }
+    if (!isUpPressed && !isDownPressed) {
+        this._playerRect.velocity.y = 0;
     }
 };
 

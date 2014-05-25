@@ -7,7 +7,7 @@ var Helper = require('psykick2d').Helper,
 
 var EnemyAI = function(enemy, ball) {
     BehaviorSystem.call(this);
-    this.enemyRect = enemy.getComponent('Rectangle');
+    this.enemyRect = enemy.getComponent('RectPhysicsBody');
     this.ballRect = ball.getComponent('Rectangle');
 };
 
@@ -21,7 +21,7 @@ EnemyAI.prototype.update = function(delta) {
     var distance = Math.abs(Math.abs(this.enemyRect.y + (this.enemyRect.h / 2)) - Math.abs(this.ballRect.y)),
         sign = (this.enemyRect.y < this.ballRect.y) ? 1 : -1;
     if (distance >= this.enemyRect.h / 4) {
-        this.enemyRect.y += SPEED * delta * sign;
+        this.enemyRect.velocity.y = SPEED * sign;
     }
 };
 

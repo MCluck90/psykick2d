@@ -6,7 +6,8 @@ var World = require('psykick2d').World,
 
     PlayerInputSystem = require('./player-input.js'),
     EnemyAISystem = require('./enemy-ai.js'),
-    BallMovementSystem = require('./ball-movement.js');
+    BallMovementSystem = require('./ball-movement.js'),
+    Physics = require('./physics.js');
 
 /**
  * Returns a new paddle at a given position
@@ -23,6 +24,10 @@ function createPaddle(x, y) {
             h: 100,
             color: 0xFFFFFF
         });
+    rect.velocity = {
+        x: 0,
+        y: 0
+    };
     paddle.addComponent(rect);
     paddle.addComponentAs(rect, 'RectPhysicsBody');
     return paddle;
@@ -37,11 +42,11 @@ function createBall(x, y) {
             h: 10,
             color: 0xFFFFFF
         });
-    ball.addComponent(rect);
     rect.velocity = {
-        x: 100,
-        y: 50
+        x: 125,
+        y: 75
     };
+    ball.addComponent(rect);
     ball.addComponentAs(rect, 'RectPhysicsBody');
     return ball;
 }
@@ -61,15 +66,20 @@ var layer = World.createLayer(),
     renderSystem = new RectRenderSystem(),
     playerInputSystem = new PlayerInputSystem(player),
     enemyAISystem = new EnemyAISystem(enemy, ball),
-    ballMovementSystem = new BallMovementSystem(ball);
+    ballMovementSystem = new BallMovementSystem(ball),
+    physicsSystem = new Physics(ball);
 
 renderSystem.addEntity(player);
 renderSystem.addEntity(enemy);
 renderSystem.addEntity(ball);
 
+physicsSystem.addEntity(player);
+physicsSystem.addEntity(enemy);
+
 layer.addSystem(renderSystem);
 layer.addSystem(playerInputSystem);
 layer.addSystem(enemyAISystem);
 layer.addSystem(ballMovementSystem);
+layer.addSystem(physicsSystem);
 
 World.pushLayer(layer);
