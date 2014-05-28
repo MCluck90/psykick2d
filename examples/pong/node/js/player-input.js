@@ -1,9 +1,9 @@
 'use strict';
 
-var BehaviorSystem = require('psykick2d').BehaviorSystem,
-    Helper = require('psykick2d').Helper,
-    Keyboard = require('psykick2d').Input.Keyboard,
-    Keys = require('psykick2d').Keys,
+var BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
+    Helper = require('../../../../src/index.js').Helper,
+    Keyboard = require('../../../../src/index.js').Input.Keyboard,
+    Keys = require('../../../../src/index.js').Keys,
 
     SPEED = 200;
 
@@ -23,7 +23,7 @@ Helper.inherit(PlayerInput, BehaviorSystem);
  * Updates the player's position
  * @param {number} delta    Time change
  */
-PlayerInput.prototype.update = function(delta) {
+PlayerInput.prototype.update = function() {
     var isUpPressed = Keyboard.isKeyDown(Keys.Up),
         isDownPressed = Keyboard.isKeyDown(Keys.Down);
     if (isUpPressed) {

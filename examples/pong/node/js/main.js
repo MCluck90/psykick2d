@@ -1,8 +1,8 @@
 'use strict';
 
-var World = require('psykick2d').World,
-    RectRenderSystem = require('psykick2d').Systems.Render.Rectangle,
-    Rectangle = require('psykick2d').Components.Shapes.Rectangle,
+var World = require('../../../../src/index.js').World,
+    RectRenderSystem = require('../../../../src/index.js').Systems.Render.Rectangle,
+    Rectangle = require('../../../../src/index.js').Components.Shapes.Rectangle,
 
     PlayerInputSystem = require('./player-input.js'),
     EnemyAISystem = require('./enemy-ai.js'),
