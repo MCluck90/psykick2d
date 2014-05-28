@@ -2,7 +2,7 @@
 
 var Helper = require('../../../helper.js'),
     BehaviorSystem = require('../../../behavior-system.js'),
-    QuadTree = require('../../../helpers/quad-tree.js');
+    QuadTree = require('../../../data-structures/quad-tree.js');
 
 var GRAVITY = 9.8,
     FRICTION = 10;
