@@ -30,7 +30,10 @@ var Entity = require('./entity.js'),
     },
 
     // If true, will not access the window or DOM
-    serverMode = false;
+    serverMode = false,
+
+    // Maximum amount of time between each step i.e. the minimum fps
+    maxTimeStep = 1 / 30;
 
 var World = {
     /**
@@ -49,12 +52,14 @@ var World = {
                 width: 800,
                 height: 600,
                 backgroundColor: '#000',
-                serverMode: false
+                serverMode: false,
+                minFPS: 30
             },
             backgroundEl,
             requestAnimationFrame;
 
         options = Helper.defaults(options, defaults);
+        maxTimeStep = 1 / options.minFPS;
         serverMode = options.serverMode;
         if (!serverMode) {
             backgroundEl = document.createElement('div');
@@ -96,7 +101,7 @@ var World = {
         }
 
         gameLoop = function() {
-            var delta = (new Date() - gameTime) / 1000;
+            var delta = Math.min((new Date() - gameTime) / 1000, maxTimeStep);
             self.update(delta);
             self.draw(delta);
             gameTime = new Date();
@@ -229,6 +234,10 @@ var World = {
         if (listenerList.indexOf(listener) === -1) {
             listenerList.push(listener);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.addEventListener(eventType, listener, false);
+        }
     },
 
     /**
@@ -245,6 +254,10 @@ var World = {
         if (index !== -1) {
             eventHandlers[eventType].splice(index, 1);
         }
+
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            window.removeEventListener(eventType, listener);
+        }
     },
 
     /**
@@ -252,6 +265,12 @@ var World = {
      * @param {string} eventType    Event to no longer listen for
      */
     removeAllListeners: function(eventType) {
+        if ((eventType === 'resize' || eventType === 'blur') && !serverMode) {
+            var listeners = eventHandlers[eventType];
+            for (var i = 0, len = listeners.length; i < len; i++) {
+                window.removeEventListener(eventType, listeners[i]);
+            }
+        }
         eventHandlers[eventType] = [];
     },
 

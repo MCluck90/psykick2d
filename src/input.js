@@ -1,7 +1,11 @@
 'use strict';
 
+var Helper = require('./helper.js');
+
 var // Determine if we're running on the server
     win = (typeof window !== 'undefined') ? window : null,
+
+    doc = (win) ? document : null,
 
     nav = (typeof navigator !== 'undefined') ? navigator : null,
 
@@ -68,12 +72,12 @@ var Input = {
             globalMouseState.y = evt.clientY - gamePosition.y;
         }
 
-        gameContainer.addEventListener('mousemove', onMouseMove);
-        gameContainer.addEventListener('mouseover', onMouseMove);
+        gameContainer.addEventListener('mousemove', onMouseMove, false);
+        gameContainer.addEventListener('mouseover', onMouseMove, false);
 
         gameContainer.addEventListener('mouseleave', function() {
             globalMouseState = null;
-        });
+        }, false);
 
         gameContainer.addEventListener('mousedown', function(evt) {
             var button = evt.button,
@@ -81,7 +85,7 @@ var Input = {
             if (index === -1) {
                 globalMouseState.buttons.push(button);
             }
-        });
+        }, false);
 
         gameContainer.addEventListener('mouseup', function(evt) {
             var button = evt.button,
@@ -89,24 +93,24 @@ var Input = {
             if (index !== -1) {
                 globalMouseState.buttons.splice(index, 1);
             }
-        });
+        }, false);
 
         // Setup keyboard tracking
-        gameContainer.addEventListener('keydown', function(evt) {
+        doc.addEventListener('keydown', function(evt) {
             keysPressed[evt.keyCode] = {
                 pressed: true,
                 shift:   evt.shiftKey,
                 ctrl:    evt.ctrlKey,
                 alt:     evt.altKey
             };
-        });
+        }, false);
 
-        gameContainer.addEventListener('keyup', function(evt) {
+        doc.addEventListener('keyup', function(evt) {
             var keyCode = evt.keyCode;
             if (keysPressed[keyCode]) {
                 keysPressed[keyCode].pressed = false;
             }
-        });
+        }, false);
     },
     Mouse: {
         /**
@@ -163,7 +167,7 @@ var Input = {
                     alt: false
                 },
                 keyInfo = keysPressed[keyCode];
-            modifiers = this.defaults(modifiers, defaultModifiers);
+            modifiers = Helper.defaults(modifiers, defaultModifiers);
             return  (keyInfo && keyInfo.pressed)        &&
                    !(modifiers.shift && !keyInfo.shift) &&
                    !(modifiers.ctrl  && !keyInfo.ctrl)  &&

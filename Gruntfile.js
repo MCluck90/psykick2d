@@ -79,8 +79,10 @@ module.exports = function(grunt) {
         grunt.task.run('jshint:all');
 
         // Create the index.js based on the source
-        var psykick = {},
-            fileContents = '';
+        var buildOptions = require('./config.json').build,
+            psykick = {},
+            indexContents = '';
+
         grunt.file.expand({ cwd: './src' }, ['**/**']).forEach(function(filepath) {
             if (['', 'index.js', 'browser.js'].indexOf(filepath) !== -1) {
                 return;
@@ -105,8 +107,32 @@ module.exports = function(grunt) {
             activeNamespace[moduleName] = 'require(\'./' + filepath + '\')';
         });
 
-        fileContents = JSON.stringify(psykick, null, 4).replace(/"/g, '');
-        grunt.file.write('./src/index.js', 'module.exports = ' + fileContents + ';');
+        // Store the actual, final index contents
+        indexContents = JSON.stringify(psykick, null, 4).replace(/"/g, '');
+
+        for (var i = 0, len = buildOptions.exclude.length; i < len; i++) {
+            var namespaces = buildOptions.exclude[i].split('.'),
+                activeNamespace = psykick,
+                key;
+            while(namespaces.length > 0) {
+                key = namespaces.shift();
+                if (!activeNamespace[key]) {
+                    // Break out of the loop for a bad reference
+                    console.log('Bad reference: "' + key + '"');
+                    namespaces = [];
+                    continue;
+                } else if (namespaces.length === 0) {
+                    delete activeNamespace[key];
+                    continue;
+                }
+
+                activeNamespace = activeNamespace[key];
+            }
+        }
+
+        // Save the custom build
+        var customBuild = JSON.stringify(psykick, null, 4).replace(/"/g, '');
+        grunt.file.write('./src/index.js', 'module.exports = ' + customBuild + ';');
 
         // Stuff it all in to one file
         if (type === undefined) {
@@ -114,5 +140,8 @@ module.exports = function(grunt) {
         } else {
             grunt.task.run('browserify:' + type);
         }
+
+        // Save the Psykick2D index
+        grunt.file.write('./src/index.js', 'module.exports = ' + indexContents + ';');
     });
 };

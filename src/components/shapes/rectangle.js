@@ -61,7 +61,7 @@ Object.defineProperties(Rectangle.prototype, {
 Rectangle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawRect(this.x, this.y, this._w, this._h);
+        this.drawRect(0, 0, this._w, this._h);
         this.endFill();
     }
 };
