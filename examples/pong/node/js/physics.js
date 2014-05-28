@@ -2,7 +2,9 @@
 
 var Helper = require('../../../../src/index.js').Helper,
     BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
-    CollisionGrid = require('../../../../src/index.js').DataStructures.CollisionGrid;
+    CollisionGrid = require('../../../../src/index.js').DataStructures.CollisionGrid,
+
+    BALL_VELOCITY_CHANGE = 50;
 
 /**
  * Takes care of the basic physics of the game
@@ -98,10 +100,35 @@ Physics.prototype.update = function(delta) {
     var collisions = this.grid.getCollisions(this.ball);
     if (collisions.length > 0) {
         // Make sure the ball only bounces when it hits the side of a paddle
-        var collider = collisions[0].getComponent('Rectangle');
-        if ((this.ballRect.x > collider.x && this.ballRect.x + this.ballRect.w > collider.x + collider.w) ||
-            (this.ballRect.x < collider.x && this.ballRect.x + this.ballRect.w < collider.x + collider.w)) {
-            this.ballRect.velocity.x *= -1;
+        var collider = collisions[0].getComponent('Rectangle'),
+            ballRight = this.ballRect.x + this.ballRect.w,
+            colliderRight = collider.x + collider.w;
+        if ((this.ballRect.x > collider.x && ballRight > colliderRight) ||
+            (this.ballRect.x < collider.x && ballRight < colliderRight)) {
+            var halfBallHeight = this.ballRect.h / 2,
+                ballCenter = this.ballRect.y + halfBallHeight,
+                halfPaddleHeight = collider.h / 2,
+                paddleCenter = collider.y + halfPaddleHeight,
+                yVelocityChange = (ballCenter - paddleCenter) / halfPaddleHeight,
+                xVelocityChange = 1 - Math.abs(yVelocityChange),
+                xVelocitySign = (this.ballRect.velocity.x > 0) ? 1 : -1,
+                velocity = Math.abs(this.ballRect.velocity.x) +
+                           Math.abs(this.ballRect.velocity.y) +
+                           BALL_VELOCITY_CHANGE;
+
+            if (Math.abs(yVelocityChange) > 0.8) {
+                yVelocityChange = (yVelocityChange > 0) ? 0.8 : -0.8;
+                xVelocityChange = 0.2;
+            }
+
+            if (xVelocitySign === 1) {
+                this.ballRect.x = collider.x - this.ballRect.w;
+            } else {
+                this.ballRect.x = collider.x + collider.w;
+            }
+
+            this.ballRect.velocity.x = velocity * xVelocityChange * -xVelocitySign;
+            this.ballRect.velocity.y = velocity * yVelocityChange;
         }
     }
 };
