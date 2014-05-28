@@ -4,6 +4,12 @@ var Helper = require('../../../../src/index.js').Helper,
     BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
     CollisionGrid = require('../../../../src/index.js').DataStructures.CollisionGrid;
 
+/**
+ * Takes care of the basic physics of the game
+ * @param {Entity}  ball    The ball entity
+ * @constructor
+ * @extends {BehaviorSystem}
+ */
 var Physics = function(ball) {
     BehaviorSystem.call(this);
     this.requiredComponents = ['Rectangle', 'RectPhysicsBody'];
@@ -19,6 +25,11 @@ var Physics = function(ball) {
 
 Helper.inherit(Physics, BehaviorSystem);
 
+/**
+ * Adds an entity to the physics system
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
 Physics.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
         this.grid.addEntity(entity);
@@ -27,6 +38,11 @@ Physics.prototype.addEntity = function(entity) {
     return false;
 };
 
+/**
+ * Removes an entity from the physics system
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
 Physics.prototype.removeEntity = function(entity) {
     if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
         this.grid.removeEntity(entity);
@@ -35,6 +51,10 @@ Physics.prototype.removeEntity = function(entity) {
     return false;
 };
 
+/**
+ * Updates the state of the world
+ * @param {number}  delta   Time since last update
+ */
 Physics.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
         var entity = this.actionOrder[i],
@@ -77,7 +97,12 @@ Physics.prototype.update = function(delta) {
 
     var collisions = this.grid.getCollisions(this.ball);
     if (collisions.length > 0) {
-        this.ballRect.velocity.x *= -1;
+        // Make sure the ball only bounces when it hits the side of a paddle
+        var collider = collisions[0].getComponent('Rectangle');
+        if ((this.ballRect.x > collider.x && this.ballRect.x + this.ballRect.w > collider.x + collider.w) ||
+            (this.ballRect.x < collider.x && this.ballRect.x + this.ballRect.w < collider.x + collider.w)) {
+            this.ballRect.velocity.x *= -1;
+        }
     }
 };
 

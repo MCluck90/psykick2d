@@ -18,10 +18,23 @@ Helper.inherit(EnemyAI, BehaviorSystem);
  * @param {number} delta    Time since last update
  */
 EnemyAI.prototype.update = function(delta) {
-    var distance = Math.abs(Math.abs(this.enemyRect.y + (this.enemyRect.h / 2)) - Math.abs(this.ballRect.y)),
-        sign = (this.enemyRect.y < this.ballRect.y) ? 1 : -1;
-    if (distance >= this.enemyRect.h / 4) {
-        this.enemyRect.velocity.y = SPEED * sign;
+    // Don't chase the ball until it's about to come back
+    var leftEdge = 100 + Math.random() * 300,
+        rightEdge = 600 + Math.random() * 100;
+    if (this.ballRect.velocity.x < 0 && this.ballRect.x > leftEdge && this.ballRect.x < rightEdge) {
+        this.enemyRect.velocity.y = 0;
+        return;
+    }
+
+    var ballCenter = this.ballRect.y + this.ballRect.h / 2,
+        enemyCenter = this.enemyRect.y + this.enemyRect.h / 2,
+        difference = Math.abs(ballCenter - enemyCenter),
+        velocitySign = (ballCenter < enemyCenter) ? -1 : 1;
+
+    if (difference > SPEED * delta) {
+        this.enemyRect.velocity.y = SPEED * velocitySign;
+    } else {
+        this.enemyRect.velocity.y = 0;
     }
 };
 
