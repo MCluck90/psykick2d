@@ -7,6 +7,7 @@ module.exports = {
             Animation: require('./components/gfx/animation.js'),
             Color: require('./components/gfx/color.js'),
             Sprite: require('./components/gfx/sprite.js'),
+            Text: require('./components/gfx/text.js'),
             TiledSprite: require('./components/gfx/tiled-sprite.js')
         },
         Physics: {
@@ -24,10 +25,6 @@ module.exports = {
     },
     Entity: require('./entity.js'),
     Helper: require('./helper.js'),
-    Helpers: {
-        CollisionGrid: require('./helpers/collision-grid.js'),
-        QuadTree: require('./helpers/quad-tree.js')
-    },
     Input: require('./input.js'),
     Keys: require('./keys.js'),
     Layer: require('./layer.js'),
@@ -43,7 +40,8 @@ module.exports = {
         Render: {
             Rectangle: require('./systems/render/rectangle.js'),
             Shape: require('./systems/render/shape.js'),
-            Sprite: require('./systems/render/sprite.js')
+            Sprite: require('./systems/render/sprite.js'),
+            Text: require('./systems/render/text.js')
         }
     },
     World: require('./world.js')
