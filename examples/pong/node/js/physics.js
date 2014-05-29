@@ -79,12 +79,6 @@ Physics.prototype.update = function(delta) {
         }
     }
 
-    // Collide with the side of the level
-    if (this.ballRect.x > 800 || this.ballRect.x < 0) {
-        this.ballRect.x = 395;
-        this.ballRect.y = 295;
-    }
-
     // Collide with the top or bottom of the level
     var hitBottom = (this.ballRect.y + this.ballRect.h >= 600),
         hitTop = (this.ballRect.y <= 0);
@@ -109,17 +103,12 @@ Physics.prototype.update = function(delta) {
                 ballCenter = this.ballRect.y + halfBallHeight,
                 halfPaddleHeight = collider.h / 2,
                 paddleCenter = collider.y + halfPaddleHeight,
-                yVelocityChange = (ballCenter - paddleCenter) / halfPaddleHeight,
+                yVelocityChange = ((ballCenter - paddleCenter) / halfPaddleHeight) * 0.8,
                 xVelocityChange = 1 - Math.abs(yVelocityChange),
                 xVelocitySign = (this.ballRect.velocity.x > 0) ? 1 : -1,
                 velocity = Math.abs(this.ballRect.velocity.x) +
                            Math.abs(this.ballRect.velocity.y) +
                            BALL_VELOCITY_CHANGE;
-
-            if (Math.abs(yVelocityChange) > 0.8) {
-                yVelocityChange = (yVelocityChange > 0) ? 0.8 : -0.8;
-                xVelocityChange = 0.2;
-            }
 
             if (xVelocitySign === 1) {
                 this.ballRect.x = collider.x - this.ballRect.w;

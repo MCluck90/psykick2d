@@ -3,11 +3,14 @@
 var World = require('../../../../src/index.js').World,
     RectRenderSystem = require('../../../../src/index.js').Systems.Render.Rectangle,
     Rectangle = require('../../../../src/index.js').Components.Shapes.Rectangle,
+    Text = require('../../../../src/index.js').Components.GFX.Text,
+    TextSystem = require('../../../../src/index.js').Systems.Render.Text,
 
     PlayerInputSystem = require('./player-input.js'),
     EnemyAISystem = require('./enemy-ai.js'),
     BallMovementSystem = require('./ball-movement.js'),
-    Physics = require('./physics.js');
+    Physics = require('./physics.js'),
+    Score = require('./score.js');
 
 /**
  * Returns a new paddle at a given position
@@ -23,6 +26,15 @@ function createPaddle(x, y) {
             w: 30,
             h: 100,
             color: 0xFFFFFF
+        }),
+        score = new Text({
+            x: (x < 400) ? 350 : 450,
+            y: 10,
+            text: 0,
+            style: {
+                font: 'bold 72px "Courier New"',
+                fill: '#FFF'
+            }
         });
     rect.velocity = {
         x: 0,
@@ -30,6 +42,7 @@ function createPaddle(x, y) {
     };
     paddle.addComponent(rect);
     paddle.addComponentAs(rect, 'RectPhysicsBody');
+    paddle.addComponent(score);
     return paddle;
 }
 
@@ -64,22 +77,29 @@ var layer = World.createLayer(),
     ball = createBall(395, 295),
 
     renderSystem = new RectRenderSystem(),
+    textSystem = new TextSystem(),
     playerInputSystem = new PlayerInputSystem(player),
     enemyAISystem = new EnemyAISystem(enemy, ball),
     ballMovementSystem = new BallMovementSystem(ball),
-    physicsSystem = new Physics(ball);
+    physicsSystem = new Physics(ball),
+    scoreSystem = new Score(ball, player, enemy);
 
 renderSystem.addEntity(player);
 renderSystem.addEntity(enemy);
 renderSystem.addEntity(ball);
 
+textSystem.addEntity(player);
+textSystem.addEntity(enemy);
+
 physicsSystem.addEntity(player);
 physicsSystem.addEntity(enemy);
 
 layer.addSystem(renderSystem);
+layer.addSystem(textSystem);
 layer.addSystem(playerInputSystem);
 layer.addSystem(enemyAISystem);
 layer.addSystem(ballMovementSystem);
 layer.addSystem(physicsSystem);
+layer.addSystem(scoreSystem);
 
 World.pushLayer(layer);
