@@ -9,7 +9,6 @@ var World = require('../../../../src/index.js').World,
     CONSTANTS = require('./constants.js'),
     PlayerInputSystem = require('./player-input.js'),
     EnemyAISystem = require('./enemy-ai.js'),
-    BallMovementSystem = require('./ball-movement.js'),
     Physics = require('./physics.js'),
     Score = require('./score.js');
 
@@ -92,7 +91,6 @@ var layer = World.createLayer(),
     textSystem = new TextSystem(),
     playerInputSystem = new PlayerInputSystem(player),
     enemyAISystem = new EnemyAISystem(enemy, ball),
-    ballMovementSystem = new BallMovementSystem(ball),
     physicsSystem = new Physics(ball),
     scoreSystem = new Score(ball, player, enemy);
 
@@ -114,7 +112,6 @@ layer.addSystem(renderSystem);
 layer.addSystem(textSystem);
 layer.addSystem(playerInputSystem);
 layer.addSystem(enemyAISystem);
-layer.addSystem(ballMovementSystem);
 layer.addSystem(physicsSystem);
 layer.addSystem(scoreSystem);
 
