@@ -48,6 +48,12 @@ function createPaddle(x, y) {
     return paddle;
 }
 
+/**
+ * Creates a ball
+ * @param {number} x    X position
+ * @param {number} y    Y position
+ * @returns {Entity}
+ */
 function createBall(x, y) {
     var xVelocity = Math.random(),
         yVelocity = 1 - xVelocity,
@@ -75,11 +81,13 @@ World.init({
     backgroundColor: '#000'
 });
 
+// Generate the layer and main game objects
 var layer = World.createLayer(),
     player = createPaddle(25, 50),
     enemy = createPaddle(745, 50),
     ball = createBall(CONSTANTS.GAME_WIDTH / 2 - 5, CONSTANTS.GAME_HEIGHT / 2 - 5),
 
+    // Prepare the systems
     renderSystem = new RectRenderSystem(),
     textSystem = new TextSystem(),
     playerInputSystem = new PlayerInputSystem(player),
@@ -88,16 +96,20 @@ var layer = World.createLayer(),
     physicsSystem = new Physics(ball),
     scoreSystem = new Score(ball, player, enemy);
 
+// Add main objects to the rendering system
 renderSystem.addEntity(player);
 renderSystem.addEntity(enemy);
 renderSystem.addEntity(ball);
 
+// Add the players' scores to a text rendering system
 textSystem.addEntity(player);
 textSystem.addEntity(enemy);
 
+// Add additional physics bodies
 physicsSystem.addEntity(player);
 physicsSystem.addEntity(enemy);
 
+// Add all the systems to the layer
 layer.addSystem(renderSystem);
 layer.addSystem(textSystem);
 layer.addSystem(playerInputSystem);
