@@ -70,9 +70,16 @@ CollisionGrid.prototype.addEntity = function(entity) {
         minY = ~~(rect.y / this.cellHeight),
         maxY = ~~( (rect.y + rect.h) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
+        var column = this._grid[x];
+        if (!column) {
+            continue;
+        }
         for (var y = minY; y < maxY; y++) {
-            var collection = this._grid[x][y];
-            if (collection.indexOf(entity) === -1) {
+            if (!column[y]) {
+                continue;
+            }
+            var collection = column[y];
+            if (collection && collection.indexOf(entity) === -1) {
                 collection.push(entity);
             }
         }
@@ -90,8 +97,16 @@ CollisionGrid.prototype.removeEntity = function(entity) {
         minY = ~~(rect.y / this.cellHeight),
         maxY = ~~( (rect.y + rect.h) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
+        var column = this._grid[x];
+        if (!column) {
+            continue;
+        }
         for (var y = minY; y < maxY; y++) {
-            var collection = this._grid[x][y],
+            if (!column[y]) {
+                continue;
+            }
+
+            var collection = column[y],
                 entityIndex = collection.indexOf(entity);
             if (entityIndex !== -1) {
                 collection.splice(entityIndex, 1);
@@ -153,14 +168,15 @@ CollisionGrid.prototype.getCollisions = function(entity) {
         results = [];
 
     for (var x = minX; x <= maxX; x++) {
-        if (!this._grid[x]) {
+        var column = this._grid[x];
+        if (!column) {
             continue;
         }
         for (var y = minY; y <= maxY; y++) {
-            if (!this._grid[x][y]) {
+            if (!column[y]) {
                 continue;
             }
-            var collection = this._grid[x][y];
+            var collection = column[y];
             for (var i = 0, len = collection.length; i < len; i++) {
                 var other = collection[i];
                 if (other !== entity && isColliding(other.getComponent('Rectangle'), rect)) {
