@@ -6,6 +6,7 @@ var World = require('../../../../src/index.js').World,
     Text = require('../../../../src/index.js').Components.GFX.Text,
     TextSystem = require('../../../../src/index.js').Systems.Render.Text,
 
+    CONSTANTS = require('./constants.js'),
     PlayerInputSystem = require('./player-input.js'),
     EnemyAISystem = require('./enemy-ai.js'),
     BallMovementSystem = require('./ball-movement.js'),
@@ -19,21 +20,22 @@ var World = require('../../../../src/index.js').World,
  * @returns {Entity}
  */
 function createPaddle(x, y) {
-    var paddle = World.createEntity(),
+    var halfGameWidth = CONSTANTS.GAME_WIDTH / 2,
+        paddle = World.createEntity(),
         rect = new Rectangle({
             x: x,
             y: y,
             w: 30,
             h: 100,
-            color: 0xFFFFFF
+            color: CONSTANTS.PADDLE_COLOR
         }),
         score = new Text({
-            x: (x < 400) ? 350 : 450,
+            x: (x < halfGameWidth) ? halfGameWidth - 50 : halfGameWidth + 50,
             y: 10,
             text: 0,
             style: {
-                font: 'bold 72px "Courier New"',
-                fill: '#FFF'
+                font: CONSTANTS.SCORE_FONT,
+                fill: CONSTANTS.SCORE_COLOR
             }
         });
     rect.velocity = {
@@ -47,17 +49,19 @@ function createPaddle(x, y) {
 }
 
 function createBall(x, y) {
-    var ball = World.createEntity(),
+    var xVelocity = Math.random(),
+        yVelocity = 1 - xVelocity,
+        ball = World.createEntity(),
         rect = new Rectangle({
             x: x,
             y: y,
             w: 10,
             h: 10,
-            color: 0xFFFFFF
+            color: CONSTANTS.BALL_COLOR
         });
     rect.velocity = {
-        x: 125,
-        y: 75
+        x: xVelocity * CONSTANTS.BALL_SPEED,
+        y: yVelocity * CONSTANTS.BALL_SPEED
     };
     ball.addComponent(rect);
     ball.addComponentAs(rect, 'RectPhysicsBody');
@@ -66,15 +70,15 @@ function createBall(x, y) {
 
 // Initialize the world
 World.init({
-    width: 800,
-    height: 600,
+    width: CONSTANTS.GAME_WIDTH,
+    height: CONSTANTS.GAME_HEIGHT,
     backgroundColor: '#000'
 });
 
 var layer = World.createLayer(),
     player = createPaddle(25, 50),
     enemy = createPaddle(745, 50),
-    ball = createBall(395, 295),
+    ball = createBall(CONSTANTS.GAME_WIDTH / 2 - 5, CONSTANTS.GAME_HEIGHT / 2 - 5),
 
     renderSystem = new RectRenderSystem(),
     textSystem = new TextSystem(),

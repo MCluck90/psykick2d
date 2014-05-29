@@ -4,7 +4,7 @@ var Helper = require('../../../../src/index.js').Helper,
     BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
     CollisionGrid = require('../../../../src/index.js').DataStructures.CollisionGrid,
 
-    BALL_VELOCITY_CHANGE = 50;
+    CONSTANTS = require('./constants.js');
 
 /**
  * Takes care of the basic physics of the game
@@ -18,9 +18,9 @@ var Physics = function(ball) {
     this.ball = ball;
     this.ballRect = ball.getComponent('RectPhysicsBody');
     this.grid = new CollisionGrid({
-        width: 800,
-        height: 600,
-        cellSize: 10
+        width: CONSTANTS.GAME_WIDTH,
+        height: CONSTANTS.GAME_HEIGHT,
+        cellSize: 50
     });
     this.addEntity(ball);
 };
@@ -71,7 +71,7 @@ Physics.prototype.update = function(delta) {
                 this.grid.removeEntity(entity);
                 physicsBody.y = 0;
                 this.grid.addEntity(entity);
-            } else if (physicsBody.y + physicsBody.h > 600) {
+            } else if (physicsBody.y + physicsBody.h > CONSTANTS.GAME_HEIGHT) {
                 this.grid.removeEntity(entity);
                 physicsBody.y = 600 - physicsBody.h;
                 this.grid.addEntity(entity);
@@ -80,14 +80,14 @@ Physics.prototype.update = function(delta) {
     }
 
     // Collide with the top or bottom of the level
-    var hitBottom = (this.ballRect.y + this.ballRect.h >= 600),
+    var hitBottom = (this.ballRect.y + this.ballRect.h >= CONSTANTS.GAME_HEIGHT),
         hitTop = (this.ballRect.y <= 0);
     if (hitTop || hitBottom) {
         this.ballRect.velocity.y *= -1;
         if (hitTop) {
             this.ballRect.y = 0;
         } else {
-            this.ballRect.y = 600 - this.ballRect.h;
+            this.ballRect.y = CONSTANTS.GAME_HEIGHT - this.ballRect.h;
         }
     }
 
@@ -103,12 +103,12 @@ Physics.prototype.update = function(delta) {
                 ballCenter = this.ballRect.y + halfBallHeight,
                 halfPaddleHeight = collider.h / 2,
                 paddleCenter = collider.y + halfPaddleHeight,
-                yVelocityChange = ((ballCenter - paddleCenter) / halfPaddleHeight) * 0.8,
+                yVelocityChange = ((ballCenter - paddleCenter) / halfPaddleHeight) * CONSTANTS.MAX_DEFLECTION,
                 xVelocityChange = 1 - Math.abs(yVelocityChange),
                 xVelocitySign = (this.ballRect.velocity.x > 0) ? 1 : -1,
                 velocity = Math.abs(this.ballRect.velocity.x) +
                            Math.abs(this.ballRect.velocity.y) +
-                           BALL_VELOCITY_CHANGE;
+                           CONSTANTS.BALL_SPEED_CHANGE;
 
             if (xVelocitySign === 1) {
                 this.ballRect.x = collider.x - this.ballRect.w;

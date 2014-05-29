@@ -5,7 +5,7 @@ var BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
     Keyboard = require('../../../../src/index.js').Input.Keyboard,
     Keys = require('../../../../src/index.js').Keys,
 
-    SPEED = 200;
+    CONSTANTS = require('./constants.js');
 
 /**
  * Controls the player
@@ -27,10 +27,10 @@ PlayerInput.prototype.update = function() {
     var isUpPressed = Keyboard.isKeyDown(Keys.Up),
         isDownPressed = Keyboard.isKeyDown(Keys.Down);
     if (isUpPressed) {
-        this._playerRect.velocity.y = -SPEED;
+        this._playerRect.velocity.y = -CONSTANTS.PADDLE_SPEED;
     }
     if (isDownPressed) {
-        this._playerRect.velocity.y = SPEED;
+        this._playerRect.velocity.y = CONSTANTS.PADDLE_SPEED;
     }
     if (!isUpPressed && !isDownPressed) {
         this._playerRect.velocity.y = 0;
