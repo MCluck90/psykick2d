@@ -1,10 +1,10 @@
 'use strict';
 
-var World = require('../../../../src/index.js').World,
-    RectRenderSystem = require('../../../../src/index.js').Systems.Render.Rectangle,
-    Rectangle = require('../../../../src/index.js').Components.Shapes.Rectangle,
-    Text = require('../../../../src/index.js').Components.GFX.Text,
-    TextSystem = require('../../../../src/index.js').Systems.Render.Text,
+var World = require('../../../src/index.js').World,
+    RectRenderSystem = require('../../../src/index.js').Systems.Render.Rectangle,
+    Rectangle = require('../../../src/index.js').Components.Shapes.Rectangle,
+    Text = require('../../../src/index.js').Components.GFX.Text,
+    TextSystem = require('../../../src/index.js').Systems.Render.Text,
 
     CONSTANTS = require('./constants.js'),
     PlayerInputSystem = require('./player-input.js'),

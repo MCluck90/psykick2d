@@ -1,8 +1,8 @@
 'use strict';
 
-var Helper = require('../../../../src/index.js').Helper,
-    BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
-    CollisionGrid = require('../../../../src/index.js').DataStructures.CollisionGrid,
+var Helper = require('../../../src/index.js').Helper,
+    BehaviorSystem = require('../../../src/index.js').BehaviorSystem,
+    CollisionGrid = require('../../../src/index.js').DataStructures.CollisionGrid,
 
     CONSTANTS = require('./constants.js');
 

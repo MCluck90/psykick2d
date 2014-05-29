@@ -1,9 +1,9 @@
 'use strict';
 
-var BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
-    Helper = require('../../../../src/index.js').Helper,
-    Keyboard = require('../../../../src/index.js').Input.Keyboard,
-    Keys = require('../../../../src/index.js').Keys,
+var BehaviorSystem = require('../../../src/index.js').BehaviorSystem,
+    Helper = require('../../../src/index.js').Helper,
+    Keyboard = require('../../../src/index.js').Input.Keyboard,
+    Keys = require('../../../src/index.js').Keys,
 
     CONSTANTS = require('./constants.js');
 
