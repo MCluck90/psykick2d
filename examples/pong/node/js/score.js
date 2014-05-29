@@ -29,6 +29,7 @@ Score.prototype.update = function() {
     var collideLeft = (this.ballRect.x < 0),
         collideRight = (this.ballRect.x + this.ballRect.w > CONSTANTS.GAME_WIDTH);
     if (collideLeft || collideRight) {
+        // Reset the ball
         this.ballRect.x = CONSTANTS.GAME_WIDTH / 2 - 5;
         this.ballRect.y = CONSTANTS.GAME_HEIGHT / 2 - 5;
         var yVelocity = Math.min(Math.random(), 0.8),
@@ -39,6 +40,7 @@ Score.prototype.update = function() {
             y: yVelocity * CONSTANTS.BALL_SPEED
         };
 
+        // Increment the players' score
         var scoringPlayer = (collideLeft) ? this.enemy : this.player,
             score = scoringPlayer.getComponent('Text');
         score.text = parseInt(score.text, 10) + 1;

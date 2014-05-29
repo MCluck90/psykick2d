@@ -3,8 +3,14 @@
 var Helper = require('../../../../src/index.js').Helper,
     BehaviorSystem = require('../../../../src/index.js').BehaviorSystem,
 
-    SPEED = 200;
+    CONSTANTS = require('./constants.js');
 
+/**
+ * Drives the enemy toward victory
+ * @param {Entity} enemy
+ * @param {Entity} ball
+ * @constructor
+ */
 var EnemyAI = function(enemy, ball) {
     BehaviorSystem.call(this);
     this.enemyRect = enemy.getComponent('RectPhysicsBody');
@@ -31,8 +37,8 @@ EnemyAI.prototype.update = function(delta) {
         difference = Math.abs(ballCenter - enemyCenter),
         velocitySign = (ballCenter < enemyCenter) ? -1 : 1;
 
-    if (difference > SPEED * delta) {
-        this.enemyRect.velocity.y = SPEED * velocitySign;
+    if (difference > CONSTANTS.PADDLE_SPEED * delta) {
+        this.enemyRect.velocity.y = CONSTANTS.PADDLE_SPEED * velocitySign;
     } else {
         this.enemyRect.velocity.y = 0;
     }

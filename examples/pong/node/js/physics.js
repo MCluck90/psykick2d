@@ -94,11 +94,14 @@ Physics.prototype.update = function(delta) {
     var collisions = this.grid.getCollisions(this.ball);
     if (collisions.length > 0) {
         // Make sure the ball only bounces when it hits the side of a paddle
-        var collider = collisions[0].getComponent('Rectangle'),
+        var collider = collisions[0].getComponent('RectPhysicsBody'),
             ballRight = this.ballRect.x + this.ballRect.w,
             colliderRight = collider.x + collider.w;
         if ((this.ballRect.x > collider.x && ballRight > colliderRight) ||
             (this.ballRect.x < collider.x && ballRight < colliderRight)) {
+
+            // Calculate what kind of angle to launch the ball at
+            // Dead center: straight forward, high up: high angle, etc.
             var halfBallHeight = this.ballRect.h / 2,
                 ballCenter = this.ballRect.y + halfBallHeight,
                 halfPaddleHeight = collider.h / 2,
@@ -110,12 +113,14 @@ Physics.prototype.update = function(delta) {
                            Math.abs(this.ballRect.velocity.y) +
                            CONSTANTS.BALL_SPEED_CHANGE;
 
+            // Ensure it jumps to the collision point
             if (xVelocitySign === 1) {
                 this.ballRect.x = collider.x - this.ballRect.w;
             } else {
                 this.ballRect.x = collider.x + collider.w;
             }
 
+            // Reflect the ball
             this.ballRect.velocity.x = velocity * xVelocityChange * -xVelocitySign;
             this.ballRect.velocity.y = velocity * yVelocityChange;
         }
