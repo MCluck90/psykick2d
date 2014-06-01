@@ -1,9 +1,9 @@
 'use strict';
 
-var BehaviorSystem = require('../../../src/index.js').BehaviorSystem,
-    Helper = require('../../../src/index.js').Helper,
-    Keyboard = require('../../../src/index.js').Input.Keyboard,
-    Keys = require('../../../src/index.js').Keys,
+var BehaviorSystem = require('psykick2d').BehaviorSystem,
+    Helper = require('psykick2d').Helper,
+    Keyboard = require('psykick2d').Input.Keyboard,
+    Keys = require('psykick2d').Keys,
 
     CONSTANTS = require('./constants.js');
 

@@ -1,7 +1,7 @@
 'use strict';
 
-var Helper = require('../../../src/index.js').Helper,
-    BehaviorSystem = require('../../../src/index.js').BehaviorSystem,
+var Helper = require('psykick2d').Helper,
+    BehaviorSystem = require('psykick2d').BehaviorSystem,
 
     CONSTANTS = require('./constants.js');
 

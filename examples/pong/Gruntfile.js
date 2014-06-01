@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(grunt) {
-    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('../../../node_modules/grunt-browserify');
 
     grunt.initConfig({
         browserify: {
@@ -10,7 +10,10 @@ module.exports = function(grunt) {
                     'build/game-debug.js': ['js/main.js']
                 },
                 options: {
-                    debug: true
+                    debug: true,
+                    alias: [
+                        '../../../src/index.js:psykick2d'
+                    ]
                 }
             },
             release: {
@@ -18,7 +21,10 @@ module.exports = function(grunt) {
                     'build/game.js': ['js/main.js']
                 },
                 options: {
-                    debug: false
+                    debug: false,
+                    alias: [
+                        '../../../src/index.js:psykick2d'
+                    ]
                 }
             }
         }
