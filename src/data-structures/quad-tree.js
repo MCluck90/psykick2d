@@ -8,14 +8,14 @@
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.h,
+        bottomA = a.y + a.height,
         leftA = a.x,
-        rightA = a.x + a.w,
+        rightA = a.x + a.width,
 
         topB = b.y,
-        bottomB = b.y + b.h,
+        bottomB = b.y + b.height,
         leftB = b.x,
-        rightB = b.x + b.w,
+        rightB = b.x + b.width,
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -59,9 +59,9 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     } else {
         rect = rect || entity.getComponent('RectPhysicsBody');
         var top    = rect.y,
-            bottom = rect.y + rect.h,
+            bottom = rect.y + rect.height,
             left   = rect.x,
-            right  = rect.x + rect.w,
+            right  = rect.x + rect.width,
             inUpper = (top <= this.y + this.h / 2),
             inLower = (bottom >= this.y + this.h / 2),
             inLeft = (left <= this.x + this.w / 2),
@@ -121,9 +121,9 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
 
     rect = rect || entity.getComponent('Rectangle');
     var top    = rect.y,
-        bottom = rect.y + rect.h,
+        bottom = rect.y + rect.height,
         left   = rect.x,
-        right  = rect.x + rect.w,
+        right  = rect.x + rect.width,
         inUpper = (top <= this.y + this.h / 2),
         inLower = (bottom >= this.y + this.h / 2),
         inLeft = (left <= this.x + this.w / 2),
@@ -172,9 +172,9 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
     if (this.entities.indexOf(entity) === -1) {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.h,
+            bottom = rect.y + rect.height,
             left   = rect.x,
-            right  = rect.x + rect.w,
+            right  = rect.x + rect.width,
             inUpper = (top <= this.y + this.h / 2),
             inLower = (bottom >= this.y + this.h / 2),
             inLeft = (left <= this.x + this.w / 2),

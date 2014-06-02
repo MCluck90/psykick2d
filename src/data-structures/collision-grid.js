@@ -8,14 +8,14 @@
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.h,
+        bottomA = a.y + a.height,
         leftA = a.x,
-        rightA = a.x + a.w,
+        rightA = a.x + a.width,
 
         topB = b.y,
-        bottomB = b.y + b.h,
+        bottomB = b.y + b.height,
         leftB = b.x,
-        rightB = b.x + b.w,
+        rightB = b.x + b.width,
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -66,20 +66,20 @@ var CollisionGrid = function(options) {
 CollisionGrid.prototype.addEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
-    for (var x = minX; x < maxX; x++) {
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+    for (var x = minX; x <= maxX; x++) {
         var column = this._grid[x];
         if (!column) {
             continue;
         }
-        for (var y = minY; y < maxY; y++) {
+        for (var y = minY; y <= maxY; y++) {
             if (!column[y]) {
                 continue;
             }
             var collection = column[y];
-            if (collection && collection.indexOf(entity) === -1) {
+            if (collection.indexOf(entity) === -1) {
                 collection.push(entity);
             }
         }
@@ -93,9 +93,9 @@ CollisionGrid.prototype.addEntity = function(entity) {
 CollisionGrid.prototype.removeEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -121,18 +121,21 @@ CollisionGrid.prototype.removeEntity = function(entity) {
  * @param {{ x: number, y: number }} deltaPosition
  */
 CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
+    deltaPosition = deltaPosition || {};
+    deltaPosition.x = deltaPosition.x || 0;
+    deltaPosition.y = deltaPosition.y || 0;
     var rect = entity.getComponent('Rectangle'),
         newRect = {
             minX: rect.x + deltaPosition.x,
-            maxX: rect.x + rect.w + deltaPosition.x,
+            maxX: rect.x + rect.width + deltaPosition.x,
             minY: rect.y + deltaPosition.y,
-            maxY: rect.y + rect.h + deltaPosition.y
+            maxY: rect.y + rect.height + deltaPosition.y
         },
         oldCells = {
             minX: ~~(rect.x / this.cellWidth),
-            maxX: ~~( (rect.x + rect.w) / this.cellWidth ),
+            maxX: ~~( (rect.x + rect.width) / this.cellWidth ),
             minY: ~~(rect.y / this.cellHeight),
-            maxY: ~~( (rect.y + rect.h) / this.cellHeight )
+            maxY: ~~( (rect.y + rect.height) / this.cellHeight )
         },
         newCells = {
             minX: ~~(newRect.minX / this.cellWidth),
@@ -162,9 +165,9 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight ),
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight ),
         results = [];
 
     for (var x = minX; x <= maxX; x++) {

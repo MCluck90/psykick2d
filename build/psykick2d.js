@@ -545,8 +545,8 @@ var Helper = require('../../helper.js');
  * @param {object}  [options]
  * @param {number}  [options.x=0]
  * @param {number}  [options.y=0]
- * @param {number}  [options.w=0]            Width
- * @param {number}  [options.h=0]            Height
+ * @param {number}  [options.width=0]
+ * @param {number}  [options.height=0]
  * @param {object}  [options.velocity]
  * @param {number}  [options.velocity.x=0]
  * @param {number}  [options.velocity.y=0]
@@ -562,8 +562,8 @@ var RectPhysicsBody = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 0,
-        h: 0,
+        width: 0,
+        height: 0,
         velocity: {
             x: 0,
             y: 0
@@ -577,8 +577,8 @@ var RectPhysicsBody = function(options) {
     options = Helper.defaults(options, defaults);
     this.x = options.x;
     this.y = options.y;
-    this.w = options.w;
-    this.h = options.h;
+    this.width = options.width;
+    this.height = options.height;
     this.velocity = options.velocity;
     this.mass = options.mass;
     this.bounciness = options.bounciness;
@@ -705,8 +705,8 @@ var Helper = require('../../helper.js'),
  * @param {object} [options]
  * @param {number} [options.x=0]
  * @param {number} [options.y=0]
- * @param {number} [options.w=0]    Width
- * @param {number} [options.h=0]    Height
+ * @param {number} [options.width=0]
+ * @param {number} [options.height=0]
  * @constructor
  * @extends {Shape}
  */
@@ -716,8 +716,8 @@ var Rectangle = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 0,
-        h: 0
+        width: 0,
+        height: 0
     };
 
     options = Helper.defaults(options, defaults);
@@ -725,40 +725,43 @@ var Rectangle = function(options) {
 
     this.x = options.x;
     this.y = options.y;
-    this._w = 0;
-    this.w = options.w;
-    this._h = 0;
-    this.h = options.h;
+    this._width = options.width;
+    this._height = options.height;
+    this._setShape();
 };
 
 Helper.inherit(Rectangle, Shape);
 
 // Update the PIXI shape when the width and height change
 Object.defineProperties(Rectangle.prototype, {
-    w: {
+    width: {
         get: function() {
-            return this._w;
+            return this._width;
         },
-        set: function(val) {
-            this._w = val;
+        set: function(value) {
+            this._width = value;
             this._setShape();
         }
     },
-    h: {
+    height: {
         get: function() {
-            return this._h;
+            return  this._height;
         },
-        set: function(val) {
-            this._h = val;
+        set: function(value) {
+            this._height = value;
             this._setShape();
         }
     }
 });
 
+/**
+ * Draws a rectangle
+ * @private
+ */
 Rectangle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawRect(0, 0, this._w, this._h);
+        this.drawRect(0, 0, this._width * this.scale.x, this._height * this.scale.y);
         this.endFill();
     }
 };
@@ -775,14 +778,14 @@ module.exports = Rectangle;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.h,
+        bottomA = a.y + a.height,
         leftA = a.x,
-        rightA = a.x + a.w,
+        rightA = a.x + a.width,
 
         topB = b.y,
-        bottomB = b.y + b.h,
+        bottomB = b.y + b.height,
         leftB = b.x,
-        rightB = b.x + b.w,
+        rightB = b.x + b.width,
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -833,12 +836,19 @@ var CollisionGrid = function(options) {
 CollisionGrid.prototype.addEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
-    for (var x = minX; x < maxX; x++) {
-        for (var y = minY; y < maxY; y++) {
-            var collection = this._grid[x][y];
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+    for (var x = minX; x <= maxX; x++) {
+        var column = this._grid[x];
+        if (!column) {
+            continue;
+        }
+        for (var y = minY; y <= maxY; y++) {
+            if (!column[y]) {
+                continue;
+            }
+            var collection = column[y];
             if (collection.indexOf(entity) === -1) {
                 collection.push(entity);
             }
@@ -853,12 +863,20 @@ CollisionGrid.prototype.addEntity = function(entity) {
 CollisionGrid.prototype.removeEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight );
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
+        var column = this._grid[x];
+        if (!column) {
+            continue;
+        }
         for (var y = minY; y < maxY; y++) {
-            var collection = this._grid[x][y],
+            if (!column[y]) {
+                continue;
+            }
+
+            var collection = column[y],
                 entityIndex = collection.indexOf(entity);
             if (entityIndex !== -1) {
                 collection.splice(entityIndex, 1);
@@ -873,18 +891,21 @@ CollisionGrid.prototype.removeEntity = function(entity) {
  * @param {{ x: number, y: number }} deltaPosition
  */
 CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
+    deltaPosition = deltaPosition || {};
+    deltaPosition.x = deltaPosition.x || 0;
+    deltaPosition.y = deltaPosition.y || 0;
     var rect = entity.getComponent('Rectangle'),
         newRect = {
             minX: rect.x + deltaPosition.x,
-            maxX: rect.x + rect.w + deltaPosition.x,
+            maxX: rect.x + rect.width + deltaPosition.x,
             minY: rect.y + deltaPosition.y,
-            maxY: rect.y + rect.h + deltaPosition.y
+            maxY: rect.y + rect.height + deltaPosition.y
         },
         oldCells = {
             minX: ~~(rect.x / this.cellWidth),
-            maxX: ~~( (rect.x + rect.w) / this.cellWidth ),
+            maxX: ~~( (rect.x + rect.width) / this.cellWidth ),
             minY: ~~(rect.y / this.cellHeight),
-            maxY: ~~( (rect.y + rect.h) / this.cellHeight )
+            maxY: ~~( (rect.y + rect.height) / this.cellHeight )
         },
         newCells = {
             minX: ~~(newRect.minX / this.cellWidth),
@@ -914,20 +935,21 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.w) / this.cellWidth ),
+        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.h) / this.cellHeight ),
+        maxY = ~~( (rect.y + rect.height) / this.cellHeight ),
         results = [];
 
     for (var x = minX; x <= maxX; x++) {
-        if (!this._grid[x]) {
+        var column = this._grid[x];
+        if (!column) {
             continue;
         }
         for (var y = minY; y <= maxY; y++) {
-            if (!this._grid[x][y]) {
+            if (!column[y]) {
                 continue;
             }
-            var collection = this._grid[x][y];
+            var collection = column[y];
             for (var i = 0, len = collection.length; i < len; i++) {
                 var other = collection[i];
                 if (other !== entity && isColliding(other.getComponent('Rectangle'), rect)) {
@@ -954,14 +976,14 @@ module.exports = CollisionGrid;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.h,
+        bottomA = a.y + a.height,
         leftA = a.x,
-        rightA = a.x + a.w,
+        rightA = a.x + a.width,
 
         topB = b.y,
-        bottomB = b.y + b.h,
+        bottomB = b.y + b.height,
         leftB = b.x,
-        rightB = b.x + b.w,
+        rightB = b.x + b.width,
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -1005,9 +1027,9 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     } else {
         rect = rect || entity.getComponent('RectPhysicsBody');
         var top    = rect.y,
-            bottom = rect.y + rect.h,
+            bottom = rect.y + rect.height,
             left   = rect.x,
-            right  = rect.x + rect.w,
+            right  = rect.x + rect.width,
             inUpper = (top <= this.y + this.h / 2),
             inLower = (bottom >= this.y + this.h / 2),
             inLeft = (left <= this.x + this.w / 2),
@@ -1067,9 +1089,9 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
 
     rect = rect || entity.getComponent('Rectangle');
     var top    = rect.y,
-        bottom = rect.y + rect.h,
+        bottom = rect.y + rect.height,
         left   = rect.x,
-        right  = rect.x + rect.w,
+        right  = rect.x + rect.width,
         inUpper = (top <= this.y + this.h / 2),
         inLower = (bottom >= this.y + this.h / 2),
         inLeft = (left <= this.x + this.w / 2),
@@ -1118,9 +1140,9 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
     if (this.entities.indexOf(entity) === -1) {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.h,
+            bottom = rect.y + rect.height,
             left   = rect.x,
-            right  = rect.x + rect.w,
+            right  = rect.x + rect.width,
             inUpper = (top <= this.y + this.h / 2),
             inLower = (bottom >= this.y + this.h / 2),
             inLeft = (left <= this.x + this.w / 2),
@@ -2193,9 +2215,9 @@ var GRAVITY = 9.8,
 function getSides(body) {
     return {
         top: body.y,
-        bottom: body.y + body.h,
+        bottom: body.y + body.height,
         left: body.x,
-        right: body.x + body.w
+        right: body.x + body.width
     };
 }
 
