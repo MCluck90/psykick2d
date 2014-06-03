@@ -48,7 +48,7 @@ var QuadTree = function(options) {
 /**
  * Adds an entity to the tree
  * @param {Entity} entity
- * @param {RectPhysicsBody} [rect]
+ * @param {Rectangle} [rect]
  */
 QuadTree.prototype.addEntity = function(entity, rect) {
     if (this.entities.indexOf(entity) !== -1) {
@@ -57,7 +57,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     if (this.w <= this.cellSize || this.h <= this.cellSize) {
         this.entities.push(entity);
     } else {
-        rect = rect || entity.getComponent('RectPhysicsBody');
+        rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
             bottom = rect.y + rect.height,
             left   = rect.x,
@@ -110,7 +110,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
 /**
  * Removes an Entity from the tree
  * @param {Entity} entity
- * @param {RectPhysicsBody} [rect]
+ * @param {Rectangle} [rect]
  */
 QuadTree.prototype.removeEntity = function(entity, rect) {
     var entityIndex = this.entities.indexOf(entity);
