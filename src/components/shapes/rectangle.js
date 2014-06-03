@@ -8,8 +8,8 @@ var Helper = require('../../helper.js'),
  * @param {object} [options]
  * @param {number} [options.x=0]
  * @param {number} [options.y=0]
- * @param {number} [options.w=0]    Width
- * @param {number} [options.h=0]    Height
+ * @param {number} [options.width=0]
+ * @param {number} [options.height=0]
  * @constructor
  * @extends {Shape}
  */
@@ -19,8 +19,8 @@ var Rectangle = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 0,
-        h: 0
+        width: 0,
+        height: 0
     };
 
     options = Helper.defaults(options, defaults);
@@ -28,40 +28,43 @@ var Rectangle = function(options) {
 
     this.x = options.x;
     this.y = options.y;
-    this._w = 0;
-    this.w = options.w;
-    this._h = 0;
-    this.h = options.h;
+    this._width = options.width;
+    this._height = options.height;
+    this._setShape();
 };
 
 Helper.inherit(Rectangle, Shape);
 
 // Update the PIXI shape when the width and height change
 Object.defineProperties(Rectangle.prototype, {
-    w: {
+    width: {
         get: function() {
-            return this._w;
+            return this._width;
         },
-        set: function(val) {
-            this._w = val;
+        set: function(value) {
+            this._width = value;
             this._setShape();
         }
     },
-    h: {
+    height: {
         get: function() {
-            return this._h;
+            return  this._height;
         },
-        set: function(val) {
-            this._h = val;
+        set: function(value) {
+            this._height = value;
             this._setShape();
         }
     }
 });
 
+/**
+ * Draws a rectangle
+ * @private
+ */
 Rectangle.prototype._setShape = function() {
     if (this._color !== null) {
         this.beginFill(this.color);
-        this.drawRect(0, 0, this._w, this._h);
+        this.drawRect(0, 0, this._width * this.scale.x, this._height * this.scale.y);
         this.endFill();
     }
 };

@@ -20,9 +20,9 @@ var GRAVITY = 9.8,
 function getSides(body) {
     return {
         top: body.y,
-        bottom: body.y + body.h,
+        bottom: body.y + body.height,
         left: body.x,
-        right: body.x + body.w
+        right: body.x + body.width
     };
 }
 
@@ -44,8 +44,8 @@ var Platformer = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 800,
-        h: 600,
+        width: 800,
+        height: 600,
         cellSize: 100
     };
     options = Helper.defaults(options, defaults);
