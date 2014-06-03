@@ -930,7 +930,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 /**
  * Gets the collisions for a given Entity
  * @param {Entity} entity
- * @returns {Entity[]}
+ * @returns {Entity[]?}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
@@ -959,6 +959,10 @@ CollisionGrid.prototype.getCollisions = function(entity) {
                 }
             }
         }
+    }
+
+    if (results.length === 0) {
+        return null;
     }
 
     return results;
@@ -998,16 +1002,16 @@ function isColliding(a, b) {
  * @param {object} options
  * @param {number} options.x        X position
  * @param {number} options.y        Y position
- * @param {number} options.w        Width
- * @param {number} options.h        Height
+ * @param {number} options.width    Width
+ * @param {number} options.height   Height
  * @param {number} options.cellSize Size of a cell
  * @constructor
  */
 var QuadTree = function(options) {
     this.x = options.x;
     this.y = options.y;
-    this.w = options.w;
-    this.h = options.h;
+    this.width = options.width;
+    this.height = options.height;
     this.cellSize = options.cellSize || 100;
     this.children = new Array(4);
     this.entities = [];
@@ -1016,27 +1020,27 @@ var QuadTree = function(options) {
 /**
  * Adds an entity to the tree
  * @param {Entity} entity
- * @param {RectPhysicsBody} [rect]
+ * @param {Rectangle} [rect]
  */
 QuadTree.prototype.addEntity = function(entity, rect) {
     if (this.entities.indexOf(entity) !== -1) {
         return;
     }
-    if (this.w <= this.cellSize || this.h <= this.cellSize) {
+    if (this.width <= this.cellSize || this.height <= this.cellSize) {
         this.entities.push(entity);
     } else {
-        rect = rect || entity.getComponent('RectPhysicsBody');
+        rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
             bottom = rect.y + rect.height,
             left   = rect.x,
             right  = rect.x + rect.width,
-            inUpper = (top <= this.y + this.h / 2),
-            inLower = (bottom >= this.y + this.h / 2),
-            inLeft = (left <= this.x + this.w / 2),
-            inRight = (right >= this.x + this.w / 2),
+            inUpper = (top <= this.y + this.height / 2),
+            inLower = (bottom >= this.y + this.height / 2),
+            inLeft = (left <= this.x + this.width / 2),
+            inRight = (right >= this.x + this.width / 2),
             nodeOptions = {
-                w: this.w / 2,
-                h: this.h / 2,
+                width: this.width / 2,
+                height: this.height / 2,
                 cellSize: this.cellSize
             };
 
@@ -1050,7 +1054,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
         }
         if (inUpper && inRight) {
             if (!this.children[1]) {
-                nodeOptions.x = this.x + this.w / 2;
+                nodeOptions.x = this.x + this.width / 2;
                 nodeOptions.y = this.y;
                 this.children[1] = new QuadTree(nodeOptions);
             }
@@ -1058,8 +1062,8 @@ QuadTree.prototype.addEntity = function(entity, rect) {
         }
         if (inLower && inRight) {
             if (!this.children[2]) {
-                nodeOptions.x = this.x + this.w / 2;
-                nodeOptions.y = this.y + this.h / 2;
+                nodeOptions.x = this.x + this.width / 2;
+                nodeOptions.y = this.y + this.height / 2;
                 this.children[2] = new QuadTree(nodeOptions);
             }
             this.children[2].addEntity(entity, rect);
@@ -1067,7 +1071,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
         if (inLower && inLeft) {
             if (!this.children[3]) {
                 nodeOptions.x = this.x;
-                nodeOptions.y = this.y + this.h / 2;
+                nodeOptions.y = this.y + this.height / 2;
                 this.children[3] = new QuadTree(nodeOptions);
             }
             this.children[3].addEntity(entity, rect);
@@ -1078,7 +1082,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
 /**
  * Removes an Entity from the tree
  * @param {Entity} entity
- * @param {RectPhysicsBody} [rect]
+ * @param {Rectangle} [rect]
  */
 QuadTree.prototype.removeEntity = function(entity, rect) {
     var entityIndex = this.entities.indexOf(entity);
@@ -1092,10 +1096,10 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
         bottom = rect.y + rect.height,
         left   = rect.x,
         right  = rect.x + rect.width,
-        inUpper = (top <= this.y + this.h / 2),
-        inLower = (bottom >= this.y + this.h / 2),
-        inLeft = (left <= this.x + this.w / 2),
-        inRight = (right >= this.x + this.w / 2);
+        inUpper = (top <= this.y + this.height / 2),
+        inLower = (bottom >= this.y + this.height / 2),
+        inLeft = (left <= this.x + this.width / 2),
+        inRight = (right >= this.x + this.width / 2);
 
     if (inUpper && inLeft && this.children[0]) {
         this.children[0].removeEntity(entity, rect);
@@ -1133,7 +1137,7 @@ QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
  * Returns all entities the given entity is colliding with
  * @param {Entity} entity
  * @param {Rectangle} [rect]
- * @returns {Entity[]}
+ * @returns {Entity[]?}
  */
 QuadTree.prototype.getCollisions = function(entity, rect) {
     var result = [];
@@ -1143,10 +1147,10 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
             bottom = rect.y + rect.height,
             left   = rect.x,
             right  = rect.x + rect.width,
-            inUpper = (top <= this.y + this.h / 2),
-            inLower = (bottom >= this.y + this.h / 2),
-            inLeft = (left <= this.x + this.w / 2),
-            inRight = (right >= this.x + this.w / 2);
+            inUpper = (top <= this.y + this.height / 2),
+            inLower = (bottom >= this.y + this.height / 2),
+            inLeft = (left <= this.x + this.width / 2),
+            inRight = (right >= this.x + this.width / 2);
 
         if (inUpper && inLeft && this.children[0]) {
             result = result.concat(this.children[0].getCollisions(entity, rect));
@@ -1170,6 +1174,10 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
                 result.push(other);
             }
         }
+    }
+
+    if (result.length === 0) {
+        return null;
     }
 
     return result.filter(function(elem, pos) {
@@ -2239,8 +2247,8 @@ var Platformer = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 800,
-        h: 600,
+        width: 800,
+        height: 600,
         cellSize: 100
     };
     options = Helper.defaults(options, defaults);
