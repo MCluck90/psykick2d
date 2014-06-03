@@ -165,7 +165,7 @@ QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
  * Returns all entities the given entity is colliding with
  * @param {Entity} entity
  * @param {Rectangle} [rect]
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 QuadTree.prototype.getCollisions = function(entity, rect) {
     var result = [];
@@ -202,10 +202,6 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
                 result.push(other);
             }
         }
-    }
-
-    if (result.length === 0) {
-        return null;
     }
 
     return result.filter(function(elem, pos) {

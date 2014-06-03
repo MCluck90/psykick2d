@@ -160,7 +160,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 /**
  * Gets the collisions for a given Entity
  * @param {Entity} entity
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
@@ -189,10 +189,6 @@ CollisionGrid.prototype.getCollisions = function(entity) {
                 }
             }
         }
-    }
-
-    if (results.length === 0) {
-        return null;
     }
 
     return results;
