@@ -44,8 +44,8 @@ var Platformer = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        w: 800,
-        h: 600,
+        width: 800,
+        height: 600,
         cellSize: 100
     };
     options = Helper.defaults(options, defaults);
