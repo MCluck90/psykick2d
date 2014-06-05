@@ -8,14 +8,14 @@
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -59,9 +59,9 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     } else {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),
@@ -121,9 +121,9 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
 
     rect = rect || entity.getComponent('Rectangle');
     var top    = rect.y,
-        bottom = rect.y + rect.height,
+        bottom = rect.y + Math.abs(rect.height),
         left   = rect.x,
-        right  = rect.x + rect.width,
+        right  = rect.x + Math.abs(rect.width),
         inUpper = (top <= this.y + this.height / 2),
         inLower = (bottom >= this.y + this.height / 2),
         inLeft = (left <= this.x + this.width / 2),
@@ -172,9 +172,9 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
     if (this.entities.indexOf(entity) === -1) {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),

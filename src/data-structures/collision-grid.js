@@ -8,14 +8,14 @@
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -66,9 +66,9 @@ var CollisionGrid = function(options) {
 CollisionGrid.prototype.addEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x <= maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -93,9 +93,9 @@ CollisionGrid.prototype.addEntity = function(entity) {
 CollisionGrid.prototype.removeEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -125,17 +125,19 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     deltaPosition.x = deltaPosition.x || 0;
     deltaPosition.y = deltaPosition.y || 0;
     var rect = entity.getComponent('Rectangle'),
+        width = Math.abs(rect.width),   // Apparently we can't assume width is positive
+        height = Math.abs(rect.height),
         newRect = {
             minX: rect.x + deltaPosition.x,
-            maxX: rect.x + rect.width + deltaPosition.x,
+            maxX: rect.x + width + deltaPosition.x,
             minY: rect.y + deltaPosition.y,
-            maxY: rect.y + rect.height + deltaPosition.y
+            maxY: rect.y + height + deltaPosition.y
         },
         oldCells = {
             minX: ~~(rect.x / this.cellWidth),
-            maxX: ~~( (rect.x + rect.width) / this.cellWidth ),
+            maxX: ~~( (rect.x + width) / this.cellWidth ),
             minY: ~~(rect.y / this.cellHeight),
-            maxY: ~~( (rect.y + rect.height) / this.cellHeight )
+            maxY: ~~( (rect.y + height) / this.cellHeight )
         },
         newCells = {
             minX: ~~(newRect.minX / this.cellWidth),
