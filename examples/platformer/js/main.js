@@ -5,7 +5,9 @@ var World = require('psykick2d').World,
     Rectangle = require('psykick2d').Components.Shapes.Rectangle,
     RenderRectSystem = require('psykick2d').Systems.Render.Rectangle,
     SpriteSystem = require('psykick2d').Systems.Render.Sprite,
-    PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer;
+    PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer,
+
+    PlayerMovement = require('./player-movement.js');
 
 World.init({
     width: 800,
@@ -19,6 +21,7 @@ var layer = World.createLayer(),
     rectSystem = new RenderRectSystem(),
     spriteSystem = new SpriteSystem(),
     platformerSystem = new PlatformerSystem(),
+    movementSystem = new PlayerMovement(entity),
     spriteComponent = new SpriteComponent({
         src: 'img/stand.png',
         x: 300,
@@ -37,9 +40,9 @@ entity.addComponentAs(spriteComponent, 'Rectangle');
 entity.addComponentAs(spriteComponent, 'RectPhysicsBody');
 
 var floorRect = new Rectangle({
-    x: 0,
+    x: 100,
     y: 550,
-    width: 800,
+    width: 600,
     height: 50,
     color: 0xFF0000
 });
@@ -52,9 +55,11 @@ floor.addComponentAs(floorRect, 'RectPhysicsBody');
 rectSystem.addEntity(floor);
 platformerSystem.addEntity(floor);
 
+movementSystem.addEntity(entity);
 spriteSystem.addEntity(entity);
 platformerSystem.addEntity(entity);
 
+layer.addSystem(movementSystem);
 layer.addSystem(rectSystem);
 layer.addSystem(spriteSystem);
 layer.addSystem(platformerSystem);
