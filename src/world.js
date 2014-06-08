@@ -1,6 +1,7 @@
 'use strict';
 
-var Entity = require('./entity.js'),
+var AssetManager = require('./asset-manager.js'),
+    Entity = require('./entity.js'),
     Helper = require('./helper.js'),
     Input = require('./input.js'),
     Layer = require('./layer.js'),
@@ -39,10 +40,12 @@ var World = {
     /**
      * Initializes the World
      * @param {Object} options
-     * @param {Element|String} options.canvasContainer
-     * @param {number} [options.width=window.innerWidth]
-     * @param {number} [options.height=window.innerHeight]
-     * @param {String} [options.backgroundColor='#000']
+     * @param {Element|String}  options.canvasContainer
+     * @param {number}          [options.width=window.innerWidth]
+     * @param {number}          [options.height=window.innerHeight]
+     * @param {String}          [options.backgroundColor='#000']
+     * @param {object?}         [options.preload=null]              Collection of resources to load before starting
+     * @param {string|string[]} [options.preload.spriteSheets]      Spritesheets in JSON format
      */
     init: function(options) {
         var self = this,
@@ -53,7 +56,8 @@ var World = {
                 height: 600,
                 backgroundColor: '#000',
                 serverMode: false,
-                minFPS: 30
+                minFPS: 30,
+                preload: null
             },
             backgroundEl,
             requestAnimationFrame;
@@ -107,7 +111,18 @@ var World = {
             gameTime = new Date();
             requestAnimationFrame(gameLoop);
         };
-        requestAnimationFrame(gameLoop);
+        if (!options.preload) {
+            requestAnimationFrame(gameLoop);
+        } else {
+            var spriteSheets = options.preload.spriteSheets;
+            if (spriteSheets) {
+                AssetManager.SpriteSheet.addLoadListener(function startGame() {
+                    AssetManager.SpriteSheet.removeLoadListener(startGame);
+                    requestAnimationFrame(gameLoop);
+                });
+                AssetManager.SpriteSheet.load(spriteSheets);
+            }
+        }
     },
 
     /**
