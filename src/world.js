@@ -40,7 +40,7 @@ var World = {
     /**
      * Initializes the World
      * @param {Object} options
-     * @param {Element|String}  options.canvasContainer
+     * @param {Element|String}  [options.canvasContainer='psykick']
      * @param {number}          [options.width=window.innerWidth]
      * @param {number}          [options.height=window.innerHeight]
      * @param {String}          [options.backgroundColor='#000']
