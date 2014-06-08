@@ -154,6 +154,11 @@ var AssetManager = {
     },
     SpriteSheet: {
         _listeners: [],
+
+        /**
+         * Loads one or more sprite sheets from JSON format
+         * @param {string|string[]} spriteSheets
+         */
         load: function(spriteSheets) {
             if (typeof spriteSheets === 'string') {
                 spriteSheets = [spriteSheets];
@@ -169,12 +174,20 @@ var AssetManager = {
             loader.load();
         },
 
+        /**
+         * Adds a listener for when sprite sheets finish loading
+         * @param {function(string[]) callback  Passes back the sheets that were just loaded
+         */
         addLoadListener: function(callback) {
             if (spriteSheetManager._listeners.indexOf(callback) === -1) {
                 spriteSheetManager._listeners.push(callback);
             }
         },
 
+        /**
+         * Removes a listener
+         * @param {function(string[])} callback
+         */
         removeLoadListener: function(callback) {
             var index = spriteSheetManager._listeners.indexOf(callback);
             if (index !== -1) {
@@ -182,8 +195,20 @@ var AssetManager = {
             }
         },
 
+        /**
+         * Removes all load listeners
+         */
         clearListeners: function() {
             spriteSheetManager._listeners = [];
+        },
+
+        /**
+         * Returns a frame based on name
+         * @param {string} name
+         * @returns {Texture}
+         */
+        getFrame: function(name) {
+            return PIXI.Texture.fromFrame(name);
         }
     }
 };
