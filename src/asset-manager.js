@@ -1,13 +1,15 @@
 'use strict';
 
 var Helper = require('./helper.js'),
+    PIXI = require('pixi.js'),
 
     doc = (typeof document !== 'undefined') ? document : null,
     isClientSide = (doc !== null),
 
     // Local shortcuts
     audioManager = null,
-    gfxManager = null;
+    gfxManager = null,
+    spriteSheetManager = null;
 
 // Detect audio support
 var audioEl = null,
@@ -149,10 +151,46 @@ var AssetManager = {
         getImage: function(src) {
             return gfxManager._cache[src] || null;
         }
+    },
+    SpriteSheet: {
+        _listeners: [],
+        load: function(spriteSheets) {
+            if (typeof spriteSheets === 'string') {
+                spriteSheets = [spriteSheets];
+            }
+
+            var loader = new PIXI.AssetLoader(spriteSheets);
+            loader.onComplete = function() {
+                var listeners = spriteSheetManager._listeners;
+                for (var i = 0, len = listeners.length; i < len; i++) {
+                    listeners[i](spriteSheets);
+                }
+            };
+            loader.load();
+        },
+
+        addLoadListener: function(callback) {
+            if (spriteSheetManager._listeners.indexOf(callback) === -1) {
+                spriteSheetManager._listeners.push(callback);
+            }
+        },
+
+        removeLoadListener: function(callback) {
+            var index = spriteSheetManager._listeners.indexOf(callback);
+            if (index !== -1) {
+                spriteSheetManager._listeners.splice(index, 1);
+            }
+        },
+
+        clearListeners: function() {
+            spriteSheetManager._listeners = [];
+        }
     }
 };
 
+// Assign our local shortcuts
 audioManager = AssetManager.Audio;
 gfxManager = AssetManager.GFX;
+spriteSheetManager = AssetManager.SpriteSheet;
 
 module.exports = AssetManager;
