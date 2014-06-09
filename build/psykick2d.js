@@ -19,13 +19,15 @@ this.updateFrame=!0,d.Texture.frameUpdates.push(this)},d.Texture.prototype._upda
 'use strict';
 
 var Helper = require('./helper.js'),
+    PIXI = require('pixi.js'),
 
     doc = (typeof document !== 'undefined') ? document : null,
     isClientSide = (doc !== null),
 
     // Local shortcuts
     audioManager = null,
-    gfxManager = null;
+    gfxManager = null,
+    spriteSheetManager = null;
 
 // Detect audio support
 var audioEl = null,
@@ -167,14 +169,75 @@ var AssetManager = {
         getImage: function(src) {
             return gfxManager._cache[src] || null;
         }
+    },
+    SpriteSheet: {
+        _listeners: [],
+
+        /**
+         * Loads one or more sprite sheets from JSON format
+         * @param {string|string[]} spriteSheets
+         */
+        load: function(spriteSheets) {
+            if (typeof spriteSheets === 'string') {
+                spriteSheets = [spriteSheets];
+            }
+
+            var loader = new PIXI.AssetLoader(spriteSheets);
+            loader.onComplete = function() {
+                var listeners = spriteSheetManager._listeners;
+                for (var i = 0, len = listeners.length; i < len; i++) {
+                    listeners[i](spriteSheets);
+                }
+            };
+            loader.load();
+        },
+
+        /**
+         * Adds a listener for when sprite sheets finish loading
+         * @param {function(string[]) callback  Passes back the sheets that were just loaded
+         */
+        addLoadListener: function(callback) {
+            if (spriteSheetManager._listeners.indexOf(callback) === -1) {
+                spriteSheetManager._listeners.push(callback);
+            }
+        },
+
+        /**
+         * Removes a listener
+         * @param {function(string[])} callback
+         */
+        removeLoadListener: function(callback) {
+            var index = spriteSheetManager._listeners.indexOf(callback);
+            if (index !== -1) {
+                spriteSheetManager._listeners.splice(index, 1);
+            }
+        },
+
+        /**
+         * Removes all load listeners
+         */
+        clearListeners: function() {
+            spriteSheetManager._listeners = [];
+        },
+
+        /**
+         * Returns a frame based on name
+         * @param {string} name
+         * @returns {Texture}
+         */
+        getFrame: function(name) {
+            return PIXI.Texture.fromFrame(name);
+        }
     }
 };
 
+// Assign our local shortcuts
 audioManager = AssetManager.Audio;
 gfxManager = AssetManager.GFX;
+spriteSheetManager = AssetManager.SpriteSheet;
 
 module.exports = AssetManager;
-},{"./helper.js":18}],3:[function(require,module,exports){
+},{"./helper.js":18,"pixi.js":1}],3:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -281,16 +344,16 @@ var Helper = require('../../helper.js');
 
 /**
  * Used for keeping track of an animation cycle
- * @param       {object}    [options]
- * @param       {number}    [options.fps=24]             Frame per second
- * @param       {number}    [options.minFrame=0]         First frame in the animation
- * @param       {number}    [options.maxFrame=0]         Final frame in the animation
- * @param       {number}    [options.currentFrame=0]     Current frame
- * @param       {number}    [options.lastFrameTime]      Time since last frame
+ * @param       {object}                [options]
+ * @param       {number}                [options.fps=24]            Frames per second
+ * @param       {number}                [options.minFrame=0]        First frame in the animation
+ * @param       {number}                [options.maxFrame=0]        Final frame in the animation
+ * @param       {number}                [options.currentFrame=0]    Current frame
+ * @param       {number}                [options.lastFrameTime]     Time since last frame
+ * @param       {string[]|PIXI.Texture} [options.frames]            Frames used by sprite
  * @constructor
  */
 var Animation = function(options) {
-    // Unique name for identifying in Entities
     this.NAME = 'Animation';
 
     var defaults = {
@@ -298,7 +361,8 @@ var Animation = function(options) {
         minFrame: 0,
         maxFrame: 0,
         currentFrame: 0,
-        lastFrameTime: 0
+        lastFrameTime: 0,
+        frames: []
     };
     options = Helper.defaults(options, defaults);
 
@@ -307,7 +371,20 @@ var Animation = function(options) {
     this.maxFrame = options.maxFrame;
     this.currentFrame = options.currentFrame;
     this.lastFrameTime = options.lastFrameTime;
+    this.frames = options.frames;
 };
+
+Object.defineProperty(Animation.prototype, 'frame', {
+    get: function() {
+        return this.frames[this.currentFrame];
+    },
+    set: function(name) {
+        var index = this.frames.indexOf(name);
+        if (index !== -1) {
+            this.currentFrame = index;
+        }
+    }
+});
 
 module.exports = Animation;
 },{"../../helper.js":18}],7:[function(require,module,exports){
@@ -336,21 +413,24 @@ module.exports = Color;
 },{"../../helper.js":18}],8:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
 /**
  * Represents a sprite
- * @param {object} [options]
- * @param {string} [options.src]        Source of the texture
- * @param {number} [options.x=0]
- * @param {number} [options.y=0]
- * @param {number} [options.width=0]
- * @param {number} [options.height=0]
- * @param {number} [options.rotation=0]
- * @param {object} [options.pivot]      Origin point
- * @param {number} [options.pivot.x=0]
- * @param {number} [options.pivot.y=0]
+ * @param {object}       [options]
+ * @param {string}       [options.src]        Source of the texture
+ * @param {string}       [options.frameName]  Name of a preloaded frame
+ * @param {PIXI.Texture} [options.texture]    A PIXI texture
+ * @param {number}       [options.x=0]
+ * @param {number}       [options.y=0]
+ * @param {number}       [options.width=0]
+ * @param {number}       [options.height=0]
+ * @param {number}       [options.rotation=0]
+ * @param {object}       [options.pivot]      Origin point
+ * @param {number}       [options.pivot.x=0]
+ * @param {number}       [options.pivot.y=0]
  * @constructor
  * @extends {PIXI.Sprite}
  */
@@ -359,6 +439,8 @@ var Sprite = function(options) {
 
     var defaults = {
         src: '',
+        frameName: '',
+        texture: null,
         x: 0,
         y: 0,
         width: 0,
@@ -370,7 +452,17 @@ var Sprite = function(options) {
         }
     };
     options = Helper.defaults(options, defaults);
-    PIXI.Sprite.call(this, PIXI.Texture.fromImage(options.src));
+    var texture;
+    if (options.src) {
+        texture = PIXI.Texture.fromImage(options.src);
+    } else if(options.frameName) {
+        texture = AssetManager.SpriteSheet.getFrame(options.frameName);
+    } else if (options.texture) {
+        texture = options.texture;
+    } else {
+        throw new Error('Must provide src, frameName, or texture to Sprite');
+    }
+    PIXI.Sprite.call(this, texture);
     this.x = options.x;
     this.y = options.y;
     this.width = options.width;
@@ -383,7 +475,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":18,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../helper.js":18,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -778,14 +870,14 @@ module.exports = Rectangle;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -836,9 +928,9 @@ var CollisionGrid = function(options) {
 CollisionGrid.prototype.addEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x <= maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -863,9 +955,9 @@ CollisionGrid.prototype.addEntity = function(entity) {
 CollisionGrid.prototype.removeEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -895,17 +987,19 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     deltaPosition.x = deltaPosition.x || 0;
     deltaPosition.y = deltaPosition.y || 0;
     var rect = entity.getComponent('Rectangle'),
+        width = Math.abs(rect.width),   // Apparently we can't assume width is positive
+        height = Math.abs(rect.height),
         newRect = {
             minX: rect.x + deltaPosition.x,
-            maxX: rect.x + rect.width + deltaPosition.x,
+            maxX: rect.x + width + deltaPosition.x,
             minY: rect.y + deltaPosition.y,
-            maxY: rect.y + rect.height + deltaPosition.y
+            maxY: rect.y + height + deltaPosition.y
         },
         oldCells = {
             minX: ~~(rect.x / this.cellWidth),
-            maxX: ~~( (rect.x + rect.width) / this.cellWidth ),
+            maxX: ~~( (rect.x + width) / this.cellWidth ),
             minY: ~~(rect.y / this.cellHeight),
-            maxY: ~~( (rect.y + rect.height) / this.cellHeight )
+            maxY: ~~( (rect.y + height) / this.cellHeight )
         },
         newCells = {
             minX: ~~(newRect.minX / this.cellWidth),
@@ -930,7 +1024,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 /**
  * Gets the collisions for a given Entity
  * @param {Entity} entity
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
@@ -961,10 +1055,6 @@ CollisionGrid.prototype.getCollisions = function(entity) {
         }
     }
 
-    if (results.length === 0) {
-        return null;
-    }
-
     return results;
 };
 
@@ -980,14 +1070,14 @@ module.exports = CollisionGrid;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -1031,9 +1121,9 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     } else {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),
@@ -1093,9 +1183,9 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
 
     rect = rect || entity.getComponent('Rectangle');
     var top    = rect.y,
-        bottom = rect.y + rect.height,
+        bottom = rect.y + Math.abs(rect.height),
         left   = rect.x,
-        right  = rect.x + rect.width,
+        right  = rect.x + Math.abs(rect.width),
         inUpper = (top <= this.y + this.height / 2),
         inLower = (bottom >= this.y + this.height / 2),
         inLeft = (left <= this.x + this.width / 2),
@@ -1137,16 +1227,16 @@ QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
  * Returns all entities the given entity is colliding with
  * @param {Entity} entity
  * @param {Rectangle} [rect]
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 QuadTree.prototype.getCollisions = function(entity, rect) {
     var result = [];
     if (this.entities.indexOf(entity) === -1) {
         rect = rect || entity.getComponent('Rectangle');
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),
@@ -1174,10 +1264,6 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
                 result.push(other);
             }
         }
-    }
-
-    if (result.length === 0) {
-        return null;
     }
 
     return result.filter(function(elem, pos) {
@@ -2163,7 +2249,8 @@ module.exports = System;
 },{"./entity.js":17,"./helper.js":18}],25:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     BehaviorSystem = require('../../behavior-system.js');
 
 /**
@@ -2195,12 +2282,22 @@ Animate.prototype.update = function(delta) {
             if (animation.currentFrame > animation.maxFrame) {
                 animation.currentFrame = animation.minFrame;
             }
+
+            // If the entity has a sprite, update it
+            var sprite = entity.getComponent('Sprite');
+            if (sprite) {
+                var frame = animation.frame;
+                if (typeof frame === 'string') {
+                    frame = AssetManager.SpriteSheet.getFrame(frame);
+                }
+                sprite.texture = frame;
+            }
         }
     }
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":3,"../../helper.js":18}],26:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../behavior-system.js":3,"../../helper.js":18}],26:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
@@ -2604,7 +2701,8 @@ module.exports = Text;
 },{"../../helper.js":18,"../../render-system.js":23}],31:[function(require,module,exports){
 'use strict';
 
-var Entity = require('./entity.js'),
+var AssetManager = require('./asset-manager.js'),
+    Entity = require('./entity.js'),
     Helper = require('./helper.js'),
     Input = require('./input.js'),
     Layer = require('./layer.js'),
@@ -2643,10 +2741,12 @@ var World = {
     /**
      * Initializes the World
      * @param {Object} options
-     * @param {Element|String} options.canvasContainer
-     * @param {number} [options.width=window.innerWidth]
-     * @param {number} [options.height=window.innerHeight]
-     * @param {String} [options.backgroundColor='#000']
+     * @param {Element|String}  [options.canvasContainer='psykick']
+     * @param {number}          [options.width=window.innerWidth]
+     * @param {number}          [options.height=window.innerHeight]
+     * @param {String}          [options.backgroundColor='#000']
+     * @param {object?}         [options.preload=null]              Collection of resources to load before starting
+     * @param {string|string[]} [options.preload.spriteSheets]      Spritesheets in JSON format
      */
     init: function(options) {
         var self = this,
@@ -2657,7 +2757,8 @@ var World = {
                 height: 600,
                 backgroundColor: '#000',
                 serverMode: false,
-                minFPS: 30
+                minFPS: 30,
+                preload: null
             },
             backgroundEl,
             requestAnimationFrame;
@@ -2711,7 +2812,18 @@ var World = {
             gameTime = new Date();
             requestAnimationFrame(gameLoop);
         };
-        requestAnimationFrame(gameLoop);
+        if (!options.preload) {
+            requestAnimationFrame(gameLoop);
+        } else {
+            var spriteSheets = options.preload.spriteSheets;
+            if (spriteSheets) {
+                AssetManager.SpriteSheet.addLoadListener(function startGame() {
+                    AssetManager.SpriteSheet.removeLoadListener(startGame);
+                    requestAnimationFrame(gameLoop);
+                });
+                AssetManager.SpriteSheet.load(spriteSheets);
+            }
+        }
     },
 
     /**
@@ -2892,4 +3004,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":17,"./helper.js":18,"./input.js":20,"./layer.js":22}]},{},[4]);
+},{"./asset-manager.js":2,"./entity.js":17,"./helper.js":18,"./input.js":20,"./layer.js":22}]},{},[4]);
