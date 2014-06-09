@@ -1,6 +1,7 @@
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     BehaviorSystem = require('../../behavior-system.js');
 
 /**
@@ -31,6 +32,16 @@ Animate.prototype.update = function(delta) {
             animation.currentFrame += 1;
             if (animation.currentFrame > animation.maxFrame) {
                 animation.currentFrame = animation.minFrame;
+            }
+
+            // If the entity has a sprite, update it
+            var sprite = entity.getComponent('Sprite');
+            if (sprite) {
+                var frame = animation.frame;
+                if (typeof frame === 'string') {
+                    frame = AssetManager.SpriteSheet.getFrame(frame);
+                }
+                sprite.texture = frame;
             }
         }
     }
