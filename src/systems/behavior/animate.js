@@ -41,7 +41,7 @@ Animate.prototype.update = function(delta) {
                 if (typeof frame === 'string') {
                     frame = AssetManager.SpriteSheet.getFrame(frame);
                 }
-                sprite.texture = frame;
+                sprite.setTexture(frame);
             }
         }
     }

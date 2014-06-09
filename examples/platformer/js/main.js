@@ -1,43 +1,32 @@
 'use strict';
 
 var World = require('psykick2d').World,
-    SpriteComponent = require('psykick2d').Components.GFX.Sprite,
     Rectangle = require('psykick2d').Components.Shapes.Rectangle,
     RenderRectSystem = require('psykick2d').Systems.Render.Rectangle,
+    AnimationSystem = require('psykick2d').Systems.Behavior.Animate,
     SpriteSystem = require('psykick2d').Systems.Render.Sprite,
     PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer,
 
+    Factory = require('./factory.js'),
     PlayerMovement = require('./player-movement.js');
 
 World.init({
     width: 800,
     height: 600,
-    backgroundColor: '#000'
+    backgroundColor: '#000',
+    preload: {
+        spriteSheets: ['sprites/player.json']
+    }
 });
 
 var layer = World.createLayer(),
-    entity = World.createEntity(),
+    player = Factory.createPlayer(),
     floor = World.createEntity(),
     rectSystem = new RenderRectSystem(),
+    animationSystem = new AnimationSystem(),
     spriteSystem = new SpriteSystem(),
     platformerSystem = new PlatformerSystem(),
-    movementSystem = new PlayerMovement(entity),
-    spriteComponent = new SpriteComponent({
-        src: 'img/stand.png',
-        x: 300,
-        y: 200,
-        width: 128,
-        height: 64
-    });
-spriteComponent.mass = 1;
-spriteComponent.velocity = {
-    x: 0,
-    y: 10
-};
-spriteComponent.solid = true;
-entity.addComponent(spriteComponent);
-entity.addComponentAs(spriteComponent, 'Rectangle');
-entity.addComponentAs(spriteComponent, 'RectPhysicsBody');
+    movementSystem = new PlayerMovement(player);
 
 var floorRect = new Rectangle({
     x: 100,
@@ -55,13 +44,15 @@ floor.addComponentAs(floorRect, 'RectPhysicsBody');
 rectSystem.addEntity(floor);
 platformerSystem.addEntity(floor);
 
-movementSystem.addEntity(entity);
-spriteSystem.addEntity(entity);
-platformerSystem.addEntity(entity);
+movementSystem.addEntity(player);
+spriteSystem.addEntity(player);
+platformerSystem.addEntity(player);
+animationSystem.addEntity(player);
 
+layer.addSystem(animationSystem);
+layer.addSystem(platformerSystem);
 layer.addSystem(movementSystem);
 layer.addSystem(rectSystem);
 layer.addSystem(spriteSystem);
-layer.addSystem(platformerSystem);
 
 World.pushLayer(layer);

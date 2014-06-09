@@ -153,28 +153,25 @@ Platformer.prototype.update = function(delta) {
                     fromBelow = staticSides.bottom - movingSides.top,
                     fromLeft = movingSides.right - staticSides.left,
                     fromRight = staticSides.right - movingSides.left;
+
                 if (movingSides.bottom >= staticSides.top &&
-                    movingSides.top < staticSides.top &&
-                    Math.abs(fromAbove).toFixed(6) * 1 <= (movingBody.velocity.y + gravityForce).toFixed(6) * 1) {
+                    movingSides.top < staticSides.top) {
                     // Dropping from above
                     deltaPosition.y = -fromAbove;
                     movingBody.velocity.y = 0;
                 } else if (movingSides.top <= staticSides.bottom &&
                     movingSides.bottom > staticSides.bottom &&
-                    movingBody.velocity.y < 0 &&
-                    Math.abs(fromBelow).toFixed(6) * 1 <= Math.abs(movingBody.velocity.y).toFixed(6) * 1) {
+                    movingBody.velocity.y < 0) {
                     // Coming from below
                     deltaPosition.y = fromBelow;
                     movingBody.velocity.y = 0;
                 } else if (movingSides.right >= staticSides.left &&
-                    movingSides.left < staticSides.left &&
-                    Math.abs(fromLeft).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
+                    movingSides.left < staticSides.left) {
                     // Coming from the left
                     deltaPosition.x = -fromLeft;
                     movingBody.velocity.x = 0;
                 } else if (movingSides.left <= staticSides.right &&
-                    movingSides.right > staticSides.right &&
-                    Math.abs(fromRight).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
+                    movingSides.right > staticSides.right) {
                     // Coming from the right
                     deltaPosition.x = fromRight;
                     movingBody.velocity.x = 0;
