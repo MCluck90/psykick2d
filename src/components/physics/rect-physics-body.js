@@ -12,6 +12,7 @@ var Helper = require('../../helper.js');
  * @param {object}  [options.velocity]
  * @param {number}  [options.velocity.x=0]
  * @param {number}  [options.velocity.y=0]
+ * @param {boolean} [options.immovable=false]
  * @param {number}  [options.mass=0]
  * @param {number}  [options.bounciness=0]
  * @param {boolean} [options.solid=true]
@@ -30,6 +31,7 @@ var RectPhysicsBody = function(options) {
             x: 0,
             y: 0
         },
+        immovable: false,
         mass: 0,
         bounciness: 0,
         solid: true,

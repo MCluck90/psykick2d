@@ -22,27 +22,46 @@ World.init({
 var layer = World.createLayer(),
     player = Factory.createPlayer(),
     floor = World.createEntity(),
+    platform = World.createEntity(),
     rectSystem = new RenderRectSystem(),
     animationSystem = new AnimationSystem(),
     spriteSystem = new SpriteSystem(),
-    platformerSystem = new PlatformerSystem(),
+    platformerSystem = new PlatformerSystem({
+        x: -500,
+        y: -500,
+        width: 2000,
+        height: 200
+    }),
     movementSystem = new PlayerMovement(player);
 
 var floorRect = new Rectangle({
-    x: 100,
+    x: -500,
     y: 550,
-    width: 600,
+    width: 2000,
     height: 50,
     color: 0xFF0000
 });
 floorRect.solid = true;
-floorRect.mass = 0;
-floorRect.velocity = { x: 0, y: 0 };
+floorRect.immovable = true;
 floor.addComponent(floorRect);
 floor.addComponentAs(floorRect, 'RectPhysicsBody');
 
+var platformRect = new Rectangle({
+    x: 300,
+    y: 500,
+    width: 400,
+    height: 50,
+    color: 0x00FF00
+});
+platformRect.solid = true;
+platformRect.immovable = true;
+platform.addComponent(platformRect);
+platform.addComponentAs(platformRect, 'RectPhysicsBody');
+
 rectSystem.addEntity(floor);
+rectSystem.addEntity(platform);
 platformerSystem.addEntity(floor);
+platformerSystem.addEntity(platform);
 
 movementSystem.addEntity(player);
 spriteSystem.addEntity(player);
