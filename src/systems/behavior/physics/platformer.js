@@ -84,6 +84,24 @@ Platformer.prototype.removeCollisionListener = function(callback) {
     }
 };
 
+/**
+ * Alerts listeners about a collision
+ * @param {Entity} a
+ * @param {Entity} b
+ * @private
+ */
+Platformer.prototype._emit = function(a, b) {
+    var handlers = this._collisionHandlers,
+        numOfHandlers = handlers.length;
+    for (var i = 0; i < numOfHandlers; i++) {
+        handlers[i](a, b);
+    }
+};
+
+/**
+ * Deals with all of the collisions
+ * @param {number} delta
+ */
 Platformer.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
         var entity = this.actionOrder[i],
@@ -103,7 +121,8 @@ Platformer.prototype.update = function(delta) {
             collisions = this._quadTree.getCollisions(entity, body),
             numOfCollisions = collisions.length;
         for (var j = 0; j < numOfCollisions; j++) {
-            var otherBody = collisions[j].getComponent('RectPhysicsBody');
+            var other = collisions[j],
+                otherBody = other.getComponent('RectPhysicsBody');
             if (!otherBody.solid) {
                 continue;
             }
@@ -134,6 +153,8 @@ Platformer.prototype.update = function(delta) {
             }
 
             this._quadTree.moveEntity(entity, deltaPosition);
+
+            this._emit(entity, entity);
         }
     }
 };
