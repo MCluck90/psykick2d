@@ -110,24 +110,23 @@ Platformer.prototype.update = function(delta) {
             continue;
         }
 
-        var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
-        body.velocity.x += this.friction * body.mass * frictionDirection * delta;
-        if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
-            body.velocity.x = 0;
-        }
         body.velocity.y += this.gravity * body.mass * delta;
-
         this._quadTree.moveEntity(entity, body.velocity);
 
         var bodyBottom = body.y + Math.abs(body.height),
             bodyRight = body.x + Math.abs(body.width),
             collisions = this._quadTree.getCollisions(entity, body),
-            numOfCollisions = collisions.length;
+            numOfCollisions = collisions.length,
+            hitGround = false;
         for (var j = 0; j < numOfCollisions; j++) {
             var other = collisions[j],
                 otherBody = other.getComponent('RectPhysicsBody');
             if (!otherBody.solid) {
                 continue;
+            }
+
+            if (otherBody.immovable) {
+                hitGround = true;
             }
 
             this._emit(entity, other);
@@ -158,6 +157,14 @@ Platformer.prototype.update = function(delta) {
             }
 
             this._quadTree.moveEntity(entity, deltaPosition);
+        }
+
+        if (hitGround) {
+            var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
+            body.velocity.x += this.friction * body.mass * frictionDirection * delta;
+            if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
+                body.velocity.x = 0;
+            }
         }
     }
 };
