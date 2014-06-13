@@ -12,7 +12,7 @@ var Helper = require('../../../helper.js'),
  * @param {number} options.width            Width of the collidable zone
  * @param {number} options.height           Height of collidable
  * @param {number} [options.gravity=9.8]    Force of gravity
- * @param {number} [options.friction=10]    Force of friction
+ * @param {number} [options.friction=30]    Force of friction
  * @constructor
  * @extends BehaviorSystem
  */
@@ -23,7 +23,7 @@ var Platformer = function(options) {
         x: 0,
         y: 0,
         gravity: 9.8,
-        friction: 10
+        friction: 30
     };
     options = Helper.defaults(options, defaults);
 
@@ -112,6 +112,9 @@ Platformer.prototype.update = function(delta) {
 
         var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
         body.velocity.x += this.friction * body.mass * frictionDirection * delta;
+        if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
+            body.velocity.x = 0;
+        }
         body.velocity.y += this.gravity * body.mass * delta;
 
         this._quadTree.moveEntity(entity, body.velocity);
@@ -126,6 +129,8 @@ Platformer.prototype.update = function(delta) {
             if (!otherBody.solid) {
                 continue;
             }
+
+            this._emit(entity, other);
 
             var deltaPosition = { x: 0, y: 0 },
                 otherBottom = otherBody.y + Math.abs(otherBody.height),
@@ -153,8 +158,6 @@ Platformer.prototype.update = function(delta) {
             }
 
             this._quadTree.moveEntity(entity, deltaPosition);
-
-            this._emit(entity, entity);
         }
     }
 };
