@@ -154,9 +154,6 @@ Layer.prototype.draw = function(delta) {
         }
     }
 
-    if (!this.stage.visible) {
-        debugger;
-    }
     this.renderer.render(this.stage);
 };
 
