@@ -2,9 +2,14 @@
 
 var World = require('psykick2d').World,
     Animation = require('psykick2d').Components.GFX.Animation,
-    Sprite = require('psykick2d').Components.GFX.Sprite;
+    Sprite = require('psykick2d').Components.GFX.Sprite,
+    Rectangle = require('psykick2d').Components.Shapes.Rectangle;
 
 var Factory = {
+    /**
+     * Creates the player entity
+     * @returns {Entity}
+     */
     createPlayer: function() {
         var player = World.createEntity(),
             sprite = new Sprite({
@@ -48,7 +53,37 @@ var Factory = {
         player.addComponentAs(standAnimation, 'StandAnimation');
         player.addComponentAs(walkAnimation, 'WalkAnimation');
         player.addComponentAs(attackAnimation, 'AttackAnimation');
+
+        // Identify the player
+        player.addComponentAs(true, 'Player');
         return player;
+    },
+
+    /**
+     * Create a platform
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @returns {Entity}
+     */
+    createPlatform: function(x, y, width, height) {
+        var platform = World.createEntity(),
+            rectangle = new Rectangle({
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                color: 0x00FF00
+            });
+        rectangle.solid = true;
+        rectangle.immovable = true;
+        rectangle.friction = 30;
+
+        platform.addComponent(rectangle);
+        platform.addComponentAs(rectangle, 'RectPhysicsBody');
+
+        return platform;
     }
 };
 
