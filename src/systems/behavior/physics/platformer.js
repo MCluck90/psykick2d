@@ -22,13 +22,11 @@ var Platformer = function(options) {
     var defaults = {
         x: 0,
         y: 0,
-        gravity: 9.8,
-        friction: 30
+        gravity: 9.8
     };
     options = Helper.defaults(options, defaults);
 
     this.gravity = options.gravity;
-    this.friction = options.friction;
 
     this._quadTree = new QuadTree(options);
     this._collisionHandlers = [];
@@ -117,8 +115,9 @@ Platformer.prototype.update = function(delta) {
             bodyRight = body.x + Math.abs(body.width),
             collisions = this._quadTree.getCollisions(entity, body),
             numOfCollisions = collisions.length,
-            hitGround = false;
-        for (var j = 0; j < numOfCollisions; j++) {
+            friction = null,
+            j;
+        for (j = 0; j < numOfCollisions; j++) {
             var other = collisions[j],
                 otherBody = other.getComponent('RectPhysicsBody');
             if (!otherBody.solid) {
@@ -126,7 +125,11 @@ Platformer.prototype.update = function(delta) {
             }
 
             if (otherBody.immovable) {
-                hitGround = true;
+                if (friction === null) {
+                    friction = [otherBody.friction];
+                } else {
+                    friction.push(otherBody.friction);
+                }
             }
 
             this._emit(entity, other);
@@ -159,9 +162,15 @@ Platformer.prototype.update = function(delta) {
             this._quadTree.moveEntity(entity, deltaPosition);
         }
 
-        if (hitGround) {
+        if (friction && body.friction) {
+            var frictionForce = 0,
+                numOfContactPoints = friction.length;
+            for (j = 0; j < numOfContactPoints; j++) {
+                frictionForce += friction[j];
+            }
+            frictionForce /= numOfContactPoints * body.friction;
             var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
-            body.velocity.x += this.friction * body.mass * frictionDirection * delta;
+            body.velocity.x += frictionForce * body.mass * frictionDirection * delta;
             if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
                 body.velocity.x = 0;
             }

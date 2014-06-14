@@ -39,6 +39,8 @@ var Factory = {
         sprite.velocity = { x: 0, y: 0 };
         sprite.mass = 1;
         sprite.solid = true;
+        sprite.friction = 1;
+
         player.addComponent(sprite);
         player.addComponentAs(sprite, 'Rectangle');
         player.addComponentAs(sprite, 'RectPhysicsBody');

@@ -17,6 +17,7 @@ var Helper = require('../../helper.js');
  * @param {number}  [options.bounciness=0]
  * @param {boolean} [options.solid=true]
  * @param {number}  [options.rotation=0]
+ * @param {number}  [options.friction=1]
  * @constructor
  */
 var RectPhysicsBody = function(options) {
@@ -35,7 +36,8 @@ var RectPhysicsBody = function(options) {
         mass: 0,
         bounciness: 0,
         solid: true,
-        rotation: 0
+        rotation: 0,
+        friction: 1
     };
 
     options = Helper.defaults(options, defaults);
@@ -48,6 +50,7 @@ var RectPhysicsBody = function(options) {
     this.bounciness = options.bounciness;
     this.solid = options.solid;
     this.rotation = options.rotation;
+    this.friction = options.friction;
 };
 
 module.exports = RectPhysicsBody;
