@@ -21,8 +21,8 @@ World.init({
 
 var layer = World.createLayer(),
     player = Factory.createPlayer(),
-    floor = World.createEntity(),
-    platform = World.createEntity(),
+    floor = Factory.createPlatform(-500, 550, 2000, 50),
+    platform = Factory.createPlatform(500, 500, 200, 20),
     rectSystem = new RenderRectSystem(),
     animationSystem = new AnimationSystem(),
     spriteSystem = new SpriteSystem(),
@@ -30,33 +30,21 @@ var layer = World.createLayer(),
         x: -500,
         y: -500,
         width: 2000,
-        height: 200
+        height: 200,
+        gravity: 30,
+        friction: 30
     }),
     movementSystem = new PlayerMovement(player);
 
-var floorRect = new Rectangle({
-    x: -500,
-    y: 550,
-    width: 2000,
-    height: 50,
-    color: 0xFF0000
-});
-floorRect.solid = true;
-floorRect.immovable = true;
-floor.addComponent(floorRect);
-floor.addComponentAs(floorRect, 'RectPhysicsBody');
+platformerSystem.addCollisionListener(function(a, b) {
+    var p = (a.hasComponent('Player')) ? a :
+            (b.hasComponent('Player')) ? b : null;
+    if (!p) {
+        return;
+    }
 
-var platformRect = new Rectangle({
-    x: 300,
-    y: 500,
-    width: 400,
-    height: 50,
-    color: 0x00FF00
+    p.onGround = true;
 });
-platformRect.solid = true;
-platformRect.immovable = true;
-platform.addComponent(platformRect);
-platform.addComponentAs(platformRect, 'RectPhysicsBody');
 
 rectSystem.addEntity(floor);
 rectSystem.addEntity(platform);
