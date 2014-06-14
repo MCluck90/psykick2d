@@ -6,7 +6,7 @@ var Helper = require('psykick2d').Helper,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
 
     RUN_SPEED = 10,
-    JUMP_SPEED = 12;
+    JUMP_SPEED = 15;
 
 var PlayerMovement = function(player) {
     BehaviorSystem.call(this);
@@ -17,7 +17,8 @@ Helper.inherit(PlayerMovement, BehaviorSystem);
 
 PlayerMovement.prototype.update = function(delta) {
     var body = this.player.getComponent('RectPhysicsBody'),
-        sprite = this.player.getComponent('Sprite');
+        sprite = this.player.getComponent('Sprite'),
+        animation = this.player.getComponent('Animation');
     if (Keyboard.isKeyDown(Keys.Left)) {
         if (body.velocity.x > 0) {
             body.friction = 1.2;
@@ -48,12 +49,24 @@ PlayerMovement.prototype.update = function(delta) {
         body.friction = 1;
     }
 
-    if (Keyboard.isKeyDown(Keys.Up) && this.player.onGround) {
+    animation.fps = Math.abs(body.velocity.x) / 1.25;
+
+    if (Keyboard.isKeyDown(Keys.Up) && this.player.onGround && !this.player.jumped) {
         this.player.onGround = false;
         body.velocity.y = -JUMP_SPEED;
+        this.player.jumped = true;
+        this.player.addComponent(this.player.getComponent('WalkAnimation'));
+
+    } else if (!Keyboard.isKeyDown(Keys.Up) && this.player.jumped) {
+        this.player.jumped = false;
+        if (body.velocity.y < 0) {
+            body.velocity.y = 0;
+        }
     }
 
     if (body.velocity.x === 0) {
+        // Make sure that the animation goes to the correct frame
+        animation.fps = 1e8;
         this.player.addComponent(this.player.getComponent('StandAnimation'));
         body.velocity.x = 0;
     }
