@@ -8,11 +8,15 @@ var World = require('psykick2d').World,
     PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer,
 
     Factory = require('./factory.js'),
-    PlayerMovement = require('./player-movement.js');
+    PlayerMovement = require('./player-movement.js'),
+    PlayerCam = require('./player-cam.js'),
+
+    WIDTH = 800,
+    HEIGHT = 600;
 
 World.init({
-    width: 800,
-    height: 600,
+    width: WIDTH,
+    height: HEIGHT,
     backgroundColor: '#000',
     preload: {
         spriteSheets: ['sprites/player.json']
@@ -35,6 +39,8 @@ var layer = World.createLayer(),
         friction: 30
     }),
     movementSystem = new PlayerMovement(player);
+
+layer.camera = new PlayerCam(player, WIDTH, HEIGHT);
 
 platformerSystem.addCollisionListener(function(a, b) {
     var p = (a.hasComponent('Player')) ? a :
