@@ -176,7 +176,7 @@ var AssetManager = {
 
         /**
          * Adds a listener for when sprite sheets finish loading
-         * @param {function(string[]) callback  Passes back the sheets that were just loaded
+         * @param {function(string[])} callback  Passes back the sheets that were just loaded
          */
         addLoadListener: function(callback) {
             if (spriteSheetManager._listeners.indexOf(callback) === -1) {
