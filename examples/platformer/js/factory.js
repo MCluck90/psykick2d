@@ -3,7 +3,7 @@
 var World = require('psykick2d').World,
     Animation = require('psykick2d').Components.GFX.Animation,
     Sprite = require('psykick2d').Components.GFX.Sprite,
-    Rectangle = require('psykick2d').Components.Shapes.Rectangle;
+    TiledSprite = require('psykick2d').Components.GFX.TiledSprite;
 
 var Factory = {
     /**
@@ -69,19 +69,20 @@ var Factory = {
      */
     createPlatform: function(x, y, width, height) {
         var platform = World.createEntity(),
-            rectangle = new Rectangle({
+            sprite = new TiledSprite({
+                frameName: 'grass',
                 x: x,
                 y: y,
                 width: width,
-                height: height,
-                color: 0x00FF00
+                height: height
             });
-        rectangle.solid = true;
-        rectangle.immovable = true;
-        rectangle.friction = 30;
+        sprite.solid = true;
+        sprite.immovable = true;
+        sprite.friction = 30;
 
-        platform.addComponent(rectangle);
-        platform.addComponentAs(rectangle, 'RectPhysicsBody');
+        platform.addComponentAs(sprite, 'Sprite');
+        platform.addComponentAs(sprite, 'Rectangle');
+        platform.addComponentAs(sprite, 'RectPhysicsBody');
 
         return platform;
     }

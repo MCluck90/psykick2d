@@ -11,7 +11,10 @@ World.init({
     height: HEIGHT,
     backgroundColor: '#000',
     preload: {
-        spriteSheets: ['sprites/player.json']
+        spriteSheets: [
+            'sprites/player.json',
+            'sprites/terrain.json'
+        ]
     }
 });
 

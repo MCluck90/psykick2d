@@ -1,7 +1,6 @@
 'use strict';
 
 var World = require('psykick2d').World,
-    RectRenderSystem = require('psykick2d').Systems.Render.Rectangle,
     AnimationSystem = require('psykick2d').Systems.Behavior.Animate,
     SpriteSystem = require('psykick2d').Systems.Render.Sprite,
     PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer,
@@ -22,7 +21,6 @@ var MapLoader = {
         }
 
         var mainLayer = World.createLayer(),
-            rectRenderSystem = new RectRenderSystem(),
             animationSystem = new AnimationSystem(),
             spriteSystem = new SpriteSystem(),
             platformerSystem = new PlatformerSystem({
@@ -62,15 +60,13 @@ var MapLoader = {
 
                 case 'floor':
                     entity = Factory.createPlatform(part.x, part.y, part.width, part.height);
-                    rectRenderSystem.addEntity(entity);
+                    spriteSystem.addEntity(entity);
                     platformerSystem.addEntity(entity);
                     break;
             }
         }
 
         mainLayer.addSystem(movementSystem);
-        mainLayer.addSystem(rectRenderSystem);
-        mainLayer.addSystem(animationSystem);
         mainLayer.addSystem(animationSystem);
         mainLayer.addSystem(spriteSystem);
         mainLayer.addSystem(platformerSystem);

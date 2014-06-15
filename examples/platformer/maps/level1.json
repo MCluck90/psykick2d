@@ -1,28 +1,28 @@
 [
     {
-        "type": "player",
-        "x": 400,
-        "y": 450
-    },
-    {
         "type": "floor",
         "x": 0,
-        "y": 550,
+        "y": 569,
         "width": 2000,
-        "height": 500
+        "height": 31
     },
     {
         "type": "floor",
         "x": 850,
-        "y": 350,
+        "y": 371,
         "width": 200,
-        "height": 50
+        "height": 31
     },
     {
         "type": "floor",
         "x": 2500,
-        "y": 550,
+        "y": 569,
         "width": 4000,
-        "height": 500
+        "height": 31
+    },
+    {
+        "type": "player",
+        "x": 400,
+        "y": 450
     }
 ]
