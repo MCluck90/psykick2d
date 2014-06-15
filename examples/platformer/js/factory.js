@@ -60,15 +60,15 @@ var Factory = {
     },
 
     /**
-     * Create a platform
+     * Create some grass
      * @param {number} x
      * @param {number} y
      * @param {number} width
      * @param {number} height
      * @returns {Entity}
      */
-    createPlatform: function(x, y, width, height) {
-        var platform = World.createEntity(),
+    createGrass: function(x, y, width, height) {
+        var grass = World.createEntity(),
             sprite = new TiledSprite({
                 frameName: 'grass',
                 x: x,
@@ -80,11 +80,31 @@ var Factory = {
         sprite.immovable = true;
         sprite.friction = 30;
 
-        platform.addComponentAs(sprite, 'Sprite');
-        platform.addComponentAs(sprite, 'Rectangle');
-        platform.addComponentAs(sprite, 'RectPhysicsBody');
+        grass.addComponentAs(sprite, 'Sprite');
+        grass.addComponentAs(sprite, 'Rectangle');
+        grass.addComponentAs(sprite, 'RectPhysicsBody');
 
-        return platform;
+        return grass;
+    },
+
+    createSteel: function(x, y, width, height) {
+        var steel = World.createEntity(),
+            sprite = new TiledSprite({
+                frameName: 'steel',
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            });
+        sprite.solid = true;
+        sprite.immovable = true;
+        sprite.friction = 25;
+
+        steel.addComponentAs(sprite, 'Sprite');
+        steel.addComponentAs(sprite, 'Rectangle');
+        steel.addComponentAs(sprite, 'RectPhysicsBody');
+
+        return steel;
     }
 };
 

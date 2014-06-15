@@ -46,23 +46,27 @@ var MapLoader = {
             var part = mapData[i],
                 entity;
 
-            switch (part.type) {
-                case 'player':
-                    entity = Factory.createPlayer(part.x, part.y);
-                    mainLayer.camera = new PlayerCam(entity, 800, 600);
-                    movementSystem = new PlayerMovement(entity);
+            if (part.type === 'player') {
+                entity = Factory.createPlayer(part.x, part.y);
+                mainLayer.camera = new PlayerCam(entity, 800, 600);
+                movementSystem = new PlayerMovement(entity);
 
-                    movementSystem.addEntity(entity);
-                    spriteSystem.addEntity(entity);
-                    platformerSystem.addEntity(entity);
-                    animationSystem.addEntity(entity);
-                    break;
+                movementSystem.addEntity(entity);
+                spriteSystem.addEntity(entity);
+                platformerSystem.addEntity(entity);
+                animationSystem.addEntity(entity);
+            } else {
+                switch (part.type) {
+                    case 'grass':
+                        entity = Factory.createGrass(part.x, part.y, part.width, part.height);
+                        break;
+                    case 'steel':
+                        entity = Factory.createSteel(part.x, part.y, part.width, part.height);
+                        break;
+                }
 
-                case 'floor':
-                    entity = Factory.createPlatform(part.x, part.y, part.width, part.height);
-                    spriteSystem.addEntity(entity);
-                    platformerSystem.addEntity(entity);
-                    break;
+                spriteSystem.addEntity(entity);
+                platformerSystem.addEntity(entity);
             }
         }
 

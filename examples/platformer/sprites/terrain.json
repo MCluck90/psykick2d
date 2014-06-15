@@ -6,6 +6,14 @@
         "rotated": false,
         "trimmed": true,
         "spriteSourceSize": {"x":0,"y":0,"w":31,"h":31},
+        "sourceSize": {"w":31,"h":31}
+    },
+    "steel":
+    {
+        "frame": {"x":32,"y":0,"w":31,"h":31},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
         "sourceSize": {"w":32,"h":32}
     }},
     "meta": {

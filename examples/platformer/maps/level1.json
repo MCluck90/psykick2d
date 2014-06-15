@@ -1,20 +1,20 @@
 [
     {
-        "type": "floor",
+        "type": "grass",
         "x": 0,
         "y": 569,
         "width": 2000,
         "height": 31
     },
     {
-        "type": "floor",
+        "type": "steel",
         "x": 850,
         "y": 371,
-        "width": 200,
+        "width": 186,
         "height": 31
     },
     {
-        "type": "floor",
+        "type": "grass",
         "x": 2500,
         "y": 569,
         "width": 4000,
