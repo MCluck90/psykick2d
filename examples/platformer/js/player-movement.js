@@ -51,7 +51,7 @@ PlayerMovement.prototype.update = function(delta) {
 
     animation.fps = Math.abs(body.velocity.x) / 1.25;
 
-    if (Keyboard.isKeyDown(Keys.Up) && this.player.onGround && !this.player.jumped) {
+    if (Keyboard.isKeyDown(Keys.Up) && body.velocity.y === 0 && this.player.onGround && !this.player.jumped) {
         this.player.onGround = false;
         body.velocity.y = -JUMP_SPEED;
         this.player.jumped = true;
