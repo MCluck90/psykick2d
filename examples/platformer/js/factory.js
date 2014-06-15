@@ -10,12 +10,12 @@ var Factory = {
      * Creates the player entity
      * @returns {Entity}
      */
-    createPlayer: function() {
+    createPlayer: function(x, y) {
         var player = World.createEntity(),
             sprite = new Sprite({
                 frameName: 'player-stand',
-                x: 320,
-                y: 200,
+                x: x,
+                y: y,
                 width: 122,
                 height: 56
             }),
