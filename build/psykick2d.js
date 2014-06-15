@@ -194,7 +194,7 @@ var AssetManager = {
 
         /**
          * Adds a listener for when sprite sheets finish loading
-         * @param {function(string[]) callback  Passes back the sheets that were just loaded
+         * @param {function(string[])} callback  Passes back the sheets that were just loaded
          */
         addLoadListener: function(callback) {
             if (spriteSheetManager._listeners.indexOf(callback) === -1) {
@@ -440,7 +440,7 @@ var Sprite = function(options) {
     var defaults = {
         src: '',
         frameName: '',
-        texture: null,
+        texture: '',
         x: 0,
         y: 0,
         width: 0,
@@ -455,12 +455,12 @@ var Sprite = function(options) {
     var texture;
     if (options.src) {
         texture = PIXI.Texture.fromImage(options.src);
-    } else if(options.frameName) {
+    } else if (options.frameName) {
         texture = AssetManager.SpriteSheet.getFrame(options.frameName);
     } else if (options.texture) {
         texture = options.texture;
     } else {
-        throw new Error('Must provide src, frameName, or texture to Sprite');
+        throw new Error(this.NAME + ': Must provide src, frame, or texture');
     }
     PIXI.Sprite.call(this, texture);
     this.x = options.x;
@@ -530,34 +530,31 @@ module.exports = Text;
 },{"../../helper.js":18,"pixi.js":1}],10:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
 /**
  * Optimized for rendering tiled sprites
- * @param {object} [options]
- * @param {string} [options.src]    Source of the texture
- * @param {number} [options.x=0]
- * @param {number} [options.y=0]
- * @param {number} [options.width=0]
- * @param {number} [options.height=0]
- * @param {object} [options.frame]  Settings for the frame of the texture
- * @param {number} [options.frame.x=0]
- * @param {number} [options.frame.y=0]
- * @param {number} [options.frame.width=0]
- * @param {number} [options.frame.height=0]
+ * @param {object} options
  * @constructor
- * @implements {PIXI.Sprite}
- * @extends {TilingSprite}
+ * @extends {PIXI.TilingSprite}
  */
 var TiledSprite = function(options) {
     this.NAME = 'TiledSprite';
     var defaults = {
-        src: null,
+        src: '',
+        frameName: '',
+        texture: '',
         x: 0,
         y: 0,
         width: 0,
         height: 0,
+        rotation: 0,
+        pivot: {
+            x: 0,
+            y: 0
+        },
         frame: {
             x: 0,
             y: 0,
@@ -567,67 +564,45 @@ var TiledSprite = function(options) {
     };
 
     options = Helper.defaults(options, defaults);
-    this.frame = new PIXI.Rectangle(
-        options.frame.x,
-        options.frame.y,
-        options.frame.width,
-        options.frame.height
-    );
-    this._src = options.src;
-    var texture = PIXI.Texture.fromImage(options.src);
+    var texture;
+    if (options.src) {
+        texture = PIXI.Texture.fromImage(options.src);
+    } else if (options.frameName) {
+        texture = AssetManager.SpriteSheet.getFrame(options.frameName);
+    } else if (options.texture) {
+        texture = options.texture;
+    } else {
+        throw new Error(this.NAME + ': Must provide src, frame, or texture');
+    }
+
     PIXI.TilingSprite.call(this, texture, options.width, options.height);
-    this.tilePosition.x = -this.frame.x;
-    this.tilePosition.y = -this.frame.y;
-    var self = this;
-    this.texture.baseTexture.on('loaded', function() {
-        self.texture.setFrame(self.frame);
-        self.generateTilingTexture();
-    });
+
+    if (options.src) {
+        var self = this;
+        this.texture.baseTexture.on('loaded', function() {
+            self.texture.setFrame(new PIXI.Rectangle(
+                options.frame.x,
+                options.frame.y,
+                options.frame.width,
+                options.frame.height
+            ));
+            self.generateTilingTexture();
+        });
+    }
+
+    this.x = options.x;
+    this.y = options.y;
+    this.width = options.width;
+    this.height = options.height;
+    this.rotation = options.rotation;
+    this.pivot.x = options.pivot.x;
+    this.pivot.y = options.pivot.y;
 };
 
 Helper.inherit(TiledSprite, PIXI.TilingSprite);
 
-// Update the texture when the image is changed
-Object.defineProperty(TiledSprite.prototype, 'src', {
-    get: function() {
-        return this._src;
-    },
-    set: function(src) {
-        this._src = src;
-        var texture = PIXI.Texture.fromImage(src);
-        texture.setFrame(this.frame);
-    }
-});
-
-/**
- * Update the tile frame
- * @param {object} options
- * @param {number} [options.x]
- * @param {number} [options.y]
- * @param {number} [options.width]
- * @param {number} [options.height]
- */
-TiledSprite.prototype.setFrame = function(options) {
-    var defaults = {
-        x: this.frame.x,
-        y: this.frame.y,
-        width: this.frame.width,
-        height: this.frame.height
-    };
-    options = Helper.defaults(options, defaults);
-    this.frame.x = options.x;
-    this.frame.y = options.y;
-    this.frame.width = options.width;
-    this.frame.height = options.height;
-    this.tilePosition.x = -options.x;
-    this.tilePosition.y = -options.y;
-
-    // Make sure the texture gets updated
-    this.src = this._src;
-};
-
 module.exports = TiledSprite;
-},{"../../helper.js":18,"pixi.js":1}],11:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../helper.js":18,"pixi.js":1}],11:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');

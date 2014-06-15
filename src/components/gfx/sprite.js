@@ -27,7 +27,7 @@ var Sprite = function(options) {
     var defaults = {
         src: '',
         frameName: '',
-        texture: null,
+        texture: '',
         x: 0,
         y: 0,
         width: 0,
@@ -42,12 +42,12 @@ var Sprite = function(options) {
     var texture;
     if (options.src) {
         texture = PIXI.Texture.fromImage(options.src);
-    } else if(options.frameName) {
+    } else if (options.frameName) {
         texture = AssetManager.SpriteSheet.getFrame(options.frameName);
     } else if (options.texture) {
         texture = options.texture;
     } else {
-        throw new Error('Must provide src, frameName, or texture to Sprite');
+        throw new Error(this.NAME + ': Must provide src, frame, or texture');
     }
     PIXI.Sprite.call(this, texture);
     this.x = options.x;
