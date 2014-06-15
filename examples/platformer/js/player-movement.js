@@ -5,7 +5,7 @@ var Helper = require('psykick2d').Helper,
     Keys = require('psykick2d').Keys,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
 
-    RUN_SPEED = 10,
+    RUN_SPEED = 8,
     JUMP_SPEED = 15;
 
 var PlayerMovement = function(player) {
