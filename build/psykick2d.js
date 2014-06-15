@@ -325,11 +325,13 @@ var Camera = function() {
 };
 
 /**
- * Called before every draw phase
- * @param {CanvasRenderingContext2D} c
+ * Call before every render step
+ * @param {Stage} stage
+ * @param {number} delta
  */
-Camera.prototype.render = function(c) {
-    c.translate(-this.x, -this.y);
+Camera.prototype.render = function(stage, delta) {
+    stage.x = -this.x;
+    stage.y = -this.y;
 };
 
 Camera.prototype.toString = function() {
