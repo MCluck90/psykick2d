@@ -64,10 +64,13 @@ PlayerMovement.prototype.update = function(delta) {
         }
     }
 
-    if (body.velocity.x === 0) {
+    // If the player is against a wall, stop animating them
+    if (Math.abs(body.velocity.x) <= RUN_SPEED * delta) {
         // Make sure that the animation goes to the correct frame
         animation.fps = 1e8;
         this.player.addComponent(this.player.getComponent('StandAnimation'));
+    }
+    if (body.velocity.x === 0) {
         body.velocity.x = 0;
     }
 };
