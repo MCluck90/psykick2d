@@ -9,7 +9,7 @@ var World = require('psykick2d').World,
 World.init({
     width: WIDTH,
     height: HEIGHT,
-    backgroundColor: '#000',
+    backgroundColor: '#AAF',
     preload: {
         spriteSheets: [
             'sprites/player.json',

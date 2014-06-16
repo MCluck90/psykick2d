@@ -10,10 +10,12 @@ module.exports = function(grunt) {
                     'build/game-debug.js': ['js/main.js']
                 },
                 options: {
-                    debug: true,
                     alias: [
                         '../../../src/index.js:psykick2d'
-                    ]
+                    ],
+                    bundleOptions: {
+                        debug: true
+                    }
                 }
             },
             release: {
@@ -21,10 +23,12 @@ module.exports = function(grunt) {
                     'build/game.js': ['js/main.js']
                 },
                 options: {
-                    debug: false,
                     alias: [
                         '../../../src/index.js:psykick2d'
-                    ]
+                    ],
+                    bundleOptions: {
+                        debug: false
+                    }
                 }
             }
         }

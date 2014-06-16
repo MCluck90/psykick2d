@@ -4,6 +4,7 @@ var World = require('psykick2d').World,
     AnimationSystem = require('psykick2d').Systems.Behavior.Animate,
     SpriteSystem = require('psykick2d').Systems.Render.Sprite,
     PlatformerSystem = require('psykick2d').Systems.Behavior.Physics.Platformer,
+    Rectangle = require('psykick2d').Components.Shapes.Rectangle,
 
     Factory = require('./factory.js'),
     PlayerCam = require('./player-cam.js'),
@@ -41,6 +42,22 @@ var MapLoader = {
 
             player.onGround = true;
         });
+
+        // Create a wall on the left side of the map to prevent the player
+        // from walking off the edge of the world
+        var leftWall = World.createEntity(),
+            leftWallRect = new Rectangle({
+                x: 0,
+                y: 0,
+                width: 1,
+                height: HEIGHT
+            });
+        leftWallRect.solid = true;
+        leftWallRect.immovable = true;
+        leftWallRect.friction = 1;
+        leftWall.addComponent(leftWallRect);
+        leftWall.addComponentAs(leftWallRect, 'RectPhysicsBody');
+        platformerSystem.addEntity(leftWall);
 
         for (var i = 0, len = mapData.length; i < len; i++) {
             var part = mapData[i],
