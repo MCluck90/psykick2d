@@ -59,12 +59,15 @@ var MapLoader = {
         leftWall.addComponentAs(leftWallRect, 'RectPhysicsBody');
         platformerSystem.addEntity(leftWall);
 
-        for (var i = 0, len = mapData.length; i < len; i++) {
-            var part = mapData[i],
-                entity;
-
-            if (part.type === 'player') {
-                entity = Factory.createPlayer(part.x, part.y);
+        var entityData,
+            entity,
+            player;
+        for (var entityType in mapData) {
+            var entityCollection = mapData[entityType],
+                createEntity;
+            if (entityType === 'player') {
+                entity = Factory.createPlayer(entityCollection.x, entityCollection.y);
+                player = entity;
                 mainLayer.camera = new PlayerCam(entity, 800, 600);
                 movementSystem = new PlayerMovement(entity);
 
@@ -72,20 +75,41 @@ var MapLoader = {
                 spriteSystem.addEntity(entity);
                 platformerSystem.addEntity(entity);
                 animationSystem.addEntity(entity);
-            } else {
-                switch (part.type) {
-                    case 'grass':
-                        entity = Factory.createGrass(part.x, part.y, part.width, part.height);
-                        break;
-                    case 'steel':
-                        entity = Factory.createSteel(part.x, part.y, part.width, part.height);
-                        break;
-                }
+                continue;
+            }
 
+            switch (entityType) {
+                case 'grass':
+                    createEntity = Factory.createGrass;
+                    break;
+
+                case 'steel':
+                    createEntity = Factory.createSteel;
+                    break;
+
+                case 'tape':
+                    createEntity = Factory.createTape;
+                    break;
+
+                case 'roll':
+                    createEntity = Factory.createRoll;
+                    break;
+
+                default:
+                    throw new Error('Unknown entity type "' + entityType + '"');
+            }
+
+            for (var i = 0, len = entityCollection.length; i < len; i++) {
+                entityData = entityCollection[i];
+                entity = createEntity(entityData.x, entityData.y, entityData.width, entityData.height);
                 spriteSystem.addEntity(entity);
                 platformerSystem.addEntity(entity);
             }
         }
+
+        // Move the player to the top of the drawing system
+        spriteSystem.removeEntity(player);
+        spriteSystem.addEntity(player);
 
         mainLayer.addSystem(movementSystem);
         mainLayer.addSystem(animationSystem);

@@ -105,6 +105,54 @@ var Factory = {
         steel.addComponentAs(sprite, 'RectPhysicsBody');
 
         return steel;
+    },
+
+    /**
+     * Creates a platform with warning tape
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @returns {Entity}
+     */
+    createTape: function(x, y, width, height) {
+        var tape = World.createEntity(),
+            sprite = new TiledSprite({
+                frameName: 'tape',
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            });
+        sprite.solid = true;
+        sprite.immovable = true;
+        sprite.friction = 25;
+
+        tape.addComponentAs(sprite, 'Sprite');
+        tape.addComponentAs(sprite, 'Rectangle');
+        tape.addComponentAs(sprite, 'RectPhysicsBody');
+
+        return tape;
+    },
+
+    createRoll: function(x, y, width, height) {
+        var roll = World.createEntity(),
+            sprite = new TiledSprite({
+                frameName: 'roll',
+                x: x,
+                y: y,
+                width: width,
+                height: height
+            });
+        sprite.solid = true;
+        sprite.immovable = true;
+        sprite.friction = 20;
+
+        roll.addComponentAs(sprite, 'Sprite');
+        roll.addComponentAs(sprite, 'Rectangle');
+        roll.addComponentAs(sprite, 'RectPhysicsBody');
+
+        return roll;
     }
 };
 
