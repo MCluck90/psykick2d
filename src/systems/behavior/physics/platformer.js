@@ -4,183 +4,175 @@ var Helper = require('../../../helper.js'),
     BehaviorSystem = require('../../../behavior-system.js'),
     QuadTree = require('../../../data-structures/quad-tree.js');
 
-var GRAVITY = 9.8,
-    FRICTION = 10;
-
 /**
- * Returns the sides of a body
- * @param {RectPhysicsBody} body
- * @returns {{
- *  top: number,
- *  bottom: number,
- *  left: number,
- *  right: number
- * }}
- */
-function getSides(body) {
-    return {
-        top: body.y,
-        bottom: body.y + body.height,
-        left: body.x,
-        right: body.x + body.width
-    };
-}
-
-function callEventHandlers(entity, other) {
-    /* jshint validthis:true */
-    var collection = this._collisionHandlers[entity.id] || [];
-    for (var i = 0, len = collection.length; i < len; i++) {
-        collection[i](other);
-    }
-}
-
-/**
- * Handles essential physics
- * @extends {BehaviorSystem}
+ * Handles basic platformer physics
+ * @param {object} options
+ * @param {number} [options.x=0]            X position of the collidable zone
+ * @param {number} [options.y=0]            Y position of the collidable zone
+ * @param {number} options.width            Width of the collidable zone
+ * @param {number} options.height           Height of collidable
+ * @param {number} [options.gravity=9.8]    Force of gravity
  * @constructor
+ * @extends BehaviorSystem
  */
 var Platformer = function(options) {
     BehaviorSystem.call(this);
+    this.requiredComponents = ['RectPhysicsBody'];
     var defaults = {
         x: 0,
         y: 0,
-        width: 800,
-        height: 600,
-        cellSize: 100
+        gravity: 9.8
     };
     options = Helper.defaults(options, defaults);
-    this._collisionHandlers = {};
+
+    this.gravity = options.gravity;
+
+    options.componentType = 'RectPhysicsBody';
     this._quadTree = new QuadTree(options);
-    this.requiredComponents = ['RectPhysicsBody'];
+    this._collisionHandlers = [];
 };
 
 Helper.inherit(Platformer, BehaviorSystem);
 
 /**
- * Adds a handler for when a given entity encounters a collision
+ * Adds an entity to the collision system
  * @param {Entity} entity
- * @param {function(Entity)} callback
+ * @returns {boolean}
  */
-Platformer.prototype.addCollisionHandler = function(entity, callback) {
-    var collection = this._collisionHandlers[entity.id];
-    if (collection.indexOf(callback) === -1) {
-        this._collisionHandlers[entity.id].push(callback);
+Platformer.prototype.addEntity = function(entity) {
+    if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
+        this._quadTree.addEntity(entity);
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Removes an entity from the collision system
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
+Platformer.prototype.removeEntity = function(entity) {
+    if (typeof entity === 'number') {
+        entity = this.entities[entity];
+        this._quadTree.removeEntity(entity);
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Adds a listener for when a collision occurs
+ * @param {function(Entity, Entity)} callback
+ */
+Platformer.prototype.addCollisionListener = function(callback) {
+    if (this._collisionHandlers.indexOf(callback) === -1) {
+        this._collisionHandlers.push(callback);
     }
 };
 
 /**
- * Removes a given collision handler for a given entity
- * @param {Entity} entity
- * @param {function} callback
+ * Removes a collision listener
+ * @param {function(Entity, Entity)} callback
  */
-Platformer.prototype.removeCollisionHandler = function(entity, callback) {
-    var collection = this._collisionHandlers[entity.id],
-        index = (collection) ? collection.indexOf(callback) : -1;
+Platformer.prototype.removeCollisionListener = function(callback) {
+    var index = this._collisionHandlers.indexOf(callback);
     if (index !== -1) {
-        collection.splice(index, 1);
+        this._collisionHandlers.splice(index, 1);
     }
 };
 
-Platformer.prototype.addEntity = function(entity) {
-    if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
-        this._quadTree.addEntity(entity);
-        this._collisionHandlers[entity.id] = [];
-        return true;
-    } else {
-        return false;
+/**
+ * Alerts listeners about a collision
+ * @param {Entity} a
+ * @param {Entity} b
+ * @private
+ */
+Platformer.prototype._emit = function(a, b) {
+    var handlers = this._collisionHandlers,
+        numOfHandlers = handlers.length;
+    for (var i = 0; i < numOfHandlers; i++) {
+        handlers[i](a, b);
     }
 };
 
-Platformer.prototype.removeEntity = function(entity) {
-    if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
-        this._quadTree.removeEntity(entity);
-        delete this._collisionHandlers[entity.id];
-        return true;
-    } else {
-        return false;
-    }
-};
-
+/**
+ * Deals with all of the collisions
+ * @param {number} delta
+ */
 Platformer.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
-        // Update it's position
         var entity = this.actionOrder[i],
-            body = entity.getComponent('RectPhysicsBody'),
-            vXSign = (body.velocity.x) ? (body.velocity.x < 0) ? -1 : 1 : 0,
-            frictionForce = delta * FRICTION * vXSign,
-            gravityForce = delta * GRAVITY * body.mass;
+            body = entity.getComponent('RectPhysicsBody');
+        if (body.immovable) {
+            continue;
+        }
 
-        body.velocity.x -= frictionForce;
-        body.velocity.y += gravityForce;
-        if (Math.abs(body.velocity.x) < Math.abs(frictionForce)) {
-            body.velocity.x = 0;
-        }
-        if (Math.abs(body.velocity.y) < gravityForce) {
-            body.velocity.y = 0;
-        }
+        body.velocity.y += this.gravity * body.mass * delta;
         this._quadTree.moveEntity(entity, body.velocity);
 
-        // Resolve any collisions
-        var collisions = (body.solid) ? this._quadTree.getCollisions(entity) : [],
-            entityIsMoving = (body.velocity.x !== 0 || body.velocity.y !== 0),
-            entitySides = getSides(body);
-        for (var j = 0, len2 = collisions.length; j < len2; j++) {
+        var bodyBottom = body.y + Math.abs(body.height),
+            bodyRight = body.x + Math.abs(body.width),
+            collisions = this._quadTree.getCollisions(entity, body),
+            numOfCollisions = collisions.length,
+            friction = null,
+            j;
+        for (j = 0; j < numOfCollisions; j++) {
             var other = collisions[j],
-                otherBody = other.getComponent('RectPhysicsBody'),
-                otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
-                otherSides = getSides(otherBody),
-                bothMoving = (entityIsMoving && otherIsMoving);
-
-            callEventHandlers.call(this, entity, other);
-
+                otherBody = other.getComponent('RectPhysicsBody');
             if (!otherBody.solid) {
                 continue;
             }
 
-            if (!bothMoving) {
-                var movingEntity = (entityIsMoving) ? entity : other,
-                    movingBody = (entityIsMoving) ? body : otherBody,
-                    movingSides = (entityIsMoving) ? entitySides : otherSides,
-                    staticSides = (entityIsMoving) ? otherSides : entitySides,
-                    deltaPosition = {
-                        x: 0,
-                        y: 0
-                    },
-                    fromAbove = movingSides.bottom - staticSides.top,
-                    fromBelow = staticSides.bottom - movingSides.top,
-                    fromLeft = movingSides.right - staticSides.left,
-                    fromRight = staticSides.right - movingSides.left;
-                if (movingSides.bottom >= staticSides.top &&
-                    movingSides.top < staticSides.top &&
-                    Math.abs(fromAbove).toFixed(6) * 1 <= (movingBody.velocity.y + gravityForce).toFixed(6) * 1) {
-                    // Dropping from above
-                    deltaPosition.y = -fromAbove;
-                    movingBody.velocity.y = 0;
-                } else if (movingSides.top <= staticSides.bottom &&
-                    movingSides.bottom > staticSides.bottom &&
-                    movingBody.velocity.y < 0 &&
-                    Math.abs(fromBelow).toFixed(6) * 1 <= Math.abs(movingBody.velocity.y).toFixed(6) * 1) {
-                    // Coming from below
-                    deltaPosition.y = fromBelow;
-                    movingBody.velocity.y = 0;
-                } else if (movingSides.right >= staticSides.left &&
-                    movingSides.left < staticSides.left &&
-                    Math.abs(fromLeft).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
-                    // Coming from the left
-                    deltaPosition.x = -fromLeft;
-                    movingBody.velocity.x = 0;
-                } else if (movingSides.left <= staticSides.right &&
-                    movingSides.right > staticSides.right &&
-                    Math.abs(fromRight).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
-                    // Coming from the right
-                    deltaPosition.x = fromRight;
-                    movingBody.velocity.x = 0;
+            if (otherBody.immovable) {
+                if (friction === null) {
+                    friction = [otherBody.friction];
+                } else {
+                    friction.push(otherBody.friction);
                 }
+            }
 
-                this._quadTree.moveEntity(movingEntity, deltaPosition);
+            this._emit(entity, other);
+
+            var deltaPosition = { x: 0, y: 0 },
+                otherBottom = otherBody.y + Math.abs(otherBody.height),
+                otherRight = otherBody.x + Math.abs(otherBody.width),
+                onTop = bodyBottom - otherBody.y,
+                onBottom = otherBottom - body.y,
+                onLeft = bodyRight - otherBody.x,
+                onRight = otherRight - body.x,
+                verticalCollision = Math.min(onTop, onBottom),
+                horizontalCollision = Math.min(onLeft, onRight);
+            if (verticalCollision < horizontalCollision) {
+                body.velocity.y = 0;
+                if (onTop < onBottom) {
+                    deltaPosition.y = -verticalCollision;
+                } else {
+                    deltaPosition.y = verticalCollision;
+                }
+            } else {
+                body.velocity.x = 0;
+                if (onLeft < onRight) {
+                    deltaPosition.x = -horizontalCollision;
+                } else {
+                    deltaPosition.x = horizontalCollision;
+                }
+            }
+
+            this._quadTree.moveEntity(entity, deltaPosition);
+        }
+
+        if (friction && body.friction) {
+            var frictionForce = 0,
+                numOfContactPoints = friction.length;
+            for (j = 0; j < numOfContactPoints; j++) {
+                frictionForce += friction[j];
+            }
+            frictionForce /= numOfContactPoints * body.friction;
+            var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
+            body.velocity.x += frictionForce * body.mass * frictionDirection * delta;
+            if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
+                body.velocity.x = 0;
             }
         }
     }
