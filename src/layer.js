@@ -118,6 +118,7 @@ Layer.prototype.removeSystem = function(system) {
         throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
+    // If applicable, remove the render systems display container
     var isRenderSystem = (system instanceof RenderSystem),
         systemCollection = (isRenderSystem) ? this.renderSystems : this.behaviorSystems,
         systemIndex = systemCollection.indexOf(system);
@@ -144,19 +145,17 @@ Layer.prototype.draw = function(delta) {
         this.camera.render(this.scene, delta);
     }
 
-    // Only draw if "visible" and have some kind of system for rendering
-    if (this.visible && this.renderSystems.length > 0) {
-        for (var i = 0, len = this.renderSystems.length; i < len; i++) {
+    var numOfRenderSystems = this.renderSystems.length;
+    if (this.visible && numOfRenderSystems > 0) {
+        for (var i = 0; i < numOfRenderSystems; i++) {
             var system = this.renderSystems[i];
             if (system.visible) {
                 system.draw(this);
             }
+            system.clearRemovalQueue();
         }
     }
 
-    if (!this.stage.visible) {
-        debugger;
-    }
     this.renderer.render(this.stage);
 };
 
@@ -165,13 +164,14 @@ Layer.prototype.draw = function(delta) {
  * @param {number} delta    Amount of time since the last update
  */
 Layer.prototype.update = function(delta) {
-    // Only update if the layer is active and we have some systems for doing behavior
-    if (this.active && this.behaviorSystems.length > 0) {
-        for (var i = 0, len = this.behaviorSystems.length; i < len; i++) {
+    var numOfBehaviorSystems = this.behaviorSystems.length;
+    if (this.active && numOfBehaviorSystems > 0) {
+        for (var i = 0; i < numOfBehaviorSystems; i++) {
             var system = this.behaviorSystems[i];
             if (system.active) {
                 system.update(delta);
             }
+            system.clearRemovalQueue();
         }
     }
 };
