@@ -28,11 +28,12 @@ function isColliding(a, b) {
 /**
  * Keeps track of all the physical objects in space
  * @param {object} options
- * @param {number} options.x        X position
- * @param {number} options.y        Y position
- * @param {number} options.width    Width
- * @param {number} options.height   Height
- * @param {number} options.cellSize Size of a cell
+ * @param {number} options.x                            X position
+ * @param {number} options.y                            Y position
+ * @param {number} options.width                        Width
+ * @param {number} options.height                       Height
+ * @param {number} options.cellSize                     Size of a cell
+ * @param {string} [options.componentType='Rectangle']  Component to use as a rectangle
  * @constructor
  */
 var QuadTree = function(options) {
@@ -43,6 +44,7 @@ var QuadTree = function(options) {
     this.cellSize = options.cellSize || 100;
     this.children = new Array(4);
     this.entities = [];
+    this.componentType = options.componentType || 'Rectangle';
 };
 
 /**
@@ -57,7 +59,7 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     if (this.width <= this.cellSize || this.height <= this.cellSize) {
         this.entities.push(entity);
     } else {
-        rect = rect || entity.getComponent('Rectangle');
+        rect = rect || entity.getComponent(this.componentType);
         var top    = rect.y,
             bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
@@ -69,7 +71,8 @@ QuadTree.prototype.addEntity = function(entity, rect) {
             nodeOptions = {
                 width: this.width / 2,
                 height: this.height / 2,
-                cellSize: this.cellSize
+                cellSize: this.cellSize,
+                componentType: this.componentType
             };
 
         if (inUpper && inLeft) {
@@ -119,7 +122,7 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
         return;
     }
 
-    rect = rect || entity.getComponent('Rectangle');
+    rect = rect || entity.getComponent(this.componentType);
     var top    = rect.y,
         bottom = rect.y + Math.abs(rect.height),
         left   = rect.x,
@@ -149,7 +152,7 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
  * @param {{ x: number, y: number }} deltaPosition
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         hasMoved = (Math.abs(deltaPosition.x) + Math.abs(deltaPosition.y)) > 0;
 
     // TODO: Do a smart check to see if it's changed cells
@@ -170,7 +173,7 @@ QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
 QuadTree.prototype.getCollisions = function(entity, rect) {
     var result = [];
     if (this.entities.indexOf(entity) === -1) {
-        rect = rect || entity.getComponent('Rectangle');
+        rect = rect || entity.getComponent(this.componentType);
         var top    = rect.y,
             bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
@@ -198,7 +201,7 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
             if (other === entity) {
                 continue;
             }
-            if (isColliding(rect, other.getComponent('Rectangle'))) {
+            if (isColliding(rect, other.getComponent(this.componentType))) {
                 result.push(other);
             }
         }

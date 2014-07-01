@@ -19,13 +19,15 @@ this.updateFrame=!0,d.Texture.frameUpdates.push(this)},d.Texture.prototype._upda
 'use strict';
 
 var Helper = require('./helper.js'),
+    PIXI = require('pixi.js'),
 
     doc = (typeof document !== 'undefined') ? document : null,
     isClientSide = (doc !== null),
 
     // Local shortcuts
     audioManager = null,
-    gfxManager = null;
+    gfxManager = null,
+    spriteSheetManager = null;
 
 // Detect audio support
 var audioEl = null,
@@ -167,14 +169,75 @@ var AssetManager = {
         getImage: function(src) {
             return gfxManager._cache[src] || null;
         }
+    },
+    SpriteSheet: {
+        _listeners: [],
+
+        /**
+         * Loads one or more sprite sheets from JSON format
+         * @param {string|string[]} spriteSheets
+         */
+        load: function(spriteSheets) {
+            if (typeof spriteSheets === 'string') {
+                spriteSheets = [spriteSheets];
+            }
+
+            var loader = new PIXI.AssetLoader(spriteSheets);
+            loader.onComplete = function() {
+                var listeners = spriteSheetManager._listeners;
+                for (var i = 0, len = listeners.length; i < len; i++) {
+                    listeners[i](spriteSheets);
+                }
+            };
+            loader.load();
+        },
+
+        /**
+         * Adds a listener for when sprite sheets finish loading
+         * @param {function(string[])} callback  Passes back the sheets that were just loaded
+         */
+        addLoadListener: function(callback) {
+            if (spriteSheetManager._listeners.indexOf(callback) === -1) {
+                spriteSheetManager._listeners.push(callback);
+            }
+        },
+
+        /**
+         * Removes a listener
+         * @param {function(string[])} callback
+         */
+        removeLoadListener: function(callback) {
+            var index = spriteSheetManager._listeners.indexOf(callback);
+            if (index !== -1) {
+                spriteSheetManager._listeners.splice(index, 1);
+            }
+        },
+
+        /**
+         * Removes all load listeners
+         */
+        clearListeners: function() {
+            spriteSheetManager._listeners = [];
+        },
+
+        /**
+         * Returns a frame based on name
+         * @param {string} name
+         * @returns {Texture}
+         */
+        getFrame: function(name) {
+            return PIXI.Texture.fromFrame(name);
+        }
     }
 };
 
+// Assign our local shortcuts
 audioManager = AssetManager.Audio;
 gfxManager = AssetManager.GFX;
+spriteSheetManager = AssetManager.SpriteSheet;
 
 module.exports = AssetManager;
-},{"./helper.js":18}],3:[function(require,module,exports){
+},{"./helper.js":18,"pixi.js":1}],3:[function(require,module,exports){
 'use strict';
 
 var System = require('./system.js'),
@@ -262,11 +325,13 @@ var Camera = function() {
 };
 
 /**
- * Called before every draw phase
- * @param {CanvasRenderingContext2D} c
+ * Call before every render step
+ * @param {Stage} stage
+ * @param {number} delta
  */
-Camera.prototype.render = function(c) {
-    c.translate(-this.x, -this.y);
+Camera.prototype.render = function(stage, delta) {
+    stage.x = -this.x;
+    stage.y = -this.y;
 };
 
 Camera.prototype.toString = function() {
@@ -281,16 +346,16 @@ var Helper = require('../../helper.js');
 
 /**
  * Used for keeping track of an animation cycle
- * @param       {object}    [options]
- * @param       {number}    [options.fps=24]             Frame per second
- * @param       {number}    [options.minFrame=0]         First frame in the animation
- * @param       {number}    [options.maxFrame=0]         Final frame in the animation
- * @param       {number}    [options.currentFrame=0]     Current frame
- * @param       {number}    [options.lastFrameTime]      Time since last frame
+ * @param       {object}                [options]
+ * @param       {number}                [options.fps=24]            Frames per second
+ * @param       {number}                [options.minFrame=0]        First frame in the animation
+ * @param       {number}                [options.maxFrame=0]        Final frame in the animation
+ * @param       {number}                [options.currentFrame=0]    Current frame
+ * @param       {number}                [options.lastFrameTime]     Time since last frame
+ * @param       {string[]|PIXI.Texture} [options.frames]            Frames used by sprite
  * @constructor
  */
 var Animation = function(options) {
-    // Unique name for identifying in Entities
     this.NAME = 'Animation';
 
     var defaults = {
@@ -298,7 +363,8 @@ var Animation = function(options) {
         minFrame: 0,
         maxFrame: 0,
         currentFrame: 0,
-        lastFrameTime: 0
+        lastFrameTime: 0,
+        frames: []
     };
     options = Helper.defaults(options, defaults);
 
@@ -307,7 +373,20 @@ var Animation = function(options) {
     this.maxFrame = options.maxFrame;
     this.currentFrame = options.currentFrame;
     this.lastFrameTime = options.lastFrameTime;
+    this.frames = options.frames;
 };
+
+Object.defineProperty(Animation.prototype, 'frame', {
+    get: function() {
+        return this.frames[this.currentFrame];
+    },
+    set: function(name) {
+        var index = this.frames.indexOf(name);
+        if (index !== -1) {
+            this.currentFrame = index;
+        }
+    }
+});
 
 module.exports = Animation;
 },{"../../helper.js":18}],7:[function(require,module,exports){
@@ -336,21 +415,24 @@ module.exports = Color;
 },{"../../helper.js":18}],8:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
 /**
  * Represents a sprite
- * @param {object} [options]
- * @param {string} [options.src]        Source of the texture
- * @param {number} [options.x=0]
- * @param {number} [options.y=0]
- * @param {number} [options.width=0]
- * @param {number} [options.height=0]
- * @param {number} [options.rotation=0]
- * @param {object} [options.pivot]      Origin point
- * @param {number} [options.pivot.x=0]
- * @param {number} [options.pivot.y=0]
+ * @param {object}       [options]
+ * @param {string}       [options.src]        Source of the texture
+ * @param {string}       [options.frameName]  Name of a preloaded frame
+ * @param {PIXI.Texture} [options.texture]    A PIXI texture
+ * @param {number}       [options.x=0]
+ * @param {number}       [options.y=0]
+ * @param {number}       [options.width=0]
+ * @param {number}       [options.height=0]
+ * @param {number}       [options.rotation=0]
+ * @param {object}       [options.pivot]      Origin point
+ * @param {number}       [options.pivot.x=0]
+ * @param {number}       [options.pivot.y=0]
  * @constructor
  * @extends {PIXI.Sprite}
  */
@@ -359,6 +441,8 @@ var Sprite = function(options) {
 
     var defaults = {
         src: '',
+        frameName: '',
+        texture: '',
         x: 0,
         y: 0,
         width: 0,
@@ -370,7 +454,17 @@ var Sprite = function(options) {
         }
     };
     options = Helper.defaults(options, defaults);
-    PIXI.Sprite.call(this, PIXI.Texture.fromImage(options.src));
+    var texture;
+    if (options.src) {
+        texture = PIXI.Texture.fromImage(options.src);
+    } else if (options.frameName) {
+        texture = AssetManager.SpriteSheet.getFrame(options.frameName);
+    } else if (options.texture) {
+        texture = options.texture;
+    } else {
+        throw new Error(this.NAME + ': Must provide src, frame, or texture');
+    }
+    PIXI.Sprite.call(this, texture);
     this.x = options.x;
     this.y = options.y;
     this.width = options.width;
@@ -383,7 +477,7 @@ var Sprite = function(options) {
 Helper.inherit(Sprite, PIXI.Sprite);
 
 module.exports = Sprite;
-},{"../../helper.js":18,"pixi.js":1}],9:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../helper.js":18,"pixi.js":1}],9:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js'),
@@ -438,34 +532,31 @@ module.exports = Text;
 },{"../../helper.js":18,"pixi.js":1}],10:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     PIXI = require('pixi.js');
 
 /**
  * Optimized for rendering tiled sprites
- * @param {object} [options]
- * @param {string} [options.src]    Source of the texture
- * @param {number} [options.x=0]
- * @param {number} [options.y=0]
- * @param {number} [options.width=0]
- * @param {number} [options.height=0]
- * @param {object} [options.frame]  Settings for the frame of the texture
- * @param {number} [options.frame.x=0]
- * @param {number} [options.frame.y=0]
- * @param {number} [options.frame.width=0]
- * @param {number} [options.frame.height=0]
+ * @param {object} options
  * @constructor
- * @implements {PIXI.Sprite}
- * @extends {TilingSprite}
+ * @extends {PIXI.TilingSprite}
  */
 var TiledSprite = function(options) {
     this.NAME = 'TiledSprite';
     var defaults = {
-        src: null,
+        src: '',
+        frameName: '',
+        texture: '',
         x: 0,
         y: 0,
         width: 0,
         height: 0,
+        rotation: 0,
+        pivot: {
+            x: 0,
+            y: 0
+        },
         frame: {
             x: 0,
             y: 0,
@@ -475,67 +566,45 @@ var TiledSprite = function(options) {
     };
 
     options = Helper.defaults(options, defaults);
-    this.frame = new PIXI.Rectangle(
-        options.frame.x,
-        options.frame.y,
-        options.frame.width,
-        options.frame.height
-    );
-    this._src = options.src;
-    var texture = PIXI.Texture.fromImage(options.src);
+    var texture;
+    if (options.src) {
+        texture = PIXI.Texture.fromImage(options.src);
+    } else if (options.frameName) {
+        texture = AssetManager.SpriteSheet.getFrame(options.frameName);
+    } else if (options.texture) {
+        texture = options.texture;
+    } else {
+        throw new Error(this.NAME + ': Must provide src, frame, or texture');
+    }
+
     PIXI.TilingSprite.call(this, texture, options.width, options.height);
-    this.tilePosition.x = -this.frame.x;
-    this.tilePosition.y = -this.frame.y;
-    var self = this;
-    this.texture.baseTexture.on('loaded', function() {
-        self.texture.setFrame(self.frame);
-        self.generateTilingTexture();
-    });
+
+    if (options.src) {
+        var self = this;
+        this.texture.baseTexture.on('loaded', function() {
+            self.texture.setFrame(new PIXI.Rectangle(
+                options.frame.x,
+                options.frame.y,
+                options.frame.width,
+                options.frame.height
+            ));
+            self.generateTilingTexture();
+        });
+    }
+
+    this.x = options.x;
+    this.y = options.y;
+    this.width = options.width;
+    this.height = options.height;
+    this.rotation = options.rotation;
+    this.pivot.x = options.pivot.x;
+    this.pivot.y = options.pivot.y;
 };
 
 Helper.inherit(TiledSprite, PIXI.TilingSprite);
 
-// Update the texture when the image is changed
-Object.defineProperty(TiledSprite.prototype, 'src', {
-    get: function() {
-        return this._src;
-    },
-    set: function(src) {
-        this._src = src;
-        var texture = PIXI.Texture.fromImage(src);
-        texture.setFrame(this.frame);
-    }
-});
-
-/**
- * Update the tile frame
- * @param {object} options
- * @param {number} [options.x]
- * @param {number} [options.y]
- * @param {number} [options.width]
- * @param {number} [options.height]
- */
-TiledSprite.prototype.setFrame = function(options) {
-    var defaults = {
-        x: this.frame.x,
-        y: this.frame.y,
-        width: this.frame.width,
-        height: this.frame.height
-    };
-    options = Helper.defaults(options, defaults);
-    this.frame.x = options.x;
-    this.frame.y = options.y;
-    this.frame.width = options.width;
-    this.frame.height = options.height;
-    this.tilePosition.x = -options.x;
-    this.tilePosition.y = -options.y;
-
-    // Make sure the texture gets updated
-    this.src = this._src;
-};
-
 module.exports = TiledSprite;
-},{"../../helper.js":18,"pixi.js":1}],11:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../helper.js":18,"pixi.js":1}],11:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../helper.js');
@@ -778,14 +847,14 @@ module.exports = Rectangle;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -836,9 +905,9 @@ var CollisionGrid = function(options) {
 CollisionGrid.prototype.addEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x <= maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -863,9 +932,9 @@ CollisionGrid.prototype.addEntity = function(entity) {
 CollisionGrid.prototype.removeEntity = function(entity) {
     var rect = entity.getComponent('Rectangle'),
         minX = ~~(rect.x / this.cellWidth),
-        maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
+        maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
-        maxY = ~~( (rect.y + rect.height) / this.cellHeight );
+        maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
     for (var x = minX; x < maxX; x++) {
         var column = this._grid[x];
         if (!column) {
@@ -895,17 +964,19 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     deltaPosition.x = deltaPosition.x || 0;
     deltaPosition.y = deltaPosition.y || 0;
     var rect = entity.getComponent('Rectangle'),
+        width = Math.abs(rect.width),   // Apparently we can't assume width is positive
+        height = Math.abs(rect.height),
         newRect = {
             minX: rect.x + deltaPosition.x,
-            maxX: rect.x + rect.width + deltaPosition.x,
+            maxX: rect.x + width + deltaPosition.x,
             minY: rect.y + deltaPosition.y,
-            maxY: rect.y + rect.height + deltaPosition.y
+            maxY: rect.y + height + deltaPosition.y
         },
         oldCells = {
             minX: ~~(rect.x / this.cellWidth),
-            maxX: ~~( (rect.x + rect.width) / this.cellWidth ),
+            maxX: ~~( (rect.x + width) / this.cellWidth ),
             minY: ~~(rect.y / this.cellHeight),
-            maxY: ~~( (rect.y + rect.height) / this.cellHeight )
+            maxY: ~~( (rect.y + height) / this.cellHeight )
         },
         newCells = {
             minX: ~~(newRect.minX / this.cellWidth),
@@ -930,7 +1001,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
 /**
  * Gets the collisions for a given Entity
  * @param {Entity} entity
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
     var rect = entity.getComponent('Rectangle'),
@@ -961,10 +1032,6 @@ CollisionGrid.prototype.getCollisions = function(entity) {
         }
     }
 
-    if (results.length === 0) {
-        return null;
-    }
-
     return results;
 };
 
@@ -980,14 +1047,14 @@ module.exports = CollisionGrid;
  */
 function isColliding(a, b) {
     var topA = a.y,
-        bottomA = a.y + a.height,
+        bottomA = a.y + Math.abs(a.height),
         leftA = a.x,
-        rightA = a.x + a.width,
+        rightA = a.x + Math.abs(a.width),
 
         topB = b.y,
-        bottomB = b.y + b.height,
+        bottomB = b.y + Math.abs(b.height),
         leftB = b.x,
-        rightB = b.x + b.width,
+        rightB = b.x + Math.abs(b.width),
 
         verticalIntersect = (topA <= bottomB && bottomA >= bottomB) ||
             (topB <= bottomA && bottomB >= bottomA),
@@ -1000,11 +1067,12 @@ function isColliding(a, b) {
 /**
  * Keeps track of all the physical objects in space
  * @param {object} options
- * @param {number} options.x        X position
- * @param {number} options.y        Y position
- * @param {number} options.width    Width
- * @param {number} options.height   Height
- * @param {number} options.cellSize Size of a cell
+ * @param {number} options.x                            X position
+ * @param {number} options.y                            Y position
+ * @param {number} options.width                        Width
+ * @param {number} options.height                       Height
+ * @param {number} options.cellSize                     Size of a cell
+ * @param {string} [options.componentType='Rectangle']  Component to use as a rectangle
  * @constructor
  */
 var QuadTree = function(options) {
@@ -1015,6 +1083,7 @@ var QuadTree = function(options) {
     this.cellSize = options.cellSize || 100;
     this.children = new Array(4);
     this.entities = [];
+    this.componentType = options.componentType || 'Rectangle';
 };
 
 /**
@@ -1029,11 +1098,11 @@ QuadTree.prototype.addEntity = function(entity, rect) {
     if (this.width <= this.cellSize || this.height <= this.cellSize) {
         this.entities.push(entity);
     } else {
-        rect = rect || entity.getComponent('Rectangle');
+        rect = rect || entity.getComponent(this.componentType);
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),
@@ -1041,7 +1110,8 @@ QuadTree.prototype.addEntity = function(entity, rect) {
             nodeOptions = {
                 width: this.width / 2,
                 height: this.height / 2,
-                cellSize: this.cellSize
+                cellSize: this.cellSize,
+                componentType: this.componentType
             };
 
         if (inUpper && inLeft) {
@@ -1091,11 +1161,11 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
         return;
     }
 
-    rect = rect || entity.getComponent('Rectangle');
+    rect = rect || entity.getComponent(this.componentType);
     var top    = rect.y,
-        bottom = rect.y + rect.height,
+        bottom = rect.y + Math.abs(rect.height),
         left   = rect.x,
-        right  = rect.x + rect.width,
+        right  = rect.x + Math.abs(rect.width),
         inUpper = (top <= this.y + this.height / 2),
         inLower = (bottom >= this.y + this.height / 2),
         inLeft = (left <= this.x + this.width / 2),
@@ -1121,7 +1191,7 @@ QuadTree.prototype.removeEntity = function(entity, rect) {
  * @param {{ x: number, y: number }} deltaPosition
  */
 QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         hasMoved = (Math.abs(deltaPosition.x) + Math.abs(deltaPosition.y)) > 0;
 
     // TODO: Do a smart check to see if it's changed cells
@@ -1137,16 +1207,16 @@ QuadTree.prototype.moveEntity = function(entity, deltaPosition) {
  * Returns all entities the given entity is colliding with
  * @param {Entity} entity
  * @param {Rectangle} [rect]
- * @returns {Entity[]?}
+ * @returns {Entity[]}
  */
 QuadTree.prototype.getCollisions = function(entity, rect) {
     var result = [];
     if (this.entities.indexOf(entity) === -1) {
-        rect = rect || entity.getComponent('Rectangle');
+        rect = rect || entity.getComponent(this.componentType);
         var top    = rect.y,
-            bottom = rect.y + rect.height,
+            bottom = rect.y + Math.abs(rect.height),
             left   = rect.x,
-            right  = rect.x + rect.width,
+            right  = rect.x + Math.abs(rect.width),
             inUpper = (top <= this.y + this.height / 2),
             inLower = (bottom >= this.y + this.height / 2),
             inLeft = (left <= this.x + this.width / 2),
@@ -1170,14 +1240,10 @@ QuadTree.prototype.getCollisions = function(entity, rect) {
             if (other === entity) {
                 continue;
             }
-            if (isColliding(rect, other.getComponent('Rectangle'))) {
+            if (isColliding(rect, other.getComponent(this.componentType))) {
                 result.push(other);
             }
         }
-    }
-
-    if (result.length === 0) {
-        return null;
     }
 
     return result.filter(function(elem, pos) {
@@ -1975,6 +2041,7 @@ Layer.prototype.removeSystem = function(system) {
         throw new Error('Invalid argument: \'system\' must be an instance of System');
     }
 
+    // If applicable, remove the render systems display container
     var isRenderSystem = (system instanceof RenderSystem),
         systemCollection = (isRenderSystem) ? this.renderSystems : this.behaviorSystems,
         systemIndex = systemCollection.indexOf(system);
@@ -2001,19 +2068,17 @@ Layer.prototype.draw = function(delta) {
         this.camera.render(this.scene, delta);
     }
 
-    // Only draw if "visible" and have some kind of system for rendering
-    if (this.visible && this.renderSystems.length > 0) {
-        for (var i = 0, len = this.renderSystems.length; i < len; i++) {
+    var numOfRenderSystems = this.renderSystems.length;
+    if (this.visible && numOfRenderSystems > 0) {
+        for (var i = 0; i < numOfRenderSystems; i++) {
             var system = this.renderSystems[i];
             if (system.visible) {
                 system.draw(this);
             }
+            system.clearRemovalQueue();
         }
     }
 
-    if (!this.stage.visible) {
-        debugger;
-    }
     this.renderer.render(this.stage);
 };
 
@@ -2022,13 +2087,14 @@ Layer.prototype.draw = function(delta) {
  * @param {number} delta    Amount of time since the last update
  */
 Layer.prototype.update = function(delta) {
-    // Only update if the layer is active and we have some systems for doing behavior
-    if (this.active && this.behaviorSystems.length > 0) {
-        for (var i = 0, len = this.behaviorSystems.length; i < len; i++) {
+    var numOfBehaviorSystems = this.behaviorSystems.length;
+    if (this.active && numOfBehaviorSystems > 0) {
+        for (var i = 0; i < numOfBehaviorSystems; i++) {
             var system = this.behaviorSystems[i];
             if (system.active) {
                 system.update(delta);
             }
+            system.clearRemovalQueue();
         }
     }
 };
@@ -2118,6 +2184,7 @@ var System = function() {
     this.entities = {};
     this.requiredComponents = [];
     this.active = true;
+    this._removalQueue = [];
 };
 
 /**
@@ -2154,16 +2221,41 @@ System.prototype.removeEntity = function(entity) {
     if (Helper.has(this.entities, entityID)) {
         delete this.entities[entityID];
         return true;
-    } else {
-        return false;
     }
+
+    return false;
+};
+
+/**
+ * Marks an Entity for removal at the end of the update or draw phase
+ * @param {Entity|number} entityID
+ */
+System.prototype.safeRemoveEntity = function(entityID) {
+    if (entityID instanceof Entity) {
+        entityID = entityID.id;
+    }
+
+    if (this._removalQueue.indexOf(entityID) === -1) {
+        this._removalQueue.push(entityID);
+    }
+};
+
+/**
+ * Removes all Entity's in the removal queue
+ */
+System.prototype.clearRemovalQueue = function() {
+    for (var i = 0, len = this._removalQueue.length; i < len; i++) {
+        this.removeEntity(this._removalQueue[i]);
+    }
+    this._removalQueue = [];
 };
 
 module.exports = System;
 },{"./entity.js":17,"./helper.js":18}],25:[function(require,module,exports){
 'use strict';
 
-var Helper = require('../../helper.js'),
+var AssetManager = require('../../asset-manager.js'),
+    Helper = require('../../helper.js'),
     BehaviorSystem = require('../../behavior-system.js');
 
 /**
@@ -2195,195 +2287,197 @@ Animate.prototype.update = function(delta) {
             if (animation.currentFrame > animation.maxFrame) {
                 animation.currentFrame = animation.minFrame;
             }
+
+            // If the entity has a sprite, update it
+            var sprite = entity.getComponent('Sprite');
+            if (sprite) {
+                var frame = animation.frame;
+                if (typeof frame === 'string') {
+                    frame = AssetManager.SpriteSheet.getFrame(frame);
+                }
+                sprite.texture = frame;
+            }
         }
     }
 };
 
 module.exports = Animate;
-},{"../../behavior-system.js":3,"../../helper.js":18}],26:[function(require,module,exports){
+},{"../../asset-manager.js":2,"../../behavior-system.js":3,"../../helper.js":18}],26:[function(require,module,exports){
 'use strict';
 
 var Helper = require('../../../helper.js'),
     BehaviorSystem = require('../../../behavior-system.js'),
     QuadTree = require('../../../data-structures/quad-tree.js');
 
-var GRAVITY = 9.8,
-    FRICTION = 10;
-
 /**
- * Returns the sides of a body
- * @param {RectPhysicsBody} body
- * @returns {{
- *  top: number,
- *  bottom: number,
- *  left: number,
- *  right: number
- * }}
- */
-function getSides(body) {
-    return {
-        top: body.y,
-        bottom: body.y + body.height,
-        left: body.x,
-        right: body.x + body.width
-    };
-}
-
-function callEventHandlers(entity, other) {
-    /* jshint validthis:true */
-    var collection = this._collisionHandlers[entity.id] || [];
-    for (var i = 0, len = collection.length; i < len; i++) {
-        collection[i](other);
-    }
-}
-
-/**
- * Handles essential physics
- * @extends {BehaviorSystem}
+ * Handles basic platformer physics
+ * @param {object} options
+ * @param {number} [options.x=0]            X position of the collidable zone
+ * @param {number} [options.y=0]            Y position of the collidable zone
+ * @param {number} options.width            Width of the collidable zone
+ * @param {number} options.height           Height of collidable
+ * @param {number} [options.gravity=9.8]    Force of gravity
  * @constructor
+ * @extends BehaviorSystem
  */
 var Platformer = function(options) {
     BehaviorSystem.call(this);
+    this.requiredComponents = ['RectPhysicsBody'];
     var defaults = {
         x: 0,
         y: 0,
-        width: 800,
-        height: 600,
-        cellSize: 100
+        gravity: 9.8
     };
     options = Helper.defaults(options, defaults);
-    this._collisionHandlers = {};
+
+    this.gravity = options.gravity;
+
+    options.componentType = 'RectPhysicsBody';
     this._quadTree = new QuadTree(options);
-    this.requiredComponents = ['RectPhysicsBody'];
+    this._collisionHandlers = [];
 };
 
 Helper.inherit(Platformer, BehaviorSystem);
 
 /**
- * Adds a handler for when a given entity encounters a collision
+ * Adds an entity to the collision system
  * @param {Entity} entity
- * @param {function(Entity)} callback
+ * @returns {boolean}
  */
-Platformer.prototype.addCollisionHandler = function(entity, callback) {
-    var collection = this._collisionHandlers[entity.id];
-    if (collection.indexOf(callback) === -1) {
-        this._collisionHandlers[entity.id].push(callback);
+Platformer.prototype.addEntity = function(entity) {
+    if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
+        this._quadTree.addEntity(entity);
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Removes an entity from the collision system
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
+Platformer.prototype.removeEntity = function(entity) {
+    if (typeof entity === 'number') {
+        entity = this.entities[entity];
+        this._quadTree.removeEntity(entity);
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Adds a listener for when a collision occurs
+ * @param {function(Entity, Entity)} callback
+ */
+Platformer.prototype.addCollisionListener = function(callback) {
+    if (this._collisionHandlers.indexOf(callback) === -1) {
+        this._collisionHandlers.push(callback);
     }
 };
 
 /**
- * Removes a given collision handler for a given entity
- * @param {Entity} entity
- * @param {function} callback
+ * Removes a collision listener
+ * @param {function(Entity, Entity)} callback
  */
-Platformer.prototype.removeCollisionHandler = function(entity, callback) {
-    var collection = this._collisionHandlers[entity.id],
-        index = (collection) ? collection.indexOf(callback) : -1;
+Platformer.prototype.removeCollisionListener = function(callback) {
+    var index = this._collisionHandlers.indexOf(callback);
     if (index !== -1) {
-        collection.splice(index, 1);
+        this._collisionHandlers.splice(index, 1);
     }
 };
 
-Platformer.prototype.addEntity = function(entity) {
-    if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
-        if (typeof entity === 'number') {
-            entity = this.entities[entity];
-        }
-        this._quadTree.addEntity(entity);
-        this._collisionHandlers[entity.id] = [];
-        return true;
-    } else {
-        return false;
+/**
+ * Alerts listeners about a collision
+ * @param {Entity} a
+ * @param {Entity} b
+ * @private
+ */
+Platformer.prototype._emit = function(a, b) {
+    var handlers = this._collisionHandlers,
+        numOfHandlers = handlers.length;
+    for (var i = 0; i < numOfHandlers; i++) {
+        handlers[i](a, b);
     }
 };
 
-Platformer.prototype.removeEntity = function(entity) {
-    if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
-        this._quadTree.removeEntity(entity);
-        delete this._collisionHandlers[entity.id];
-        return true;
-    } else {
-        return false;
-    }
-};
-
+/**
+ * Deals with all of the collisions
+ * @param {number} delta
+ */
 Platformer.prototype.update = function(delta) {
     for (var i = 0, len = this.actionOrder.length; i < len; i++) {
-        // Update it's position
         var entity = this.actionOrder[i],
-            body = entity.getComponent('RectPhysicsBody'),
-            vXSign = (body.velocity.x) ? (body.velocity.x < 0) ? -1 : 1 : 0,
-            frictionForce = delta * FRICTION * vXSign,
-            gravityForce = delta * GRAVITY * body.mass;
+            body = entity.getComponent('RectPhysicsBody');
+        if (body.immovable) {
+            continue;
+        }
 
-        body.velocity.x -= frictionForce;
-        body.velocity.y += gravityForce;
-        if (Math.abs(body.velocity.x) < Math.abs(frictionForce)) {
-            body.velocity.x = 0;
-        }
-        if (Math.abs(body.velocity.y) < gravityForce) {
-            body.velocity.y = 0;
-        }
+        body.velocity.y += this.gravity * body.mass * delta;
         this._quadTree.moveEntity(entity, body.velocity);
 
-        // Resolve any collisions
-        var collisions = (body.solid) ? this._quadTree.getCollisions(entity) : [],
-            entityIsMoving = (body.velocity.x !== 0 || body.velocity.y !== 0),
-            entitySides = getSides(body);
-        for (var j = 0, len2 = collisions.length; j < len2; j++) {
+        var bodyBottom = body.y + Math.abs(body.height),
+            bodyRight = body.x + Math.abs(body.width),
+            collisions = this._quadTree.getCollisions(entity, body),
+            numOfCollisions = collisions.length,
+            friction = null,
+            j;
+        for (j = 0; j < numOfCollisions; j++) {
             var other = collisions[j],
-                otherBody = other.getComponent('RectPhysicsBody'),
-                otherIsMoving = (otherBody.velocity.x !== 0 || otherBody.velocity.y !== 0),
-                otherSides = getSides(otherBody),
-                bothMoving = (entityIsMoving && otherIsMoving);
-
-            callEventHandlers.call(this, entity, other);
-
+                otherBody = other.getComponent('RectPhysicsBody');
             if (!otherBody.solid) {
                 continue;
             }
 
-            if (!bothMoving) {
-                var movingEntity = (entityIsMoving) ? entity : other,
-                    movingBody = (entityIsMoving) ? body : otherBody,
-                    movingSides = (entityIsMoving) ? entitySides : otherSides,
-                    staticSides = (entityIsMoving) ? otherSides : entitySides,
-                    deltaPosition = {
-                        x: 0,
-                        y: 0
-                    },
-                    fromAbove = movingSides.bottom - staticSides.top,
-                    fromBelow = staticSides.bottom - movingSides.top,
-                    fromLeft = movingSides.right - staticSides.left,
-                    fromRight = staticSides.right - movingSides.left;
-                if (movingSides.bottom >= staticSides.top &&
-                    movingSides.top < staticSides.top &&
-                    Math.abs(fromAbove).toFixed(6) * 1 <= (movingBody.velocity.y + gravityForce).toFixed(6) * 1) {
-                    // Dropping from above
-                    deltaPosition.y = -fromAbove;
-                    movingBody.velocity.y = 0;
-                } else if (movingSides.top <= staticSides.bottom &&
-                    movingSides.bottom > staticSides.bottom &&
-                    movingBody.velocity.y < 0 &&
-                    Math.abs(fromBelow).toFixed(6) * 1 <= Math.abs(movingBody.velocity.y).toFixed(6) * 1) {
-                    // Coming from below
-                    deltaPosition.y = fromBelow;
-                    movingBody.velocity.y = 0;
-                } else if (movingSides.right >= staticSides.left &&
-                    movingSides.left < staticSides.left &&
-                    Math.abs(fromLeft).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
-                    // Coming from the left
-                    deltaPosition.x = -fromLeft;
-                    movingBody.velocity.x = 0;
-                } else if (movingSides.left <= staticSides.right &&
-                    movingSides.right > staticSides.right &&
-                    Math.abs(fromRight).toFixed(6) * 1 <= Math.abs(movingBody.velocity.x).toFixed(6) * 1) {
-                    // Coming from the right
-                    deltaPosition.x = fromRight;
-                    movingBody.velocity.x = 0;
+            if (otherBody.immovable) {
+                if (friction === null) {
+                    friction = [otherBody.friction];
+                } else {
+                    friction.push(otherBody.friction);
                 }
+            }
 
-                this._quadTree.moveEntity(movingEntity, deltaPosition);
+            this._emit(entity, other);
+
+            var deltaPosition = { x: 0, y: 0 },
+                otherBottom = otherBody.y + Math.abs(otherBody.height),
+                otherRight = otherBody.x + Math.abs(otherBody.width),
+                onTop = bodyBottom - otherBody.y,
+                onBottom = otherBottom - body.y,
+                onLeft = bodyRight - otherBody.x,
+                onRight = otherRight - body.x,
+                verticalCollision = Math.min(onTop, onBottom),
+                horizontalCollision = Math.min(onLeft, onRight);
+            if (verticalCollision < horizontalCollision) {
+                body.velocity.y = 0;
+                if (onTop < onBottom) {
+                    deltaPosition.y = -verticalCollision;
+                } else {
+                    deltaPosition.y = verticalCollision;
+                }
+            } else {
+                body.velocity.x = 0;
+                if (onLeft < onRight) {
+                    deltaPosition.x = -horizontalCollision;
+                } else {
+                    deltaPosition.x = horizontalCollision;
+                }
+            }
+
+            this._quadTree.moveEntity(entity, deltaPosition);
+        }
+
+        if (friction && body.friction) {
+            var frictionForce = 0,
+                numOfContactPoints = friction.length;
+            for (j = 0; j < numOfContactPoints; j++) {
+                frictionForce += friction[j];
+            }
+            frictionForce /= numOfContactPoints * body.friction;
+            var frictionDirection = (body.velocity.x) ? ((body.velocity.x < 0) ? 1 : -1) : 0;
+            body.velocity.x += frictionForce * body.mass * frictionDirection * delta;
+            if (body.velocity.x / Math.abs(body.velocity.x) === frictionDirection) {
+                body.velocity.x = 0;
             }
         }
     }
@@ -2604,7 +2698,8 @@ module.exports = Text;
 },{"../../helper.js":18,"../../render-system.js":23}],31:[function(require,module,exports){
 'use strict';
 
-var Entity = require('./entity.js'),
+var AssetManager = require('./asset-manager.js'),
+    Entity = require('./entity.js'),
     Helper = require('./helper.js'),
     Input = require('./input.js'),
     Layer = require('./layer.js'),
@@ -2643,10 +2738,12 @@ var World = {
     /**
      * Initializes the World
      * @param {Object} options
-     * @param {Element|String} options.canvasContainer
-     * @param {number} [options.width=window.innerWidth]
-     * @param {number} [options.height=window.innerHeight]
-     * @param {String} [options.backgroundColor='#000']
+     * @param {Element|String}  [options.canvasContainer='psykick']
+     * @param {number}          [options.width=window.innerWidth]
+     * @param {number}          [options.height=window.innerHeight]
+     * @param {String}          [options.backgroundColor='#000']
+     * @param {object?}         [options.preload=null]              Collection of resources to load before starting
+     * @param {string|string[]} [options.preload.spriteSheets]      Spritesheets in JSON format
      */
     init: function(options) {
         var self = this,
@@ -2657,7 +2754,8 @@ var World = {
                 height: 600,
                 backgroundColor: '#000',
                 serverMode: false,
-                minFPS: 30
+                minFPS: 30,
+                preload: null
             },
             backgroundEl,
             requestAnimationFrame;
@@ -2711,7 +2809,18 @@ var World = {
             gameTime = new Date();
             requestAnimationFrame(gameLoop);
         };
-        requestAnimationFrame(gameLoop);
+        if (!options.preload) {
+            requestAnimationFrame(gameLoop);
+        } else {
+            var spriteSheets = options.preload.spriteSheets;
+            if (spriteSheets) {
+                AssetManager.SpriteSheet.addLoadListener(function startGame() {
+                    AssetManager.SpriteSheet.removeLoadListener(startGame);
+                    requestAnimationFrame(gameLoop);
+                });
+                AssetManager.SpriteSheet.load(spriteSheets);
+            }
+        }
     },
 
     /**
@@ -2892,4 +3001,4 @@ var World = {
 };
 
 module.exports = World;
-},{"./entity.js":17,"./helper.js":18,"./input.js":20,"./layer.js":22}]},{},[4]);
+},{"./asset-manager.js":2,"./entity.js":17,"./helper.js":18,"./input.js":20,"./layer.js":22}]},{},[4]);

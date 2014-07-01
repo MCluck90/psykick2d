@@ -11,6 +11,7 @@ var System = function() {
     this.entities = {};
     this.requiredComponents = [];
     this.active = true;
+    this._removalQueue = [];
 };
 
 /**
@@ -47,9 +48,33 @@ System.prototype.removeEntity = function(entity) {
     if (Helper.has(this.entities, entityID)) {
         delete this.entities[entityID];
         return true;
-    } else {
-        return false;
     }
+
+    return false;
+};
+
+/**
+ * Marks an Entity for removal at the end of the update or draw phase
+ * @param {Entity|number} entityID
+ */
+System.prototype.safeRemoveEntity = function(entityID) {
+    if (entityID instanceof Entity) {
+        entityID = entityID.id;
+    }
+
+    if (this._removalQueue.indexOf(entityID) === -1) {
+        this._removalQueue.push(entityID);
+    }
+};
+
+/**
+ * Removes all Entity's in the removal queue
+ */
+System.prototype.clearRemovalQueue = function() {
+    for (var i = 0, len = this._removalQueue.length; i < len; i++) {
+        this.removeEntity(this._removalQueue[i]);
+    }
+    this._removalQueue = [];
 };
 
 module.exports = System;
