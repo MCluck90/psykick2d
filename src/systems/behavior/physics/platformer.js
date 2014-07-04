@@ -12,7 +12,6 @@ var Helper = require('../../../helper.js'),
  * @param {number} options.width            Width of the collidable zone
  * @param {number} options.height           Height of collidable
  * @param {number} [options.gravity=9.8]    Force of gravity
- * @param {number} [options.friction=30]    Force of friction
  * @constructor
  * @extends BehaviorSystem
  */
@@ -28,6 +27,7 @@ var Platformer = function(options) {
 
     this.gravity = options.gravity;
 
+    options.componentType = 'RectPhysicsBody';
     this._quadTree = new QuadTree(options);
     this._collisionHandlers = [];
 };

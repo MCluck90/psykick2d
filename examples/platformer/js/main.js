@@ -13,7 +13,8 @@ World.init({
     preload: {
         spriteSheets: [
             'sprites/player.json',
-            'sprites/terrain.json'
+            'sprites/terrain.json',
+            'sprites/enemy.json'
         ]
     }
 });

@@ -95,6 +95,10 @@ var MapLoader = {
                     createEntity = Factory.createRoll;
                     break;
 
+                case 'enemy':
+                    createEntity = Factory.createEnemy;
+                    break;
+
                 default:
                     throw new Error('Unknown entity type "' + entityType + '"');
             }

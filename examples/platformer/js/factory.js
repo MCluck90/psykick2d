@@ -153,6 +153,24 @@ var Factory = {
         roll.addComponentAs(sprite, 'RectPhysicsBody');
 
         return roll;
+    },
+
+    createEnemy: function(x, y) {
+        var enemy = World.createEntity(),
+            sprite = new Sprite({
+                frameName: 'flyingEnemy',
+                x: x,
+                y: y,
+                width: 91,
+                height: 42
+            });
+        sprite.solid = true;
+        sprite.immovable = true;
+
+        enemy.addComponent(sprite);
+        enemy.addComponentAs(sprite, 'RectPhysicsBody');
+
+        return enemy;
     }
 };
 
