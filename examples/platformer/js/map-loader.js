@@ -34,13 +34,20 @@ var MapLoader = {
             movementSystem;
 
         platformerSystem.addCollisionListener(function(a, b) {
-            var player = (a.hasComponent('Player')) ? a :
-                (b.hasComponent('Player')) ? b : null;
-            if (!player) {
+            var player = null,
+                other = null;
+            if (a.hasComponent('Player')) {
+                player = a;
+                other = b;
+            } else if (b.hasComponent('Player')) {
+                player = b;
+                other = a;
+            }
+            if (!player || !other.hasComponent('Enemy')) {
                 return;
             }
 
-            player.onGround = true;
+            movementSystem.onEnemyCollision(other);
         });
 
         // Create a wall on the left side of the map to prevent the player
@@ -69,7 +76,7 @@ var MapLoader = {
                 entity = Factory.createPlayer(entityCollection.x, entityCollection.y);
                 player = entity;
                 mainLayer.camera = new PlayerCam(entity, 800, 600);
-                movementSystem = new PlayerMovement(entity);
+                movementSystem = new PlayerMovement(entity, mainLayer);
 
                 movementSystem.addEntity(entity);
                 spriteSystem.addEntity(entity);

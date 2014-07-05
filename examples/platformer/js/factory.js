@@ -170,6 +170,8 @@ var Factory = {
 
         enemy.addComponent(sprite);
         enemy.addComponentAs(sprite, 'RectPhysicsBody');
+        // Tag it as a an enemy
+        enemy.addComponentAs(true, 'Enemy');
 
         return enemy;
     }

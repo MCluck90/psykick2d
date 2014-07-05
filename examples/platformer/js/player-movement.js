@@ -24,9 +24,16 @@ var Helper = require('psykick2d').Helper,
         ATTACK: 4
     };
 
-var PlayerMovement = function(player) {
+/**
+ * Controls the player and player interactions
+ * @param {Entity} player
+ * @param {Layer} layer
+ * @constructor
+ */
+var PlayerMovement = function(player, layer) {
     BehaviorSystem.call(this);
     this.player = player;
+    this.mainLayer = layer;
     this._prevState = this._states.stand;
     this._state = this._states.stand;
     this._attackTimeout = 0;
@@ -347,6 +354,15 @@ PlayerMovement.prototype._states = {
             this._attackTimeout = ATTACK_TIMEOUT;
         },
         update: function(delta) {
+            // Make sure we keep pace after hitting an enemy
+            var sprite = this.player.getComponent('Sprite'),
+                body = this.player.getComponent('RectPhysicsBody');
+            if (sprite.scale.x === 1) {
+                body.velocity.x = ATTACK_SPEED;
+            } else {
+                body.velocity.x = -ATTACK_SPEED;
+            }
+
             // Keep attacking until the timeout is over
             this._attackCooldown = ATTACK_COOLDOWN;
             this._attackTimeout -= delta;
@@ -375,6 +391,32 @@ PlayerMovement.prototype._states = {
                 body.velocity.x = 0;
             }
 
+        }
+    }
+};
+
+PlayerMovement.prototype.onEnemyCollision = function(enemy) {
+    if (this._state === this._states.attack) {
+        var renderSystems = this.mainLayer.renderSystems,
+            behaviorSystems = this.mainLayer.behaviorSystems,
+            numOfRenderSystems = renderSystems.length,
+            numOfBehaviorSystems = behaviorSystems.length,
+            len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+
+        for (var i = 0; i < len; i++) {
+            if (i < numOfBehaviorSystems) {
+                behaviorSystems[i].safeRemoveEntity(enemy);
+            }
+            if (i < numOfRenderSystems) {
+                renderSystems[i].safeRemoveEntity(enemy);
+            }
+        }
+
+        // "Fix" the stoppage caused by the physics system
+        var body = this.player.getComponent('RectPhysicsBody');
+        body.velocity.x = ATTACK_SPEED;
+        if (this.player.getComponent('Sprite').scale.x === -1) {
+            body.velocity.x *= -1;
         }
     }
 };
