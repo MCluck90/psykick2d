@@ -34,6 +34,7 @@ var Factory = {
                 ]
             }),
             attackAnimation = new Animation({
+                fps: 24,
                 maxFrame: 1,
                 frames: [
                     'player-attack1',
