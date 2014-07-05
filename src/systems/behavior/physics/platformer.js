@@ -111,6 +111,10 @@ Platformer.prototype.update = function(delta) {
         body.velocity.y += this.gravity * body.mass * delta;
         this.collisionStructure.moveEntity(entity, body.velocity);
 
+        if (!body.solid) {
+            continue;
+        }
+
         var bodyBottom = body.y + Math.abs(body.height),
             bodyRight = body.x + Math.abs(body.width),
             collisions = this.collisionStructure.getCollisions(entity, body),

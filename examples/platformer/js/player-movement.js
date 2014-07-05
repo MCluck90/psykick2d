@@ -21,7 +21,8 @@ var Helper = require('psykick2d').Helper,
         WALK: 1,
         JUMP: 2,
         FALL: 3,
-        ATTACK: 4
+        ATTACK: 4,
+        DIE: 5
     };
 
 /**
@@ -51,8 +52,8 @@ Helper.inherit(PlayerMovement, BehaviorSystem);
  * @param {number} delta
  * @private
  */
-PlayerMovement.prototype._changeState = function(state, delta) {
-    this._state.exit.call(this, delta);
+PlayerMovement.prototype._changeState = function(state) {
+    this._prevState = this._state;
     switch (state) {
         case STATES.STAND:
             this._state = this._states.stand;
@@ -73,8 +74,11 @@ PlayerMovement.prototype._changeState = function(state, delta) {
         case STATES.ATTACK:
             this._state = this._states.attack;
             break;
+
+        case STATES.DIE:
+            this._state = this._states.die;
+            break;
     }
-    this._state.enter.call(this, delta);
 };
 
 /**
@@ -83,6 +87,11 @@ PlayerMovement.prototype._changeState = function(state, delta) {
  */
 PlayerMovement.prototype.update = function(delta) {
     this._attackCooldown -= delta;
+    if (this._state !== this._prevState) {
+        this._prevState.exit.call(this);
+        this._state.enter.call(this);
+        this._prevState = this._state;
+    }
     this._state.update.call(this, delta);
 };
 
@@ -113,18 +122,17 @@ PlayerMovement.prototype._states = {
 
         /**
          * Transition to walking, jumping, attacking or falling
-         * @param {number} delta
          */
-        update: function(delta) {
+        update: function() {
             var body = this.player.getComponent('RectPhysicsBody');
             if (Keyboard.isKeyDown(Keys.Left) || Keyboard.isKeyDown(Keys.Right)) {
-                this._changeState(STATES.WALK, delta);
+                this._changeState(STATES.WALK);
             } else if (Keyboard.isKeyDown(Keys.Up)) {
-                this._changeState(STATES.JUMP, delta);
+                this._changeState(STATES.JUMP);
             } else if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
-                this._changeState(STATES.ATTACK, delta);
+                this._changeState(STATES.ATTACK);
             } else if (body.velocity.y > 0) {
-                this._changeState(STATES.FALL, delta);
+                this._changeState(STATES.FALL);
             }
         },
         exit: function() {}
@@ -188,7 +196,7 @@ PlayerMovement.prototype._states = {
                 }
             } else if (Math.abs(body.velocity.x) <= RUN_SPEED * delta) {
                 // If we slowed down enough from friction, come to a stop
-                this._changeState(STATES.STAND, delta);
+                this._changeState(STATES.STAND);
                 return;
             } else {
                 body.friction = 1;
@@ -196,10 +204,10 @@ PlayerMovement.prototype._states = {
 
             // Allow the player to attack or jump
             if (Keyboard.isKeyDown(Keys.Up)) {
-                this._changeState(STATES.JUMP, delta);
+                this._changeState(STATES.JUMP);
                 return;
             } else if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
-                this._changeState(STATES.ATTACK, delta);
+                this._changeState(STATES.ATTACK);
                 return;
             }
 
@@ -239,7 +247,7 @@ PlayerMovement.prototype._states = {
 
             // Allow us to attack
             if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
-                this._changeState(STATES.ATTACK, delta);
+                this._changeState(STATES.ATTACK);
                 return;
             }
 
@@ -268,7 +276,7 @@ PlayerMovement.prototype._states = {
             }
 
             if (body.velocity.y >= 0) {
-                this._changeState(STATES.FALL, delta);
+                this._changeState(STATES.FALL);
             }
         },
         exit: function(){}
@@ -282,13 +290,13 @@ PlayerMovement.prototype._states = {
             // Landed, change to standing or walking
             if (body.velocity.y === 0) {
                 if (body.velocity.x === 0) {
-                    this._changeState(STATES.STAND, delta);
+                    this._changeState(STATES.STAND);
                 } else {
-                    this._changeState(STATES.WALK, delta);
+                    this._changeState(STATES.WALK);
                 }
             } else if (this._attackCooldown <= 0 && Keyboard.isKeyDown(Keys.Space)) {
                 // Attack in mid-fall
-                this._changeState(STATES.ATTACK, delta);
+                this._changeState(STATES.ATTACK);
             } else if (Keyboard.isKeyDown(Keys.Left)) {
                 // Do aerial movement like when jumping
                 if (body.velocity.x > 0) {
@@ -368,7 +376,7 @@ PlayerMovement.prototype._states = {
             this._attackTimeout -= delta;
             if (this._attackTimeout <= 0) {
                 this._attackTimeout = 0;
-                this._changeState(STATES.FALL, delta);
+                this._changeState(STATES.FALL);
             }
         },
         exit: function() {
@@ -391,6 +399,37 @@ PlayerMovement.prototype._states = {
                 body.velocity.x = 0;
             }
 
+        }
+    },
+    die: {
+        enter: function() {
+            var body = this.player.getComponent('RectPhysicsBody'),
+                sprite = this.player.getComponent('Sprite'),
+                animation = this.player.getComponent('Animation');
+            sprite.scale.y = -1;
+            body.velocity.x = 0;
+            body.velocity.y = -JUMP_SPEED * 2;
+            body.mass = 5;
+            body.solid = false;
+            animation.fps = 0;
+        },
+        update: function() {
+            var body = this.player.getComponent('RectPhysicsBody');
+            if (body.y > 800) {
+                this._changeState(STATES.FALL);
+            }
+        },
+        exit: function() {
+            var body = this.player.getComponent('RectPhysicsBody'),
+                sprite = this.player.getComponent('Sprite');
+            sprite.scale.y = 1;
+            sprite.scale.x = 1;
+            sprite.pivot.x = 0;
+            body.mass = 1;
+            body.solid = true;
+            body.velocity.y = 0;
+            body.x = 400;
+            body.y = 450;
         }
     }
 };
@@ -418,6 +457,8 @@ PlayerMovement.prototype.onEnemyCollision = function(enemy) {
         if (this.player.getComponent('Sprite').scale.x === -1) {
             body.velocity.x *= -1;
         }
+    } else if (this._state !== this._states.die) {
+        this._changeState(STATES.DIE);
     }
 };
 
