@@ -8,6 +8,9 @@ var Helper = require('psykick2d').Helper,
 
     RUN_SPEED = 8,
     JUMP_SPEED = 15,
+    ATTACK_SPEED = 25,
+    ATTACK_TIMEOUT = 1 / 4,
+    ATTACK_COOLDOWN = 1,
 
     STATES = {
         STAND: 0,
@@ -22,6 +25,8 @@ var PlayerMovement = function(player) {
     this.player = player;
     this._prevState = this._states.stand;
     this._state = this._states.stand;
+    this._attackTimeout = 0;
+    this._attackCooldown = 0;
 
     // Initialize the standing state
     this._state.enter.call(this);
@@ -56,6 +61,7 @@ PlayerMovement.prototype._changeState = function(state, delta) {
 };
 
 PlayerMovement.prototype.update = function(delta) {
+    this._attackCooldown -= delta;
     this._state.update.call(this, delta);
 };
 
@@ -75,7 +81,7 @@ PlayerMovement.prototype._states = {
                 this._changeState(STATES.WALK, delta);
             } else if (Keyboard.isKeyDown(Keys.Up)) {
                 this._changeState(STATES.JUMP, delta);
-            } else if (Keyboard.isKeyDown(Keys.Space)) {
+            } else if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
                 this._changeState(STATES.ATTACK, delta);
             } else if (body.velocity.y > 0) {
                 this._changeState(STATES.FALL, delta);
@@ -141,6 +147,9 @@ PlayerMovement.prototype._states = {
             if (Keyboard.isKeyDown(Keys.Up)) {
                 this._changeState(STATES.JUMP, delta);
                 return;
+            } else if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
+                this._changeState(STATES.ATTACK, delta);
+                return;
             }
 
             animation.fps = Math.abs(body.velocity.x) / 1.25;
@@ -164,6 +173,10 @@ PlayerMovement.prototype._states = {
 
             if (!Keyboard.isKeyDown(Keys.Up)) {
                 body.velocity.y = 0;
+            }
+            if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
+                this._changeState(STATES.ATTACK, delta);
+                return;
             }
             if (Keyboard.isKeyDown(Keys.Left)) {
                 if (body.velocity.x > 0) {
@@ -196,12 +209,35 @@ PlayerMovement.prototype._states = {
     fall: {
         enter: function(){},
         update: function(delta) {
-            var body = this.player.getComponent('RectPhysicsBody');
+            var body = this.player.getComponent('RectPhysicsBody'),
+                sprite = this.player.getComponent('Sprite');
             if (body.velocity.y === 0) {
                 if (body.velocity.x === 0) {
                     this._changeState(STATES.STAND, delta);
                 } else {
                     this._changeState(STATES.WALK, delta);
+                }
+            } else if (this._attackCooldown <= 0 && Keyboard.isKeyDown(Keys.Space)) {
+                this._changeState(STATES.ATTACK, delta);
+            } else if (Keyboard.isKeyDown(Keys.Left)) {
+                if (body.velocity.x > 0) {
+                    sprite.pivot.x = 128;
+                    sprite.scale.x = -1;
+                }
+
+                body.velocity.x -= RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x < -RUN_SPEED) {
+                    body.velocity.x = -RUN_SPEED;
+                }
+            } else if (Keyboard.isKeyDown(Keys.Right)) {
+                if (body.velocity.x < 0) {
+                    sprite.pivot.x = 0;
+                    sprite.scale.x = 1;
+                }
+
+                body.velocity.x += RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x > RUN_SPEED) {
+                    body.velocity.x = RUN_SPEED;
                 }
             }
         },
@@ -210,86 +246,61 @@ PlayerMovement.prototype._states = {
         }
     },
     attack: {
-        enter: function(){},
-        update: function(){},
-        exit: function(){}
-    }
-};
-
-/*
-PlayerMovement.prototype.update = function(delta) {
-    var body = this.player.getComponent('RectPhysicsBody'),
-        sprite = this.player.getComponent('Sprite'),
-        animation = this.player.getComponent('Animation'),
-
-        upPressed = Keyboard.isKeyDown(Keys.Up),
-        leftPressed = Keyboard.isKeyDown(Keys.Left),
-        rightPressed = Keyboard.isKeyDown(Keys.Right),
-        spacePressed = Keyboard.isKeyDown(Keys.Space);
-
-    if (spacePressed) {
-        this.player.addComponent(this.player.getComponent('AttackAnimation'));
-    } else if (leftPressed) {
-        if (body.velocity.x > 0) {
-            body.friction = 1.2;
-        } else {
-            body.friction = 0;
-        }
-        this.player.addComponent(this.player.getComponent('WalkAnimation'));
-        body.velocity.x -= RUN_SPEED * delta;
-        if (body.velocity.x < -RUN_SPEED) {
-            body.velocity.x = -RUN_SPEED;
-        }
-        sprite.pivot.x = 128;
-        sprite.scale.x = -1;
-    } else if (rightPressed) {
-        if (body.velocity.x < 0) {
-            body.friction = 1.2;
-        } else {
-            body.friction = 0;
-        }
-        this.player.addComponent(this.player.getComponent('WalkAnimation'));
-        body.velocity.x += RUN_SPEED * delta;
-        if (body.velocity.x > RUN_SPEED) {
-            body.velocity.x = RUN_SPEED;
-        }
-        sprite.pivot.x = 0;
-        sprite.scale.x = 1;
-    } else {
-        body.friction = 1;
-    }
-
-    if (spacePressed) {
-        body.mass = 0;
-        animation.fps = 24;
-    } else {
-        body.mass = 1;
-        animation.fps = Math.abs(body.velocity.x) / 1.25;
-    }
-
-    if (upPressed && body.velocity.y === 0 && this.player.onGround && !this.player.jumped) {
-        this.player.onGround = false;
-        body.velocity.y = -JUMP_SPEED;
-        this.player.jumped = true;
-        this.player.addComponent(this.player.getComponent('WalkAnimation'));
-
-    } else if (!upPressed && this.player.jumped) {
-        this.player.jumped = false;
-        if (body.velocity.y < 0) {
+        enter: function() {
+            var animation = this.player.getComponent('AttackAnimation'),
+                body = this.player.getComponent('RectPhysicsBody'),
+                sprite = this.player.getComponent('Sprite');
+            animation.fps = 24;
+            this.player.addComponent(animation);
             body.velocity.y = 0;
+            body.friction = 0;
+            body.mass = 0;
+
+            var movingLeft = (Keyboard.isKeyDown(Keys.Left)),
+                movingRight = (Keyboard.isKeyDown(Keys.Right));
+
+            if (!movingLeft && !movingRight) {
+                movingLeft = (sprite.scale.x === -1);
+            }
+
+            if (movingLeft) {
+                body.velocity.x = -ATTACK_SPEED;
+                sprite.scale.x = -1;
+                sprite.pivot.x = 128;
+            } else {
+                body.velocity.x = ATTACK_SPEED;
+                sprite.scale.x = 1;
+                sprite.pivot.x = 0;
+            }
+
+            this._attackTimeout = ATTACK_TIMEOUT;
+        },
+        update: function(delta) {
+            this._attackCooldown = ATTACK_COOLDOWN;
+            this._attackTimeout -= delta;
+            if (this._attackTimeout <= 0) {
+                this._attackTimeout = 0;
+                this._changeState(STATES.FALL, delta);
+            }
+        },
+        exit: function() {
+            var body = this.player.getComponent('RectPhysicsBody'),
+                animation = this.player.getComponent('WalkAnimation'),
+                sprite = this.player.getComponent('Sprite');
+            animation.fps = 0;
+            sprite.setTexture(AssetManager.SpriteSheet.getFrame('player-walk3'));
+            this.player.addComponent(animation);
+            body.mass = 1;
+            if (Keyboard.isKeyDown(Keys.Left)) {
+                body.velocity.x = -RUN_SPEED;
+            } else if (Keyboard.isKeyDown(Keys.Right)) {
+                body.velocity.x = RUN_SPEED;
+            } else {
+                body.velocity.x = 0;
+            }
+
         }
     }
-
-    // If the player is against a wall, stop animating them
-    if (Math.abs(body.velocity.x) <= RUN_SPEED * delta) {
-        // Make sure that the animation goes to the correct frame
-        animation.fps = Number.MAX_VALUE;
-        this.player.addComponent(this.player.getComponent('StandAnimation'));
-    }
-    if (body.velocity.x === 0) {
-        body.velocity.x = 0;
-    }
 };
-*/
 
 module.exports = PlayerMovement;

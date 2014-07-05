@@ -28,7 +28,7 @@ var Platformer = function(options) {
     this.gravity = options.gravity;
 
     options.componentType = 'RectPhysicsBody';
-    this._quadTree = new QuadTree(options);
+    this.collisionStructure = new QuadTree(options);
     this._collisionHandlers = [];
 };
 
@@ -41,7 +41,7 @@ Helper.inherit(Platformer, BehaviorSystem);
  */
 Platformer.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
-        this._quadTree.addEntity(entity);
+        this.collisionStructure.addEntity(entity);
         return true;
     }
     return false;
@@ -55,7 +55,7 @@ Platformer.prototype.addEntity = function(entity) {
 Platformer.prototype.removeEntity = function(entity) {
     if (typeof entity === 'number') {
         entity = this.entities[entity];
-        this._quadTree.removeEntity(entity);
+        this.collisionStructure.removeEntity(entity);
         return true;
     }
     return false;
@@ -109,11 +109,11 @@ Platformer.prototype.update = function(delta) {
         }
 
         body.velocity.y += this.gravity * body.mass * delta;
-        this._quadTree.moveEntity(entity, body.velocity);
+        this.collisionStructure.moveEntity(entity, body.velocity);
 
         var bodyBottom = body.y + Math.abs(body.height),
             bodyRight = body.x + Math.abs(body.width),
-            collisions = this._quadTree.getCollisions(entity, body),
+            collisions = this.collisionStructure.getCollisions(entity, body),
             numOfCollisions = collisions.length,
             friction = null,
             j;
@@ -159,7 +159,7 @@ Platformer.prototype.update = function(delta) {
                 }
             }
 
-            this._quadTree.moveEntity(entity, deltaPosition);
+            this.collisionStructure.moveEntity(entity, deltaPosition);
         }
 
         if (friction && body.friction) {
