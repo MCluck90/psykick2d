@@ -156,7 +156,7 @@ PlayerMovement.prototype._states = {
             if (Keyboard.isKeyDown(Keys.Left)) {
                 sprite.pivot.x = 128;
                 sprite.scale.x = -1;
-            } else {
+            } else if (Keyboard.isKeyDown(Keys.Right)) {
                 sprite.pivot.x = 0;
                 sprite.scale.x = 1;
             }
@@ -282,7 +282,7 @@ PlayerMovement.prototype._states = {
         exit: function(){}
     },
     fall: {
-        enter: function(){},
+        enter: function() {},
         update: function(delta) {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite');
@@ -322,7 +322,7 @@ PlayerMovement.prototype._states = {
         },
         exit: function() {
             // Reset to the correct animation frame
-            this.player.getComponent('Animation').currentFrame = 0;
+            //this.player.getComponent('Animation').currentFrame = 0;
         }
     },
     attack: {
