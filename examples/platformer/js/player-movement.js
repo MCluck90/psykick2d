@@ -1,10 +1,13 @@
 'use strict';
 
-var Helper = require('psykick2d').Helper,
+var World = require('psykick2d').World,
+    Helper = require('psykick2d').Helper,
     Keyboard = require('psykick2d').Input.Keyboard,
     Keys = require('psykick2d').Keys,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
     AssetManager = require('psykick2d').AssetManager,
+    Sprite = require('psykick2d').Components.GFX.Sprite,
+    Animation = require('psykick2d').Components.GFX.Animation,
 
     RUN_SPEED = 8,
     JUMP_SPEED = 15,
@@ -39,6 +42,30 @@ var PlayerMovement = function(player, layer) {
     this._state = this._states.stand;
     this._attackTimeout = 0;
     this._attackCooldown = 0;
+    this._flame = World.createEntity();
+    var flameSprite = new Sprite({
+        frameName: 'flames1',
+        x: 0,
+        y: 0,
+        width: 32,
+        height: 16
+    });
+    // Also treat it as a physics body so it will stay synced up with the player
+    flameSprite.mass = 0;
+    flameSprite.solid = false;
+    flameSprite.velocity = { x: 0, y: 0 };
+    this._flame.addComponent(flameSprite);
+    this._flame.addComponentAs(flameSprite, 'RectPhysicsBody');
+    this._flame.addComponent(new Animation({
+        fps: 12,
+        maxFrame: 3,
+        frames: [
+            'flames1',
+            'flames2',
+            'flames3',
+            'flames4'
+        ]
+    }));
 
     // Initialize the standing state
     this._state.enter.call(this);
@@ -367,6 +394,23 @@ PlayerMovement.prototype._states = {
 
             // Setup the timeout
             this._attackTimeout = ATTACK_TIMEOUT;
+
+            // Add the flame effect
+            var flameSprite = this._flame.getComponent('Sprite'),
+                flameWidth = Math.abs(flameSprite.width);
+            flameSprite.y = body.y + body.height / 2 - flameSprite.height / 4;
+            if (sprite.scale.x === 1) {
+                flameSprite.pivot.x = 0;
+                flameSprite.scale.x = 1;
+                flameSprite.x = body.x - flameWidth;
+            } else {
+                flameSprite.pivot.x = flameWidth;
+                flameSprite.scale.x = -1;
+                flameSprite.x = body.x + Math.abs(body.width) + flameWidth / 4;
+            }
+
+            this._flame.getComponent('RectPhysicsBody').velocity = body.velocity;
+            this.mainLayer.addEntity(this._flame);
         },
         update: function(delta) {
             // Make sure we keep pace after hitting an enemy
@@ -387,6 +431,9 @@ PlayerMovement.prototype._states = {
             }
         },
         exit: function() {
+            // Remove the flames
+            this.mainLayer.removeEntity(this._flame);
+
             // Change to a falling sprite and apply gravity
             var body = this.player.getComponent('RectPhysicsBody'),
                 animation = this.player.getComponent('WalkAnimation'),

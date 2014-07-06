@@ -14,7 +14,8 @@ World.init({
         spriteSheets: [
             'sprites/player.json',
             'sprites/terrain.json',
-            'sprites/enemy.json'
+            'sprites/enemy.json',
+            'sprites/flames.json'
         ]
     }
 });
