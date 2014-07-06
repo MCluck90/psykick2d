@@ -131,6 +131,60 @@ Layer.prototype.removeSystem = function(system) {
 };
 
 /**
+ * Will attempt to add an entity to every system
+ * @param {Entity} entity
+ */
+Layer.prototype.addEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].addEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].addEntity(entity);
+        }
+    }
+};
+
+/**
+ * Will attempt to remove an entity from every system
+ * @param {Entity} entity
+ */
+Layer.prototype.removeEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].removeEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].removeEntity(entity);
+        }
+    }
+};
+
+/**
+ * Will attempt to safely remove an entity from every system
+ * @param entity
+ */
+Layer.prototype.safeRemoveEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].safeRemoveEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].safeRemoveEntity(entity);
+        }
+    }
+};
+
+/**
  * Draw the layer
  * @param {number} delta    Time since previous update
  */

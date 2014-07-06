@@ -120,8 +120,8 @@ Enemy.prototype.update = function() {
             body = enemy.getComponent('RectPhysicsBody');
             sprite = enemy.getComponent('Sprite');
             body.velocity.x = -ENEMY_SPEED;
+            sprite.pivot.x = sprite.width;
             sprite.scale.x = -1;
-            sprite.pivot.x = 128;
         }
     }
 
@@ -130,37 +130,16 @@ Enemy.prototype.update = function() {
         body = enemy.getComponent('RectPhysicsBody');
         this.collisionStructure.moveEntity(enemy, body.velocity);
 
-        if (body.x + body.width < -REGION_MARGIN) {
-            this._removeEnemy(enemy);
+        // Width is negative since the sprite is flipped
+        if (body.x < body.width) {
+            this.mainLayer.safeRemoveEntity(enemy);
+            continue;
         }
         collisions = this.collisionStructure.getCollisions(enemy);
         if (collisions.indexOf(this.player) !== -1) {
             this.onPlayerCollision(enemy);
         }
     }
-};
-
-/**
- * Remove an enemy from all systems
- * @param {Enemy} enemy
- * @private
- */
-Enemy.prototype._removeEnemy = function(enemy) {
-    var behaviorSystems = this.mainLayer.behaviorSystems,
-        renderSystems = this.mainLayer.renderSystems,
-        numOfBehaviorSystems = behaviorSystems.length,
-        numOfRenderSystems = renderSystems.length,
-        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
-
-    for (var i = 0; i < len; i++) {
-        if (i < numOfBehaviorSystems && behaviorSystems[i] !== this) {
-            behaviorSystems[i].removeEntity(enemy);
-        }
-        if (i < numOfRenderSystems) {
-            renderSystems[i].removeEntity(enemy);
-        }
-    }
-    this.safeRemoveEntity(enemy);
 };
 
 /**
