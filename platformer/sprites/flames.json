@@ -1,0 +1,44 @@
+{"frames": {
+
+"flames0":
+{
+	"frame": {"x":0,"y":0,"w":32,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":16},
+	"sourceSize": {"w":128,"h":16}
+},
+"flames1":
+{
+    "frame": {"x":32,"y":0,"w":32,"h":16},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":32,"h":16},
+    "sourceSize": {"w":128,"h":16}
+},
+"flames2":
+{
+    "frame": {"x":64,"y":0,"w":32,"h":16},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":32,"h":16},
+    "sourceSize": {"w":128,"h":16}
+},
+"flames3":
+{
+    "frame": {"x":96,"y":0,"w":32,"h":16},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":32,"h":16},
+    "sourceSize": {"w":128,"h":16}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "flames.png",
+	"format": "RGBA8888",
+	"size": {"w":128,"h":64},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8b88fc85ea89e96da0667ddf8033d267:4bc86b1b491d06c23a7b839dc4770bb3:86d5339b780aedd87b35e2b7c0a7e11b$"
+}
+}
