@@ -202,6 +202,11 @@ PlayerMovement.prototype._states = {
                 body.friction = 1;
             }
 
+            if (body.velocity.y > 0) {
+                this._changeState(STATES.FALL);
+                return;
+            }
+
             // Allow the player to attack or jump
             if (Keyboard.isKeyDown(Keys.Up)) {
                 this._changeState(STATES.JUMP);
@@ -318,6 +323,8 @@ PlayerMovement.prototype._states = {
                 if (body.velocity.x > RUN_SPEED) {
                     body.velocity.x = RUN_SPEED;
                 }
+            } else if (body.y > 600) {
+                this._changeState(STATES.DIE);
             }
         },
         exit: function() {
