@@ -61,4 +61,12 @@ Entity.prototype.hasComponent = function(componentName) {
     return this.getComponent(componentName) !== null;
 };
 
+/**
+ * Provide a more descriptive toString message
+ * @returns {string}
+ */
+Entity.prototype.toString = function() {
+    return '[object Entity:' + this.id + ']';
+};
+
 module.exports = Entity;
