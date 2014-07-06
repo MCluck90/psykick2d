@@ -175,6 +175,38 @@ var Factory = {
         enemy.addComponentAs(true, 'Enemy');
 
         return enemy;
+    },
+
+    createFlames: function(x, y) {
+        // Start on a random frame
+        var flameIndex = Math.floor(Math.random() * 4),
+            flame = World.createEntity(),
+            sprite = new Sprite({
+                frameName: 'flames' + flameIndex,
+                x: x,
+                y: y,
+                width: 32,
+                height: 16
+            }),
+            animation = new Animation({
+                fps: 12,
+                maxFrame: 3,
+                currentFrame: flameIndex,
+                frames: [
+                    'flames0',
+                    'flames1',
+                    'flames2',
+                    'flames3'
+                ]
+            });
+        sprite.mass = 0;
+        sprite.solid = false;
+        sprite.velocity = { x: 0, y: 0 };
+
+        flame.addComponent(sprite);
+        flame.addComponentAs(sprite, 'RectPhysicsBody');
+        flame.addComponent(animation);
+        return flame;
     }
 };
 

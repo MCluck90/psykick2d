@@ -5,6 +5,7 @@ var World = require('psykick2d').World,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
     QuadTree = require('psykick2d').DataStructures.QuadTree,
     RectPhysicsBody = require('psykick2d').Components.Physics.RectPhysicsBody,
+    Factory = require('./factory.js'),
 
     ENEMY_SPEED = 10,
     SCREEN_WIDTH = 800,
@@ -47,6 +48,9 @@ var Enemy = function(player, layer) {
     // Use this to separate the active enemies from the ones that are still inactive
     this.inactiveEnemies = [];
     this.activeEnemies = [];
+
+    // Contains the flames for each enemy
+    this._flames = {};
 };
 
 Helper.inherit(Enemy, BehaviorSystem);
@@ -55,6 +59,12 @@ Enemy.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
         this.inactiveEnemies.push(entity);
         this.collisionStructure.addEntity(entity);
+        var body = entity.getComponent('RectPhysicsBody'),
+            flames = Factory.createFlames(body.x, body.y),
+            flameSprite = flames.getComponent('Sprite');
+        flameSprite.x += body.width;
+        flameSprite.y += flameSprite.height / 2;
+        this._flames[entity.id] = flames;
     }
 };
 
@@ -72,6 +82,8 @@ Enemy.prototype.removeEntity = function(entity) {
             this.activeEnemies.splice(index, 1);
         }
         this.collisionStructure.removeEntity(entity);
+        this.mainLayer.removeEntity(this._flames[entity.id]);
+        delete this._flames[entity.id];
     }
 };
 
@@ -105,7 +117,7 @@ Enemy.prototype.update = function() {
 
     var inactiveEnemies = this.inactiveEnemies.slice(0),
         collisions = [],
-        enemy, i, len, body, sprite;
+        enemy, i, len, body, sprite, flameBody;
 
     // Activate any enemies now in the region
     for (i = 0, len = inactiveEnemies.length; i < len; i++) {
@@ -122,12 +134,20 @@ Enemy.prototype.update = function() {
             body.velocity.x = -ENEMY_SPEED;
             sprite.pivot.x = sprite.width;
             sprite.scale.x = -1;
+
+            // Add in the flame
+            var flameSprite = this._flames[enemy.id].getComponent('Sprite');flameSprite.pivot.x = flameSprite.width;
+            flameSprite.pivot.x = flameSprite.width;
+            flameSprite.scale.x = -1;
+            this.mainLayer.addEntity(this._flames[enemy.id]);
         }
     }
 
     for (i = 0, len = this.activeEnemies.length; i < len; i++) {
         enemy = this.activeEnemies[i];
         body = enemy.getComponent('RectPhysicsBody');
+        flameBody = this._flames[enemy.id].getComponent('RectPhysicsBody');
+        flameBody.x += body.velocity.x;
         this.collisionStructure.moveEntity(enemy, body.velocity);
 
         // Width is negative since the sprite is flipped

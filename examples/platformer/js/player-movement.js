@@ -1,13 +1,11 @@
 'use strict';
 
-var World = require('psykick2d').World,
-    Helper = require('psykick2d').Helper,
+var Helper = require('psykick2d').Helper,
     Keyboard = require('psykick2d').Input.Keyboard,
     Keys = require('psykick2d').Keys,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
     AssetManager = require('psykick2d').AssetManager,
-    Sprite = require('psykick2d').Components.GFX.Sprite,
-    Animation = require('psykick2d').Components.GFX.Animation,
+    Factory = require('./factory.js'),
 
     RUN_SPEED = 8,
     JUMP_SPEED = 15,
@@ -42,30 +40,7 @@ var PlayerMovement = function(player, layer) {
     this._state = this._states.stand;
     this._attackTimeout = 0;
     this._attackCooldown = 0;
-    this._flame = World.createEntity();
-    var flameSprite = new Sprite({
-        frameName: 'flames1',
-        x: 0,
-        y: 0,
-        width: 32,
-        height: 16
-    });
-    // Also treat it as a physics body so it will stay synced up with the player
-    flameSprite.mass = 0;
-    flameSprite.solid = false;
-    flameSprite.velocity = { x: 0, y: 0 };
-    this._flame.addComponent(flameSprite);
-    this._flame.addComponentAs(flameSprite, 'RectPhysicsBody');
-    this._flame.addComponent(new Animation({
-        fps: 12,
-        maxFrame: 3,
-        frames: [
-            'flames1',
-            'flames2',
-            'flames3',
-            'flames4'
-        ]
-    }));
+    this._flame = Factory.createFlames(0, 0);
 
     // Initialize the standing state
     this._state.enter.call(this);
