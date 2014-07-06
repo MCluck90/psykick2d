@@ -95,6 +95,12 @@ PlayerMovement.prototype.update = function(delta) {
         this._prevState = this._state;
     }
     this._state.update.call(this, delta);
+
+    // See if the player died
+    var body = this.player.getComponent('RectPhysicsBody');
+    if (this._prevState !== this._states.die && body.y > 600) {
+        this._changeState(STATES.DIE);
+    }
 };
 
 /**
@@ -199,7 +205,6 @@ PlayerMovement.prototype._states = {
             } else if (Math.abs(body.velocity.x) <= RUN_SPEED * delta) {
                 // If we slowed down enough from friction, come to a stop
                 this._changeState(STATES.STAND);
-                return;
             } else {
                 body.friction = 1;
             }
@@ -325,8 +330,6 @@ PlayerMovement.prototype._states = {
                 if (body.velocity.x > RUN_SPEED) {
                     body.velocity.x = RUN_SPEED;
                 }
-            } else if (body.y > 600) {
-                this._changeState(STATES.DIE);
             }
         },
         exit: function() {
