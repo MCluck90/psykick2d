@@ -49,12 +49,14 @@ Platformer.prototype.addEntity = function(entity) {
 
 /**
  * Removes an entity from the collision system
- * @param {Entity} entity
+ * @param {Entity|number} entity
  * @returns {boolean}
  */
 Platformer.prototype.removeEntity = function(entity) {
     if (typeof entity === 'number') {
         entity = this.entities[entity];
+    }
+    if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
         this.collisionStructure.removeEntity(entity);
         return true;
     }
