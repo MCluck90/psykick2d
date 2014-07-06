@@ -56,6 +56,10 @@ var Enemy = function(player, layer) {
 Helper.inherit(Enemy, BehaviorSystem);
 
 Enemy.prototype.addEntity = function(entity) {
+    if (this.entities[entity.id] === entity) {
+        return false;
+    }
+
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
         this.inactiveEnemies.push(entity);
         this.collisionStructure.addEntity(entity);
@@ -77,8 +81,9 @@ Enemy.prototype.removeEntity = function(entity) {
         var index = this.inactiveEnemies.indexOf(entity);
         if (index !== -1) {
             this.inactiveEnemies.splice(index, 1);
-        } else {
-            index = this.activeEnemies.indexOf(entity);
+        }
+        index = this.activeEnemies.indexOf(entity);
+        if (index !== -1) {
             this.activeEnemies.splice(index, 1);
         }
         this.collisionStructure.removeEntity(entity);
@@ -125,7 +130,7 @@ Enemy.prototype.update = function() {
         collisions = this.collisionStructure.getCollisions(enemy);
         // Enemy hit activation area
         if (collisions.indexOf(this.activeRegion) !== -1) {
-            this.inactiveEnemies.splice(i, 1);
+            this.inactiveEnemies.splice(this.inactiveEnemies.indexOf(enemy), 1);
             this.activeEnemies.push(enemy);
 
             // Start moving
@@ -136,7 +141,7 @@ Enemy.prototype.update = function() {
             sprite.scale.x = -1;
 
             // Add in the flame
-            var flameSprite = this._flames[enemy.id].getComponent('Sprite');flameSprite.pivot.x = flameSprite.width;
+            var flameSprite = this._flames[enemy.id].getComponent('Sprite');
             flameSprite.pivot.x = flameSprite.width;
             flameSprite.scale.x = -1;
             this.mainLayer.addEntity(this._flames[enemy.id]);
