@@ -40,7 +40,7 @@ var Enemy = function(player, layer) {
         x: 0,
         y: 0,
         width: SCREEN_WIDTH + REGION_MARGIN * 2,
-        height: SCREEN_HEIGHT + REGION_MARGIN * 2
+        height: SCREEN_HEIGHT * 2
     });
     this.activeRegion.addComponent(this.regionRect);
     this.collisionStructure.addEntity(this.activeRegion);
@@ -117,7 +117,7 @@ Enemy.prototype.update = function() {
     };
     this.collisionStructure.moveEntity(this.activeRegion, {
         x: (playerCenter.x - SCREEN_WIDTH / 2 - REGION_MARGIN) - this.regionRect.x,
-        y: (playerCenter.y - SCREEN_HEIGHT / 2 - REGION_MARGIN) - this.regionRect.y
+        y: (playerCenter.y - SCREEN_HEIGHT) - this.regionRect.y
     });
 
     var inactiveEnemies = this.inactiveEnemies.slice(0),
