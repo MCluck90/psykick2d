@@ -289,15 +289,7 @@ PlayerMovement.prototype._states = {
         exit: function(){}
     },
     fall: {
-        enter: function() {
-            this.player.addComponent(this.player.getComponent('WalkAnimation'));
-            var animation = this.player.getComponent('Animation'),
-                sprite = this.player.getComponent('Sprite'),
-                body = this.player.getComponent('RectPhysicsBody');
-            animation.fps = 0;
-            sprite.setTexture(AssetManager.SpriteSheet.getFrame('player-walk3'));
-            body.friction = 0;
-        },
+        enter: function() {},
         update: function(delta) {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite');
