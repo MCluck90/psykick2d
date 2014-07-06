@@ -9,6 +9,7 @@ var World = require('psykick2d').World,
     Factory = require('./factory.js'),
     PlayerCam = require('./player-cam.js'),
     PlayerMovement = require('./player-movement.js'),
+    Enemy = require('./enemy.js'),
 
     WIDTH = 10000,
     HEIGHT = 10000;
@@ -31,24 +32,8 @@ var MapLoader = {
                 height: HEIGHT,
                 gravity: 30
             }),
+            enemySystem,
             movementSystem;
-
-        platformerSystem.addCollisionListener(function(a, b) {
-            var player = null,
-                other = null;
-            if (a.hasComponent('Player')) {
-                player = a;
-                other = b;
-            } else if (b.hasComponent('Player')) {
-                player = b;
-                other = a;
-            }
-            if (!player || !other.hasComponent('Enemy')) {
-                return;
-            }
-
-            movementSystem.onEnemyCollision(other);
-        });
 
         // Create a wall on the left side of the map to prevent the player
         // from walking off the edge of the world
@@ -77,6 +62,8 @@ var MapLoader = {
                 player = entity;
                 mainLayer.camera = new PlayerCam(entity, 800, 600);
                 movementSystem = new PlayerMovement(entity, mainLayer);
+                enemySystem = new Enemy(entity, mainLayer);
+                enemySystem.onPlayerCollision = movementSystem.onEnemyCollision.bind(movementSystem);
 
                 movementSystem.addEntity(entity);
                 spriteSystem.addEntity(entity);
@@ -114,7 +101,11 @@ var MapLoader = {
                 entityData = entityCollection[i];
                 entity = createEntity(entityData.x, entityData.y, entityData.width, entityData.height);
                 spriteSystem.addEntity(entity);
-                platformerSystem.addEntity(entity);
+                if (entity.hasComponent('Enemy')) {
+                    enemySystem.addEntity(entity);
+                } else {
+                    platformerSystem.addEntity(entity);
+                }
             }
         }
 
@@ -123,6 +114,7 @@ var MapLoader = {
         spriteSystem.addEntity(player);
 
         mainLayer.addSystem(movementSystem);
+        mainLayer.addSystem(enemySystem);
         mainLayer.addSystem(animationSystem);
         mainLayer.addSystem(spriteSystem);
         mainLayer.addSystem(platformerSystem);

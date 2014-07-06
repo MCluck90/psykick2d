@@ -167,6 +167,7 @@ var Factory = {
             });
         sprite.solid = true;
         sprite.immovable = true;
+        sprite.velocity = { x: 0, y: 0 };
 
         enemy.addComponent(sprite);
         enemy.addComponentAs(sprite, 'RectPhysicsBody');
