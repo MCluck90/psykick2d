@@ -619,10 +619,12 @@ var Helper = require('../../helper.js');
  * @param {object}  [options.velocity]
  * @param {number}  [options.velocity.x=0]
  * @param {number}  [options.velocity.y=0]
+ * @param {boolean} [options.immovable=false]
  * @param {number}  [options.mass=0]
  * @param {number}  [options.bounciness=0]
  * @param {boolean} [options.solid=true]
  * @param {number}  [options.rotation=0]
+ * @param {number}  [options.friction=1]
  * @constructor
  */
 var RectPhysicsBody = function(options) {
@@ -637,10 +639,12 @@ var RectPhysicsBody = function(options) {
             x: 0,
             y: 0
         },
+        immovable: false,
         mass: 0,
         bounciness: 0,
         solid: true,
-        rotation: 0
+        rotation: 0,
+        friction: 1
     };
 
     options = Helper.defaults(options, defaults);
@@ -653,6 +657,7 @@ var RectPhysicsBody = function(options) {
     this.bounciness = options.bounciness;
     this.solid = options.solid;
     this.rotation = options.rotation;
+    this.friction = options.friction;
 };
 
 module.exports = RectPhysicsBody;
@@ -868,14 +873,17 @@ function isColliding(a, b) {
  * A simple grid for finding any collisions
  * Best used for tiled game worlds with defined boundaries
  * @param {object} options
- * @param {number} options.width        Width of the game world
- * @param {number} options.height       Height of the game world
- * @param {number} options.cellWidth    Width of a cell. May use cellSize instead
- * @param {number} options.cellHeight   Height of a cell. May use cellSize instead
- * @param {number} [options.cellSize]   Set this if you want width and height to be the same
+ * @param {number} options.width                        Width of the game world
+ * @param {number} options.height                       Height of the game world
+ * @param {number} options.cellWidth                    Width of a cell. May use cellSize instead
+ * @param {number} options.cellHeight                   Height of a cell. May use cellSize instead
+ * @param {number} [options.cellSize]                   Set this if you want width and height to be the same
+ * @param {number} [options.componentType='Rectangle']  Type of component to treat as a rectangle
  * @constructor
  */
 var CollisionGrid = function(options) {
+    this.componentType = options.componentType || 'Rectangle';
+
     this.width = options.width;
     this.height = options.height;
     if (options.cellSize) {
@@ -903,7 +911,7 @@ var CollisionGrid = function(options) {
  * @param {Entity} entity
  */
 CollisionGrid.prototype.addEntity = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -930,7 +938,7 @@ CollisionGrid.prototype.addEntity = function(entity) {
  * @param {Entity} entity
  */
 CollisionGrid.prototype.removeEntity = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -963,7 +971,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     deltaPosition = deltaPosition || {};
     deltaPosition.x = deltaPosition.x || 0;
     deltaPosition.y = deltaPosition.y || 0;
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         width = Math.abs(rect.width),   // Apparently we can't assume width is positive
         height = Math.abs(rect.height),
         newRect = {
@@ -1004,7 +1012,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
  * @returns {Entity[]}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -1023,7 +1031,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
             var collection = column[y];
             for (var i = 0, len = collection.length; i < len; i++) {
                 var other = collection[i];
-                if (other !== entity && isColliding(other.getComponent('Rectangle'), rect)) {
+                if (other !== entity && isColliding(other.getComponent(this.componentType), rect)) {
                     if (results.indexOf(other) === -1) {
                         results.push(other);
                     }
@@ -1314,6 +1322,14 @@ Entity.prototype.getComponent = function(componentName) {
  */
 Entity.prototype.hasComponent = function(componentName) {
     return this.getComponent(componentName) !== null;
+};
+
+/**
+ * Provide a more descriptive toString message
+ * @returns {string}
+ */
+Entity.prototype.toString = function() {
+    return '[object Entity:' + this.id + ']';
 };
 
 module.exports = Entity;
@@ -2054,6 +2070,60 @@ Layer.prototype.removeSystem = function(system) {
 };
 
 /**
+ * Will attempt to add an entity to every system
+ * @param {Entity} entity
+ */
+Layer.prototype.addEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].addEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].addEntity(entity);
+        }
+    }
+};
+
+/**
+ * Will attempt to remove an entity from every system
+ * @param {Entity} entity
+ */
+Layer.prototype.removeEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].removeEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].removeEntity(entity);
+        }
+    }
+};
+
+/**
+ * Will attempt to safely remove an entity from every system
+ * @param entity
+ */
+Layer.prototype.safeRemoveEntity = function(entity) {
+    var numOfBehaviorSystems = this.behaviorSystems.length,
+        numOfRenderSystems = this.renderSystems.length,
+        len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
+    for (var i = 0; i < len; i++) {
+        if (i < numOfBehaviorSystems) {
+            this.behaviorSystems[i].safeRemoveEntity(entity);
+        }
+        if (i < numOfRenderSystems) {
+            this.renderSystems[i].safeRemoveEntity(entity);
+        }
+    }
+};
+
+/**
  * Draw the layer
  * @param {number} delta    Time since previous update
  */
@@ -2295,7 +2365,7 @@ Animate.prototype.update = function(delta) {
                 if (typeof frame === 'string') {
                     frame = AssetManager.SpriteSheet.getFrame(frame);
                 }
-                sprite.texture = frame;
+                sprite.setTexture(frame);
             }
         }
     }
@@ -2333,7 +2403,7 @@ var Platformer = function(options) {
     this.gravity = options.gravity;
 
     options.componentType = 'RectPhysicsBody';
-    this._quadTree = new QuadTree(options);
+    this.collisionStructure = new QuadTree(options);
     this._collisionHandlers = [];
 };
 
@@ -2346,7 +2416,7 @@ Helper.inherit(Platformer, BehaviorSystem);
  */
 Platformer.prototype.addEntity = function(entity) {
     if (BehaviorSystem.prototype.addEntity.call(this, entity)) {
-        this._quadTree.addEntity(entity);
+        this.collisionStructure.addEntity(entity);
         return true;
     }
     return false;
@@ -2354,13 +2424,15 @@ Platformer.prototype.addEntity = function(entity) {
 
 /**
  * Removes an entity from the collision system
- * @param {Entity} entity
+ * @param {Entity|number} entity
  * @returns {boolean}
  */
 Platformer.prototype.removeEntity = function(entity) {
     if (typeof entity === 'number') {
         entity = this.entities[entity];
-        this._quadTree.removeEntity(entity);
+    }
+    if (BehaviorSystem.prototype.removeEntity.call(this, entity)) {
+        this.collisionStructure.removeEntity(entity);
         return true;
     }
     return false;
@@ -2414,11 +2486,15 @@ Platformer.prototype.update = function(delta) {
         }
 
         body.velocity.y += this.gravity * body.mass * delta;
-        this._quadTree.moveEntity(entity, body.velocity);
+        this.collisionStructure.moveEntity(entity, body.velocity);
+
+        if (!body.solid) {
+            continue;
+        }
 
         var bodyBottom = body.y + Math.abs(body.height),
             bodyRight = body.x + Math.abs(body.width),
-            collisions = this._quadTree.getCollisions(entity, body),
+            collisions = this.collisionStructure.getCollisions(entity, body),
             numOfCollisions = collisions.length,
             friction = null,
             j;
@@ -2464,7 +2540,7 @@ Platformer.prototype.update = function(delta) {
                 }
             }
 
-            this._quadTree.moveEntity(entity, deltaPosition);
+            this.collisionStructure.moveEntity(entity, deltaPosition);
         }
 
         if (friction && body.friction) {
