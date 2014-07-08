@@ -12,13 +12,13 @@ var Helper = require('psykick2d').Helper,
      * Each of the players' states
      * @enum {number}
      */
-        STATES = {
-        STAND: 0,
-        WALK: 1,
-        JUMP: 2,
-        FALL: 3,
-        ATTACK: 4,
-        DIE: 5
+    STATES = {
+        STAND: 'stand',
+        WALK: 'walk',
+        JUMP: 'jump',
+        FALL: 'fall',
+        ATTACK: 'attack',
+        DIE: 'die'
     };
 
 /**
@@ -43,7 +43,7 @@ var PlayerMovement = function(player, layer) {
     this._flame = Factory.createFlames(0, 0);
 
     // Initialize the standing state
-    this._state.enter.call(this);
+    this._states.stand.enter.call(this);
 };
 
 Helper.inherit(PlayerMovement, BehaviorSystem);
@@ -55,31 +55,7 @@ Helper.inherit(PlayerMovement, BehaviorSystem);
  */
 PlayerMovement.prototype._changeState = function(state) {
     this._prevState = this._state;
-    switch (state) {
-        case STATES.STAND:
-            this._state = this._states.stand;
-            break;
-
-        case STATES.WALK:
-            this._state = this._states.walk;
-            break;
-
-        case STATES.JUMP:
-            this._state = this._states.jump;
-            break;
-
-        case STATES.FALL:
-            this._state = this._states.fall;
-            break;
-
-        case STATES.ATTACK:
-            this._state = this._states.attack;
-            break;
-
-        case STATES.DIE:
-            this._state = this._states.die;
-            break;
-    }
+    this._state = this._states[state];
 };
 
 /**
@@ -494,11 +470,11 @@ PlayerMovement.prototype._states = {
         },
 
         /**
-         * Keep falling until the player hits the top of the screen
+         * Keep falling until the player falls below the bottom of the screen
          */
         update: function() {
             var body = this.player.getComponent('RectPhysicsBody');
-            if (body.y > CONSTANTS.SCREEN_HEIGHT + body.height) {
+            if (body.y > CONSTANTS.SCREEN_HEIGHT * 1.5) {
                 this._changeState(STATES.FALL);
             }
         },
