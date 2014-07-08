@@ -2,15 +2,15 @@
 
 var World = require('psykick2d').World,
     MapLoader = require('./map-loader.js'),
+    CONSTANTS = require('./constants.js');
 
-    WIDTH = 800,
-    HEIGHT = 600;
-
+// Initialize the world
 World.init({
-    width: WIDTH,
-    height: HEIGHT,
-    backgroundColor: '#AAF',
+    width: CONSTANTS.SCREEN_WIDTH,
+    height: CONSTANTS.SCREEN_HEIGHT,
+    backgroundColor: '#AAF', // Cornflower blue-ish for the sky
     preload: {
+        // Make sure all of the sprite sheets are loaded
         spriteSheets: [
             'sprites/player.json',
             'sprites/terrain.json',
@@ -20,4 +20,5 @@ World.init({
     }
 });
 
+// Load up level 1
 MapLoader.load(require('../maps/level1.json'));

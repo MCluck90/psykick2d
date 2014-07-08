@@ -10,11 +10,16 @@ var World = require('psykick2d').World,
     PlayerCam = require('./player-cam.js'),
     PlayerMovement = require('./player-movement.js'),
     Enemy = require('./enemy.js'),
+    CONSTANTS = require('./constants.js');
 
-    WIDTH = 10000,
-    HEIGHT = 10000;
-
+/**
+ * Used for loading maps
+ */
 var MapLoader = {
+    /**
+     * Loads a map. See ../maps for map data
+     * @param {object} mapData
+     */
     load: function(mapData) {
         // Remove all previous layers
         var layer = World.popLayer();
@@ -22,14 +27,15 @@ var MapLoader = {
             layer = World.popLayer();
         }
 
+        // Initialize the layer and systems
         var mainLayer = World.createLayer(),
             animationSystem = new AnimationSystem(),
             spriteSystem = new SpriteSystem(),
             platformerSystem = new PlatformerSystem({
                 x: 0,
                 y: 0,
-                width: WIDTH,
-                height: HEIGHT,
+                width: CONSTANTS.WORLD_WIDTH,
+                height: CONSTANTS.WORLD_HEIGHT,
                 gravity: 30
             }),
             enemySystem,
@@ -42,7 +48,7 @@ var MapLoader = {
                 x: 0,
                 y: 0,
                 width: 1,
-                height: HEIGHT
+                height: CONSTANTS.WORLD_HEIGHT
             });
         leftWallRect.solid = true;
         leftWallRect.immovable = true;
@@ -51,20 +57,28 @@ var MapLoader = {
         leftWall.addComponentAs(leftWallRect, 'RectPhysicsBody');
         platformerSystem.addEntity(leftWall);
 
+        // Create different types of entities
         var entityData,
             entity,
             player;
         for (var entityType in mapData) {
             var entityCollection = mapData[entityType],
                 createEntity;
+
+            // If we're making the player
             if (entityType === 'player') {
                 entity = Factory.createPlayer(entityCollection.x, entityCollection.y);
                 player = entity;
-                mainLayer.camera = new PlayerCam(entity, 800, 600);
+
+                // Initialize the camera, player, and enemy systems
+                mainLayer.camera = new PlayerCam(entity);
                 movementSystem = new PlayerMovement(entity, mainLayer);
                 enemySystem = new Enemy(entity, mainLayer);
+
+                // Tell the movement system to handle when the player collides with an enemy
                 enemySystem.onPlayerCollision = movementSystem.onEnemyCollision.bind(movementSystem);
 
+                // Add the player to all of the systems it belongs to
                 movementSystem.addEntity(entity);
                 spriteSystem.addEntity(entity);
                 platformerSystem.addEntity(entity);
@@ -97,15 +111,21 @@ var MapLoader = {
                     throw new Error('Unknown entity type "' + entityType + '"');
             }
 
+            // For each entity in the collection
             for (var i = 0, len = entityCollection.length; i < len; i++) {
+                // Generate the new entity
                 entityData = entityCollection[i];
                 entity = createEntity(entityData.x, entityData.y, entityData.width, entityData.height);
+
+                // Add it to the correct systems
                 spriteSystem.addEntity(entity);
                 if (entity.hasComponent('Enemy')) {
                     enemySystem.addEntity(entity);
                 } else {
                     platformerSystem.addEntity(entity);
                 }
+                // Don't bother adding to animation since enemies and platforms
+                // don't use animation
             }
         }
 
@@ -113,12 +133,14 @@ var MapLoader = {
         spriteSystem.removeEntity(player);
         spriteSystem.addEntity(player);
 
+        // Add all of the systems to the layer
         mainLayer.addSystem(movementSystem);
         mainLayer.addSystem(enemySystem);
         mainLayer.addSystem(animationSystem);
         mainLayer.addSystem(spriteSystem);
         mainLayer.addSystem(platformerSystem);
 
+        // Put the layer on the top of the update/draw stack
         World.pushLayer(mainLayer);
     }
 };

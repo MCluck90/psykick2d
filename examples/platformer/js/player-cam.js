@@ -1,14 +1,24 @@
 'use strict';
 
 var Camera = require('psykick2d').Camera,
-    Helper = require('psykick2d').Helper;
+    Helper = require('psykick2d').Helper,
 
-var PlayerCam = function(player, width, height) {
-    this.playerBody = player.getComponent('Rectangle');
+    CONSTANTS = require('./constants.js');
+
+/**
+ * Follows the player around the world
+ * @param {Entity} player
+ * @constructor
+ */
+var PlayerCam = function(player) {
+    // Store the player's body for quick reference
+    this.playerBody = player.getComponent('RectPhysicsBody');
+
+    // Save the previous position so we don't bother moving the camera too much
     this._cacheX = this.playerBody.x;
     this._cacheY = this.playerBody.y;
-    this.halfWidth = width / 2;
-    this.halfHeight = height / 2;
+    this.halfWidth = CONSTANTS.SCREEN_WIDTH / 2;
+    this.halfHeight = CONSTANTS.SCREEN_HEIGHT / 2;
 
     // Put the camera just a little bit ahead of the player
     this.playerXOffset = this.playerBody.width / 1.1;
@@ -23,6 +33,7 @@ Helper.inherit(PlayerCam, Camera);
  * @param {number} delta
  */
 PlayerCam.prototype.render = function(stage, delta) {
+    // Calculate where the camera should be looking
     var x = this.playerBody.x - this.halfWidth + this.playerXOffset,
         y = this.playerBody.y - this.halfHeight + this.playerYOffset;
 

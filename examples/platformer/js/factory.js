@@ -5,9 +5,14 @@ var World = require('psykick2d').World,
     Sprite = require('psykick2d').Components.GFX.Sprite,
     TiledSprite = require('psykick2d').Components.GFX.TiledSprite;
 
+/**
+ * Generates different kinds of entities
+ */
 var Factory = {
     /**
-     * Creates the player entity
+     * Creates the player
+     * @param {number} x
+     * @param {number} y
      * @returns {Entity}
      */
     createPlayer: function(x, y) {
@@ -48,14 +53,15 @@ var Factory = {
         sprite.friction = 1;
 
         player.addComponent(sprite);
-        player.addComponentAs(sprite, 'Rectangle');
         player.addComponentAs(sprite, 'RectPhysicsBody');
         player.addComponent(standAnimation);
+
+        // Save the animations under different names so we can access them later
         player.addComponentAs(standAnimation, 'StandAnimation');
         player.addComponentAs(walkAnimation, 'WalkAnimation');
         player.addComponentAs(attackAnimation, 'AttackAnimation');
 
-        // Identify the player
+        // Tag it as a player
         player.addComponentAs(true, 'Player');
         return player;
     },
@@ -77,17 +83,26 @@ var Factory = {
                 width: width,
                 height: height
             });
+
+        // Make sure it's treated as a platform
         sprite.solid = true;
         sprite.immovable = true;
         sprite.friction = 30;
 
         grass.addComponentAs(sprite, 'Sprite');
-        grass.addComponentAs(sprite, 'Rectangle');
         grass.addComponentAs(sprite, 'RectPhysicsBody');
 
         return grass;
     },
 
+    /**
+     * Creates a block of steel
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @returns {Entity}
+     */
     createSteel: function(x, y, width, height) {
         var steel = World.createEntity(),
             sprite = new TiledSprite({
@@ -97,12 +112,15 @@ var Factory = {
                 width: width,
                 height: height
             });
+
+        // Treat it as a platform
         sprite.solid = true;
         sprite.immovable = true;
+
+        // Give it just a tiny bit of slide
         sprite.friction = 25;
 
         steel.addComponentAs(sprite, 'Sprite');
-        steel.addComponentAs(sprite, 'Rectangle');
         steel.addComponentAs(sprite, 'RectPhysicsBody');
 
         return steel;
@@ -125,17 +143,26 @@ var Factory = {
                 width: width,
                 height: height
             });
+
+        // Treat it as a platform
         sprite.solid = true;
         sprite.immovable = true;
         sprite.friction = 25;
 
         tape.addComponentAs(sprite, 'Sprite');
-        tape.addComponentAs(sprite, 'Rectangle');
         tape.addComponentAs(sprite, 'RectPhysicsBody');
 
         return tape;
     },
 
+    /**
+     * Creates a concrete roll
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @returns {Entity}
+     */
     createRoll: function(x, y, width, height) {
         var roll = World.createEntity(),
             sprite = new TiledSprite({
@@ -145,17 +172,24 @@ var Factory = {
                 width: width,
                 height: height
             });
+
+        // Make it a platform
         sprite.solid = true;
         sprite.immovable = true;
         sprite.friction = 20;
 
         roll.addComponentAs(sprite, 'Sprite');
-        roll.addComponentAs(sprite, 'Rectangle');
         roll.addComponentAs(sprite, 'RectPhysicsBody');
 
         return roll;
     },
 
+    /**
+     * Creates a new enemy
+     * @param {number} x
+     * @param {number} y
+     * @returns {Entity}
+     */
     createEnemy: function(x, y) {
         var enemy = World.createEntity(),
             sprite = new Sprite({
@@ -165,20 +199,26 @@ var Factory = {
                 width: 91,
                 height: 42
             });
-        sprite.solid = true;
-        sprite.immovable = true;
+        // Use velocity to move it
         sprite.velocity = { x: 0, y: 0 };
 
         enemy.addComponent(sprite);
         enemy.addComponentAs(sprite, 'RectPhysicsBody');
+
         // Tag it as a an enemy
         enemy.addComponentAs(true, 'Enemy');
 
         return enemy;
     },
 
+    /**
+     * Creates some flames
+     * @param {number} x
+     * @param {number} y
+     * @returns {Entity}
+     */
     createFlames: function(x, y) {
-        // Start on a random frame
+        // Start on a random frame so everything doesn't look synchronized
         var flameIndex = Math.floor(Math.random() * 4),
             flame = World.createEntity(),
             sprite = new Sprite({
@@ -199,6 +239,8 @@ var Factory = {
                     'flames3'
                 ]
             });
+
+        // Make sure it doesn't fall and doesn't collide with anything
         sprite.mass = 0;
         sprite.solid = false;
         sprite.velocity = { x: 0, y: 0 };

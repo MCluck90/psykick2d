@@ -6,18 +6,13 @@ var Helper = require('psykick2d').Helper,
     BehaviorSystem = require('psykick2d').BehaviorSystem,
     AssetManager = require('psykick2d').AssetManager,
     Factory = require('./factory.js'),
-
-    RUN_SPEED = 8,
-    JUMP_SPEED = 15,
-    ATTACK_SPEED = 25,
-    ATTACK_TIMEOUT = 1 / 4,
-    ATTACK_COOLDOWN = 1,
+    CONSTANTS = require('./constants.js'),
 
     /**
      * Each of the players' states
      * @enum {number}
      */
-    STATES = {
+        STATES = {
         STAND: 0,
         WALK: 1,
         JUMP: 2,
@@ -36,10 +31,15 @@ var PlayerMovement = function(player, layer) {
     BehaviorSystem.call(this);
     this.player = player;
     this.mainLayer = layer;
+    // Track which state the player is in (standing, walking, etc.)
     this._prevState = this._states.stand;
     this._state = this._states.stand;
+
+    // Used for determining when the player can attack and how long it will last
     this._attackTimeout = 0;
     this._attackCooldown = 0;
+
+    // Create a flame for when the player attacks
     this._flame = Factory.createFlames(0, 0);
 
     // Initialize the standing state
@@ -51,7 +51,6 @@ Helper.inherit(PlayerMovement, BehaviorSystem);
 /**
  * Changes the players' state
  * @param {STATES} state
- * @param {number} delta
  * @private
  */
 PlayerMovement.prototype._changeState = function(state) {
@@ -84,16 +83,21 @@ PlayerMovement.prototype._changeState = function(state) {
 };
 
 /**
- * Update the player
+ * Update the player based on their state
  * @param {number} delta
  */
 PlayerMovement.prototype.update = function(delta) {
+    // Reduce the time needed before the player can attack again
     this._attackCooldown -= delta;
+
+    // If they changed state, exit the previous one and enter the current one
     if (this._state !== this._prevState) {
         this._prevState.exit.call(this);
         this._state.enter.call(this);
         this._prevState = this._state;
     }
+
+    // Update the player
     this._state.update.call(this, delta);
 
     // See if the player died
@@ -112,9 +116,6 @@ PlayerMovement.prototype.update = function(delta) {
  * @private
  */
 PlayerMovement.prototype._states = {
-    /**
-     * The player is standing
-     */
     stand: {
         /**
          * Set the standing animation and stop the player
@@ -145,9 +146,10 @@ PlayerMovement.prototype._states = {
         },
         exit: function() {}
     },
+
     walk: {
         /**
-         * Change to the walking sprite
+         * Change to the walking state
          */
         enter: function() {
             var body = this.player.getComponent('RectPhysicsBody'),
@@ -159,8 +161,11 @@ PlayerMovement.prototype._states = {
             } else {
                 body.friction = 0;
             }
+
+            // Change to the walking animation
             this.player.addComponent(this.player.getComponent('WalkAnimation'));
 
+            // Flip the sprite depending on if the player is pressing left or right
             if (Keyboard.isKeyDown(Keys.Left)) {
                 sprite.pivot.x = 128;
                 sprite.scale.x = -1;
@@ -177,6 +182,7 @@ PlayerMovement.prototype._states = {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite'),
                 animation = this.player.getComponent('Animation');
+
             if (Keyboard.isKeyDown(Keys.Left)) {
                 // Add a slide and flip the sprite
                 if (body.velocity.x > 0) {
@@ -186,11 +192,16 @@ PlayerMovement.prototype._states = {
                 } else {
                     body.friction = 0;
                 }
-                body.velocity.x -= RUN_SPEED * delta;
-                if (body.velocity.x < -RUN_SPEED) {
-                    body.velocity.x = -RUN_SPEED;
+
+                // Increase the running speed to the left
+                body.velocity.x -= CONSTANTS.PLAYER.RUN_SPEED * delta;
+
+                // Cap it at the maximum running speed
+                if (body.velocity.x < -CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = -CONSTANTS.PLAYER.RUN_SPEED;
                 }
             } else if (Keyboard.isKeyDown(Keys.Right)) {
+                // Add a slide and flip the sprite to the right
                 if (body.velocity.x < 0) {
                     body.friction = 1.2;
                     sprite.pivot.x = 0;
@@ -198,17 +209,23 @@ PlayerMovement.prototype._states = {
                 } else {
                     body.friction = 0;
                 }
-                body.velocity.x += RUN_SPEED * delta;
-                if (body.velocity.x > RUN_SPEED) {
-                    body.velocity.x = RUN_SPEED;
+
+                // Increase the speed to the right
+                body.velocity.x += CONSTANTS.PLAYER.RUN_SPEED * delta;
+
+                // Cap it at the maximum running speed
+                if (body.velocity.x > CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = CONSTANTS.PLAYER.RUN_SPEED;
                 }
-            } else if (Math.abs(body.velocity.x) <= RUN_SPEED * delta) {
+            } else if (Math.abs(body.velocity.x) <= CONSTANTS.PLAYER.RUN_SPEED * delta) {
                 // If we slowed down enough from friction, come to a stop
                 this._changeState(STATES.STAND);
             } else {
+                // Apply friction so the player slows down when they're not pressing anything
                 body.friction = 1;
             }
 
+            // If the player is falling, then transition to falling
             if (body.velocity.y > 0) {
                 this._changeState(STATES.FALL);
                 return;
@@ -228,6 +245,7 @@ PlayerMovement.prototype._states = {
         },
         exit: function(){}
     },
+
     jump: {
         /**
          * Change to the "jumping animation"
@@ -239,13 +257,14 @@ PlayerMovement.prototype._states = {
                 sprite = this.player.getComponent('Sprite'),
                 body = this.player.getComponent('RectPhysicsBody');
             animation.fps = 0;
+            // Move to the frame where the players' legs are extended
             sprite.setTexture(AssetManager.SpriteSheet.getFrame('player-walk3'));
-            body.velocity.y = -JUMP_SPEED;
+            body.velocity.y = -CONSTANTS.PLAYER.JUMP_SPEED;
             body.friction = 0;
         },
 
         /**
-         *
+         * Allow the player to stay in control in the air
          * @param {number} delta
          */
         update: function(delta) {
@@ -257,44 +276,54 @@ PlayerMovement.prototype._states = {
                 body.velocity.y = 0;
             }
 
-            // Allow us to attack
+            // Allow the player to attack
             if (Keyboard.isKeyDown(Keys.Space) && this._attackCooldown <= 0) {
                 this._changeState(STATES.ATTACK);
                 return;
             }
 
-            // Enable in air movement
+            // Move in mid-air
             if (Keyboard.isKeyDown(Keys.Left)) {
+                // Flip the sprite to the left
                 if (body.velocity.x > 0) {
                     sprite.pivot.x = 128;
                     sprite.scale.x = -1;
                 }
 
-                // Don't accelerate as quickly as normal
-                body.velocity.x -= RUN_SPEED * 0.8 * delta;
-                if (body.velocity.x < -RUN_SPEED) {
-                    body.velocity.x = -RUN_SPEED;
+                // Don't accelerate as quickly in the air
+                body.velocity.x -= CONSTANTS.PLAYER.RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x < -CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = -CONSTANTS.PLAYER.RUN_SPEED;
                 }
             } else if (Keyboard.isKeyDown(Keys.Right)) {
+                // Flip the sprite to the right
                 if (body.velocity.x < 0) {
                     sprite.pivot.x = 0;
                     sprite.scale.x = 1;
                 }
 
-                body.velocity.x += RUN_SPEED * 0.8 * delta;
-                if (body.velocity.x > RUN_SPEED) {
-                    body.velocity.x = RUN_SPEED;
+                // Accelerate the player
+                body.velocity.x += CONSTANTS.PLAYER.RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x > CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = CONSTANTS.PLAYER.RUN_SPEED;
                 }
             }
 
+            // If the player isn't going up anymore, they must be falling
             if (body.velocity.y >= 0) {
                 this._changeState(STATES.FALL);
             }
         },
         exit: function(){}
     },
+
     fall: {
         enter: function() {},
+
+        /**
+         * Control the player when they're falling
+         * @param {number} delta
+         */
         update: function(delta) {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite');
@@ -316,9 +345,9 @@ PlayerMovement.prototype._states = {
                     sprite.scale.x = -1;
                 }
 
-                body.velocity.x -= RUN_SPEED * 0.8 * delta;
-                if (body.velocity.x < -RUN_SPEED) {
-                    body.velocity.x = -RUN_SPEED;
+                body.velocity.x -= CONSTANTS.PLAYER.RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x < -CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = -CONSTANTS.PLAYER.RUN_SPEED;
                 }
             } else if (Keyboard.isKeyDown(Keys.Right)) {
                 if (body.velocity.x < 0) {
@@ -326,17 +355,15 @@ PlayerMovement.prototype._states = {
                     sprite.scale.x = 1;
                 }
 
-                body.velocity.x += RUN_SPEED * 0.8 * delta;
-                if (body.velocity.x > RUN_SPEED) {
-                    body.velocity.x = RUN_SPEED;
+                body.velocity.x += CONSTANTS.PLAYER.RUN_SPEED * 0.8 * delta;
+                if (body.velocity.x > CONSTANTS.PLAYER.RUN_SPEED) {
+                    body.velocity.x = CONSTANTS.PLAYER.RUN_SPEED;
                 }
             }
         },
-        exit: function() {
-            // Reset to the correct animation frame
-            //this.player.getComponent('Animation').currentFrame = 0;
-        }
+        exit: function() {}
     },
+
     attack: {
         /**
          * Change to the attack animation and rocket forward
@@ -349,7 +376,8 @@ PlayerMovement.prototype._states = {
             this.player.addComponent(animation);
             body.velocity.y = 0;
             body.friction = 0;
-            // Remove gravity
+
+            // Remove gravity so the player doesn't fall
             body.mass = 0;
 
             // Which way are we going?
@@ -361,53 +389,59 @@ PlayerMovement.prototype._states = {
             }
 
             if (movingLeft) {
-                body.velocity.x = -ATTACK_SPEED;
+                // Move to the left and make sure the sprite is pointing left
+                body.velocity.x = -CONSTANTS.PLAYER.ATTACK_SPEED;
                 sprite.scale.x = -1;
                 sprite.pivot.x = 128;
             } else {
-                body.velocity.x = ATTACK_SPEED;
+                // Go to the right
+                body.velocity.x = CONSTANTS.PLAYER.ATTACK_SPEED;
                 sprite.scale.x = 1;
                 sprite.pivot.x = 0;
             }
 
-            // Setup the timeout
-            this._attackTimeout = ATTACK_TIMEOUT;
+            // Setup how long the attack will last
+            this._attackTimeout = CONSTANTS.PLAYER.ATTACK_TIMEOUT;
 
             // Add the flame effect
             var flameSprite = this._flame.getComponent('Sprite'),
                 flameWidth = Math.abs(flameSprite.width);
             flameSprite.y = body.y + body.height / 2 - flameSprite.height / 4;
+
             if (sprite.scale.x === 1) {
+                // "Attach" the flames to the left end
                 flameSprite.pivot.x = 0;
                 flameSprite.scale.x = 1;
                 flameSprite.x = body.x - flameWidth;
             } else {
+                // "Attach" the flames to the right end
                 flameSprite.pivot.x = flameWidth;
                 flameSprite.scale.x = -1;
                 flameSprite.x = body.x + Math.abs(body.width) + flameWidth / 4;
             }
 
+            // Set the flames in motion and add them to the systems
             this._flame.getComponent('RectPhysicsBody').velocity = body.velocity;
             this.mainLayer.addEntity(this._flame);
         },
-        update: function(delta) {
-            // Make sure we keep pace after hitting an enemy
-            var sprite = this.player.getComponent('Sprite'),
-                body = this.player.getComponent('RectPhysicsBody');
-            if (sprite.scale.x === 1) {
-                body.velocity.x = ATTACK_SPEED;
-            } else {
-                body.velocity.x = -ATTACK_SPEED;
-            }
 
+        /**
+         * Keep attacking!
+         * @param {number} delta
+         */
+        update: function(delta) {
             // Keep attacking until the timeout is over
-            this._attackCooldown = ATTACK_COOLDOWN;
+            this._attackCooldown = CONSTANTS.PLAYER.ATTACK_COOLDOWN;
             this._attackTimeout -= delta;
             if (this._attackTimeout <= 0) {
                 this._attackTimeout = 0;
                 this._changeState(STATES.FALL);
             }
         },
+
+        /**
+         * Clean up the flames and transition out of attacking
+         */
         exit: function() {
             // Remove the flames
             this.mainLayer.removeEntity(this._flame);
@@ -417,15 +451,17 @@ PlayerMovement.prototype._states = {
                 animation = this.player.getComponent('WalkAnimation'),
                 sprite = this.player.getComponent('Sprite');
             animation.fps = 0;
+
+            // Set it to the falling frame
             sprite.setTexture(AssetManager.SpriteSheet.getFrame('player-walk3'));
             this.player.addComponent(animation);
             body.mass = 1;
 
             // Allow the player to keep momentum
             if (Keyboard.isKeyDown(Keys.Left)) {
-                body.velocity.x = -RUN_SPEED;
+                body.velocity.x = -CONSTANTS.PLAYER.RUN_SPEED;
             } else if (Keyboard.isKeyDown(Keys.Right)) {
-                body.velocity.x = RUN_SPEED;
+                body.velocity.x = CONSTANTS.PLAYER.RUN_SPEED;
             } else {
                 // Or come to a complete stop
                 body.velocity.x = 0;
@@ -433,24 +469,43 @@ PlayerMovement.prototype._states = {
 
         }
     },
+
     die: {
+        /**
+         * Apply a dying animation of sorts
+         */
         enter: function() {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite'),
                 animation = this.player.getComponent('Animation');
+
+            // Flip the player upside down,
             sprite.scale.y = -1;
             body.velocity.x = 0;
-            body.velocity.y = -JUMP_SPEED * 2;
+            // launch them up,
+            body.velocity.y = -CONSTANTS.PLAYER.JUMP_SPEED * 2;
+
+            // and drag them down
             body.mass = 5;
+
+            // Make sure the player falls through platforms
             body.solid = false;
             animation.fps = 0;
         },
+
+        /**
+         * Keep falling until the player hits the top of the screen
+         */
         update: function() {
             var body = this.player.getComponent('RectPhysicsBody');
-            if (body.y > 800) {
+            if (body.y > CONSTANTS.SCREEN_HEIGHT + body.height) {
                 this._changeState(STATES.FALL);
             }
         },
+
+        /**
+         * Return to the beginning of the game
+         */
         exit: function() {
             var body = this.player.getComponent('RectPhysicsBody'),
                 sprite = this.player.getComponent('Sprite');
@@ -467,30 +522,16 @@ PlayerMovement.prototype._states = {
     }
 };
 
+/**
+ * Called whenever the player collides with an enemy
+ * @param {Entity} enemy
+ */
 PlayerMovement.prototype.onEnemyCollision = function(enemy) {
     if (this._state === this._states.attack) {
-        var renderSystems = this.mainLayer.renderSystems,
-            behaviorSystems = this.mainLayer.behaviorSystems,
-            numOfRenderSystems = renderSystems.length,
-            numOfBehaviorSystems = behaviorSystems.length,
-            len = Math.max(numOfBehaviorSystems, numOfRenderSystems);
-
-        for (var i = 0; i < len; i++) {
-            if (i < numOfBehaviorSystems) {
-                behaviorSystems[i].safeRemoveEntity(enemy);
-            }
-            if (i < numOfRenderSystems) {
-                renderSystems[i].safeRemoveEntity(enemy);
-            }
-        }
-
-        // "Fix" the stoppage caused by the physics system
-        var body = this.player.getComponent('RectPhysicsBody');
-        body.velocity.x = ATTACK_SPEED;
-        if (this.player.getComponent('Sprite').scale.x === -1) {
-            body.velocity.x *= -1;
-        }
+        // If the player is attacking, kill the enemy
+        this.mainLayer.safeRemoveEntity(enemy);
     } else if (this._state !== this._states.die) {
+        // If the player wasn't attacking, kill them
         this._changeState(STATES.DIE);
     }
 };
