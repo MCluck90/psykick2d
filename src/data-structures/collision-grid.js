@@ -29,14 +29,17 @@ function isColliding(a, b) {
  * A simple grid for finding any collisions
  * Best used for tiled game worlds with defined boundaries
  * @param {object} options
- * @param {number} options.width        Width of the game world
- * @param {number} options.height       Height of the game world
- * @param {number} options.cellWidth    Width of a cell. May use cellSize instead
- * @param {number} options.cellHeight   Height of a cell. May use cellSize instead
- * @param {number} [options.cellSize]   Set this if you want width and height to be the same
+ * @param {number} options.width                        Width of the game world
+ * @param {number} options.height                       Height of the game world
+ * @param {number} options.cellWidth                    Width of a cell. May use cellSize instead
+ * @param {number} options.cellHeight                   Height of a cell. May use cellSize instead
+ * @param {number} [options.cellSize]                   Set this if you want width and height to be the same
+ * @param {number} [options.componentType='Rectangle']  Type of component to treat as a rectangle
  * @constructor
  */
 var CollisionGrid = function(options) {
+    this.componentType = options.componentType || 'Rectangle';
+
     this.width = options.width;
     this.height = options.height;
     if (options.cellSize) {
@@ -64,7 +67,7 @@ var CollisionGrid = function(options) {
  * @param {Entity} entity
  */
 CollisionGrid.prototype.addEntity = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -91,7 +94,7 @@ CollisionGrid.prototype.addEntity = function(entity) {
  * @param {Entity} entity
  */
 CollisionGrid.prototype.removeEntity = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -124,7 +127,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
     deltaPosition = deltaPosition || {};
     deltaPosition.x = deltaPosition.x || 0;
     deltaPosition.y = deltaPosition.y || 0;
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         width = Math.abs(rect.width),   // Apparently we can't assume width is positive
         height = Math.abs(rect.height),
         newRect = {
@@ -165,7 +168,7 @@ CollisionGrid.prototype.moveEntity = function(entity, deltaPosition) {
  * @returns {Entity[]}
  */
 CollisionGrid.prototype.getCollisions = function(entity) {
-    var rect = entity.getComponent('Rectangle'),
+    var rect = entity.getComponent(this.componentType),
         minX = ~~(rect.x / this.cellWidth),
         maxX = ~~( (rect.x + rect.width) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
@@ -184,7 +187,7 @@ CollisionGrid.prototype.getCollisions = function(entity) {
             var collection = column[y];
             for (var i = 0, len = collection.length; i < len; i++) {
                 var other = collection[i];
-                if (other !== entity && isColliding(other.getComponent('Rectangle'), rect)) {
+                if (other !== entity && isColliding(other.getComponent(this.componentType), rect)) {
                     if (results.indexOf(other) === -1) {
                         results.push(other);
                     }
