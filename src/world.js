@@ -46,6 +46,7 @@ var World = {
      * @param {String}          [options.backgroundColor='#000']
      * @param {object?}         [options.preload=null]              Collection of resources to load before starting
      * @param {string|string[]} [options.preload.spriteSheets]      Spritesheets in JSON format
+     * @param {function}        [options.preload.onComplete]        Called after preload resources are done
      */
     init: function(options) {
         var self = this,
@@ -119,6 +120,9 @@ var World = {
                 AssetManager.SpriteSheet.addLoadListener(function startGame() {
                     AssetManager.SpriteSheet.removeLoadListener(startGame);
                     requestAnimationFrame(gameLoop);
+                    if (options.preload.onComplete) {
+                        options.preload.onComplete();
+                    }
                 });
                 AssetManager.SpriteSheet.load(spriteSheets);
             }
