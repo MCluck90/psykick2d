@@ -1,3 +1,7 @@
+v0.7.1
+======
+* Added preload completion event listener
+
 v0.7.0
 ======
 * Added add/remove/safeRemove to `Layer`
