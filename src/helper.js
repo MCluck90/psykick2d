@@ -78,7 +78,7 @@ var Helper = {
                     prop = source[key];
                 if (this.isObject(prop) && this.isObject(current)) {
                     obj[key] = this.extend(current, prop);
-                } else {
+                } else if(obj[key] === undefined) {
                     obj[key] = prop;
                 }
             }
