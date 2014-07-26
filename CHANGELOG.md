@@ -1,3 +1,7 @@
+v0.7.2
+======
+* Fixed Helper.extend to only add new properties, not overwrite old ones
+
 v0.7.1
 ======
 * Added preload completion event listener
