@@ -78,3 +78,13 @@ body {
 .obj {
     color: #F5E530;
 }
+
+.screenshot {
+    display: block;
+    margin: 0 auto;
+}
+.caption {
+    display: block;
+    text-align: center;
+    font-style: italic;
+}

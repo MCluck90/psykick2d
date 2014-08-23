@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Psykick2D - Creating a Platformer</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="How to create a platformer in Psykick2D">
+    <meta property="og:title" content="Psykick2D - Creating a Platformer">
+    <meta property="og:description" content="Creating a platformer in Psykick2D is easy and this guide will show you how">
+    <link rel="canonical" href="http://mcluck90.github.io/">
+    <base href="http://mcluck90.github.io/psykick2d/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/psykick2d/css/pygment_trac.css">
+    <link rel="stylesheet" href="/psykick2d/docs/bootstrap.min.css">
+    <link rel="stylesheet" href="/psykick2d/docs/style.css">
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/psykick2d">Psykick2D</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="https://github.com/MCluck90/psykick2d">GitHub</a>
+                    </li>
+                    <li>
+                        <a href="docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container" role="main">
+        <div class="row">
+            <h1 id="creating-a-platformer">Creating a Platformer</h1>
+
+            <p>Today I’m going to show you how to make your own complete platformer using Psykick2D. This tutorial is going to be written from the perspective of using <a href="http://browserify.org/">Browserify</a> to build your game. If you’re using the pre-built <code>psykick2d.js</code>, just replace any instances of <code>require('psykick2d')</code> with <code>Psykick2D</code> and be sure to include your files in the page in the correct order. I would encourage you to make your own namespace, such as <code>Game</code>, so you can attach and reference any custom modules there.</p>
+
+            <p>Before getting started, make sure you have the following:</p>
+
+            <ul>
+            <li><a href="http://nodejs.org/">Node.js</a></li>
+            <li>A folder for your game</li>
+            <li>Psykick2D installed: <code>npm install psykick2d</code></li>
+            <li><a href="http://browserify.org/">Browserify</a>: <code>npm install -g browserify</code></li>
+            <li>Alternative: If you prefer using +grunt then you can install the +grunt-browserify module and use that for your build process.</li>
+            </ul>
+
+
+
+            <h2 id="initialization">Initialization</h2>
+
+            <p>First things first, we need to setup the game world. Create a folder called <code>js</code> then create <code>js/main.js</code>.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World;
+
+World.init({
+    width: <span class="hljs-number">800</span>,
+    height: <span class="hljs-number">600</span>,
+    backgroundColor: <span class="hljs-string">'#AAF'</span>
+});</code></pre>
+
+            <p>Next, we need a web page to run the game in. Create <code>index.html</code> and put in the following:</p>
+
+            <p><em class="caption">index.html</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-html hljs "><span class="hljs-doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">title</span>&gt;</span>Platformer<span class="hljs-tag">&lt;/<span class="hljs-title">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">style</span>&gt;</span><span class="css">
+        <span class="hljs-comment">/* Centers the game and dims the screen around it */</span>
+        <span class="hljs-tag">body</span> <span class="hljs-rules">{
+            <span class="hljs-rule"><span class="hljs-attribute">background-color</span>:<span class="hljs-value"> <span class="hljs-hexcolor">#222</span></span></span>;
+        <span class="hljs-rule">}</span></span>
+        <span class="hljs-id">#psykick</span> <span class="hljs-rules">{
+            <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">24</span>px auto</span></span>;
+        <span class="hljs-rule">}</span></span>
+    </span><span class="hljs-tag">&lt;/<span class="hljs-title">style</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- This is what will hold the game --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">”psykick”</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">”build</span>/<span class="hljs-attribute">game.js</span>”&gt;</span><span class="javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+    <span class="hljs-comment">&lt;!--
+    If you're using the pre-built, it would look more like this
+    &lt;script src=”psykick2d.js”&gt;&lt;/script&gt;
+    &lt;script src=”js/main.js”&gt;&lt;/script&gt;
+    --&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span></code></pre>
+
+            <p>Finally, you just need to create the <code>build</code> folder and build your game using <a href="http://browserify.org/">Browserify</a>: <code>browserify js/main.js &gt; build/game.js</code>. If you’re using +grunt then just run your grunt task: <code>grunt browserify</code>. Now if you open <code>index.html</code></p>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/blank-screen.png" />
+            <h4 class="caption">Voila!</h4>
+
+            <p>It doesn’t look like much but now you’ve got the engine running. Give yourself a pat on the back then we’ll get to the fun stuff.</p>
+
+
+
+            <h2 id="drawing-to-the-screen">Drawing to the Screen</h2>
+
+            <p>Before we can start putting our own graphics on the screen, we need a layer to place them on. Everything in Psykick2D resides on layers. For more information about layers, +check out the  architecture guide but now all you need to know is that we need a layer to draw on. So in <code>main.js</code>, create a new layer and push it on to the stack.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World;
+
+World.init({ ... });
+
+<span class="hljs-keyword">var</span> layer = World.createLayer();
+
+World.pushLayer(layer);</code></pre>
+
+            <p>If you build and run your game now, you won’t see any difference. To fix that, we’ll draw a rectangle to the screen. The rectangle game object and all other game objects are <a href="/psykick2d/docs/entity">entities</a> which are made up of <a href="/psykick2d/docs/components/gfx/sprite">components</a>. The rectangle entity will then be rendered by a <a href="/psykick2d/docs/render-system">render system</a>.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    Rectangle = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.Shapes.Rectangle,
+    RectangleSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Render.Rectangle;
+
+World.init({ ... });
+
+<span class="hljs-keyword">var</span> layer = World.createLayer(),
+    rectangle = World.createEntity(),
+    rectangleSystem = <span class="hljs-keyword">new</span> RectangleSystem();
+rectangle.addComponent(<span class="hljs-keyword">new</span> Rectangle({
+    x: <span class="hljs-number">0</span>,
+    y: <span class="hljs-number">550</span>,
+    width: <span class="hljs-number">800</span>,
+    height: <span class="hljs-number">50</span>,
+    color: <span class="hljs-number">0xFF0000</span>
+});
+
+<span class="hljs-comment">// Tell the system to render the rectangle</span>
+rectangleSystem.addEntity(rectangle);
+
+<span class="hljs-comment">// Tell the layer to use the rectangle system</span>
+layer.addSystem(rectangleSystem);
+
+World.pushLayer(layer);</code></pre>
+
+            <p>If you rebuild, you should see a rectangle much like this.</p>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/red-platform.jpg" />
+            <h4 class="caption">What a nice platform!</h4>
+
+
+            <h2 id="drawing-sprites">Drawing Sprites</h2>
+
+            <p>Rectangles are fine but sooner or later we’re going to want to use actual graphics. So go ahead and pick up the <a href="https://github.com/MCluck90/psykick2d/blob/master/examples/platformer/sprites/terrain.png">sample spritesheet</a> and <a href="https://github.com/MCluck90/psykick2d/blob/master/examples/platformer/sprites/terrain.json">matching JSON file</a>. Create a <code>sprites</code> folder and drop in the <code>terrain.png</code> and <code>terrain.json</code> files.</p>
+
+            <p>Through <a href="http://pixijs.com">Pixi.js</a>, Psykick2D can automatically load the JSON file and provide easy access to sprites. Before using them, we need to go ahead and preload the sheet:</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+...
+World.init({
+    width: <span class="hljs-number">800</span>,
+    height: <span class="hljs-number">600</span>,
+    backgroundColor: <span class="hljs-string">'#AAF'</span>,
+    preload: {
+        spriteSheets: [<span class="hljs-string">'sprites/terrain.json'</span>],
+        <span class="hljs-comment">// This is called when everything is loaded</span>
+        onComplete: init
+    }
+});
+
+<span class="hljs-comment">// Move the initialization code into here</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> layer = World.createLayer(),
+    ...
+    World.pushLayer(layer);
+}</code></pre>
+
+            <p>If you look inside of <code>terrain.json</code> you’ll notice it’s an object with a property named <code>frames</code> and a series of information about different sprite frames. These names are how we’ll reference the sprites in the game. Now it’s time to basically replace the rectangle with a sprite:</p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    Sprite = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.GFX.Sprite,
+    SpriteSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Render.Sprite;
+
+...
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> layer = World.createLayer(),
+        grass = World.createEntity(),
+        spriteSystem = <span class="hljs-keyword">new</span> SpriteSystem();
+    grass.addComponent(<span class="hljs-keyword">new</span> Sprite({
+        frameName: <span class="hljs-string">'grass'</span>, <span class="hljs-comment">// Matches 'grass' in terrain.json</span>
+        x: <span class="hljs-number">0</span>,
+        y: <span class="hljs-number">568</span>,
+        width: <span class="hljs-number">32</span>,
+        height: <span class="hljs-number">32</span>
+    });
+    spriteSystem.addEntity(grass);
+    layer.addSystem(spriteSystem);
+    World.pushLayer(layer);
+}</code></pre>
+
+            <p>And after a quick build…</p>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/single-grass-tile.jpg" alt="A single grass tile" />
+
+            <div class="well">
+            <blockquote>
+              <p>“I can’t see the tile and I’m getting an error about loading sprites/terrain.json!”</p>
+            </blockquote>
+            <p>Due to security restrictions in various browsers, you can only load files through a server. If you have a local server setup, run it through there. Otherwise, it’s really easy to get a local server going.</p>
+
+            <p>If you have Python installed, you can do one of the following: <br>
+            Python 2: <code>python -m SimpleHTTPServer</code> <br>
+            Python 3: <code>python -m http.server 8080</code> <br>
+            Now you can access the game at <a href="http://localhost:8080">http://localhost:8080</a></p>
+
+            <p>If you don’t have Python installed, you can run a simple server using the <a href="https://github.com/nodeapps/http-server">http-server</a> module.</p>
+
+
+
+            <pre class="prettyprint"><code class="language-bash hljs ">$ npm install -g http-server
+$ http-server</code></pre>
+
+            <p>Now the game is available at <a href="http://localhost:8080">http://localhost:8080</a></p>
+            </div>
+
+            <p>Great! But we probably want more than one tile for the ground. You might be thinking that we’ll need to create a new entity for every single tile but that’s not true. There’s a built in <code>TiledSprite</code> component that’s optimized for exactly this reason. So if we change out a few quick things…</p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    TiledSprite = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.GFX.TiledSprite,
+    SpriteSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Render.Sprite;
+...
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    ...
+    grass.addComponent(<span class="hljs-keyword">new</span> TiledSprite({
+        x: <span class="hljs-number">0</span>,
+        y: <span class="hljs-number">568</span>,
+        width: <span class="hljs-number">800</span>,
+        height: <span class="hljs-number">32</span>
+    });
+    ...
+}</code></pre>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/blank-screen.png" />
+            <h4 class="caption">What?</h4>
+
+            <p>The problem here is that +systems require certain components to add an entity. But since we know that the <code>TiledSprite</code> works exactly like a normal <code>Sprite</code> but allows tiling, we can easily mark it as a <code>Sprite</code> component so it will work in the <code>Sprite</code> system.</p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">grass.addComponentAs(<span class="hljs-keyword">new</span> TiledSprite({
+    ...
+}, <span class="hljs-string">'Sprite'</span>);</code></pre>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/grass-platform.jpg" />
+            <h4 class="caption">That's more like it</h4>
+
+
+
+            <h2 id="player-input">Player Input</h2>
+
+            <p>Next up, we’re going to add in the player. First, we need to load up the players’ <a href="https://github.com/MCluck90/psykick2d/blob/master/examples/platformer/sprites/player.png">sprite sheet</a> with the <a href="https://github.com/MCluck90/psykick2d/blob/master/examples/platformer/sprites/player.json">matching JSON file</a>.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">World.init({
+    ...
+    preload: {
+        spriteSheets: [<span class="hljs-string">'sprites/terrain.json'</span>, <span class="hljs-string">'sprites/player.json'</span>],
+        onComplete: init
+    }
+});</code></pre>
+
+            <p>Then write up a function for generating the player:</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    ...
+    Sprite = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.GFX.Sprite;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createPlayer</span><span class="hljs-params">(x, y)</span> {</span>
+    <span class="hljs-keyword">var</span> player = World.createEntity();
+    player.addComponent(<span class="hljs-keyword">new</span> Sprite({
+        frameName: <span class="hljs-string">'player-stand'</span>,
+        x: x,
+        y: y,
+        width: <span class="hljs-number">122</span>,
+        height: <span class="hljs-number">56</span>
+    });
+    <span class="hljs-keyword">return</span> player;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    ...
+    spriteSystem.addEntity(createPlayer(<span class="hljs-number">300</span>, <span class="hljs-number">450</span>));
+    ...
+}</code></pre>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/first-player-standing.jpg" />
+            <h4 class="caption">After building the game, you should see the player</h4>
+
+            <p>But to control the player, we’ll need to write a custom <a href="/psykick2d/docs/behavior-system">behavior system</a> to do that. Create <code>js/player-input.js</code> and put in the following:</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> BehaviorSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).BehaviorSystem,
+    Helper = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Helper;
+
+<span class="hljs-keyword">var</span> PlayerInput = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(player)</span> {</span>
+    <span class="hljs-comment">// Call the BehaviorSystem constructor</span>
+    BehaviorSystem.call(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.player = player;
+};
+
+<span class="hljs-comment">// Shortcut for handling inheritance</span>
+Helper.inherit(PlayerInput, BehaviorSystem);
+
+<span class="hljs-comment">/**
+ * Updates the player based on input
+ * @param {number} delta    Seconds since last update
+ */</span>
+PlayerInput.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+};
+
+module.exports = PlayerInput;
+
+<span class="hljs-comment">// If you're going the pre-built route, you should omit module.exports and</span>
+<span class="hljs-comment">// attach it to your personal namespace such as Game</span></code></pre>
+
+            <p><code>PlayerInput</code> inherits from <code>BehaviorSystem</code> so that it will be run during the update phase of every tick. To use it in the game, just add it to a layer like you did with the <code>Sprite</code> system.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    ...
+    PlayerInput = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./player-input.js'</span>);
+
+...
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> layer = World.createLayer(),
+        grass = World.createEntity(),
+        player = createPlayer(<span class="hljs-number">300</span>, <span class="hljs-number">450</span>),
+        spriteSystem = <span class="hljs-keyword">new</span> SpriteSystem(),
+        playerSystem = <span class="hljs-keyword">new</span> PlayerInput(player);
+    ...
+    spriteSystem.addEntity(player);
+    layer.addSystem(playerSystem);
+}</code></pre>
+
+            <p>One thing that separates the <code>PlayerInput</code> system from other systems is we aren’t using <code>addEntity</code> to add the player. We could have done that and it would work just fine but passing the player directly into the system just saves us the hassle of overriding <code>addEntity</code> or extracting the player from the collection on every update.</p>
+
+            <p>Okay, now that we have the system tied in, let’s make it actually do something. Psykick2D automatically supports keyboard (and others) input through the <code>Input</code> namespace. So let’s throw in some simple movement.</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> BehaviorSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).BehaviorSystem,
+    ...
+    Keyboard = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Input.Keyboard,
+    <span class="hljs-comment">// Collection of key codes</span>
+    Keys = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Keys;
+
+...
+
+PlayerMovement.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+    <span class="hljs-keyword">var</span> sprite = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'Sprite'</span>);
+    <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Left)) {
+        sprite.x -= delta * <span class="hljs-number">200</span>;
+    }
+    <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Right)) {
+        sprite.x += delta * <span class="hljs-number">200</span>;
+    }
+};</code></pre>
+
+            <p>Now you should be able to move the player around the screen.</p>
+
+
+
+            <h2 id="adding-in-physics">Adding in Physics</h2>
+
+            <p>You may have noticed that, while you can move back and forth, you’re actually floating above the platform. Let’s make the player fall to the ground with gravity. There’s a built-in <code>Platformer</code> physics system built for handling gravity and basic collisions. But the system requires a <code>RectPhysicsBody</code> component. So to avoid having to synchronize data, we’ll just make our <code>Sprite</code> “act” like a physics body.</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    Helper = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Helper,
+    ...
+    RectPhysicsBody =
+        <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.Physics.RectPhysicsBody;
+
+...
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createPlayer</span><span class="hljs-params">(x, y)</span> {</span>
+    <span class="hljs-keyword">var</span> player = World.createEntity(),
+        sprite = <span class="hljs-keyword">new</span> Sprite({
+            ...
+        });
+    Helper.extend(sprite, <span class="hljs-keyword">new</span> RectPhysicsBody({
+        mass: <span class="hljs-number">1</span>,
+        solid: <span class="hljs-literal">true</span>,
+        friction: <span class="hljs-number">1</span>
+    }));
+    player.addComponent(sprite);
+    player.addComponentAs(sprite, <span class="hljs-string">'RectPhysicsBody'</span>);
+
+    <span class="hljs-keyword">return</span> player;
+}</code></pre>
+
+            <p>Before we throw in the physics system, we need to make sure our platforms are also in the physics system. First, we’ll refactor our tile creation:</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createGrass</span><span class="hljs-params">(x, y, width, height)</span> {</span>
+    <span class="hljs-keyword">var</span> grass = World.createEntity(),
+        sprite = <span class="hljs-keyword">new</span> TiledSprite({
+            ...
+        });
+    Helper.extend(sprite, <span class="hljs-keyword">new</span> RectPhysicsBody({
+        solid: <span class="hljs-literal">true</span>,
+        immovable: <span class="hljs-literal">true</span>,
+        friction: <span class="hljs-number">30</span>
+    }));
+    grass.addComponentAs(sprite, <span class="hljs-string">'Sprite'</span>);
+    grass.addComponentAs(sprite, <span class="hljs-string">'RectPhysicsBody'</span>);
+    <span class="hljs-keyword">return</span> grass;
+}</code></pre>
+
+            <p>Now we can finally drop in the physics system and watch it go!</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    ...
+    PlatformerSystem =
+        <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Behavior.Physics.Platformer;
+...
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> layer = World.createLayer(),
+        grass = createGrass(<span class="hljs-number">0</span>, <span class="hljs-number">568</span>, <span class="hljs-number">800</span>, <span class="hljs-number">32</span>),
+        player = createPlayer(<span class="hljs-number">300</span>, <span class="hljs-number">450</span>),
+        playerInput = <span class="hljs-keyword">new</span> PlayerInput(player),
+        physicsSystem = <span class="hljs-keyword">new</span> PlatformerSystem({
+            width: <span class="hljs-number">10000</span>,
+            height: <span class="hljs-number">10000</span>,
+            gravity: <span class="hljs-number">30</span>
+        }),
+        spriteSystem = <span class="hljs-keyword">new</span> SpriteSystem();
+
+    spriteSystem.addEntity(grass);
+    spriteSystem.addEntity(player);
+    physicsSystem.addEntity(grass);
+    physicsSystem.addEntity(grass);
+
+    layer.addSystem(playerInput);
+    layer.addSystem(physicsSystem);
+    layer.addSystem(spriteSystem);
+
+    World.pushLayer(layer);
+}</code></pre>
+
+            <p>The last thing to tie it all together is we need to change the player input to adjust the velocity of the player. The <code>Platformer</code> system will move the player based on it’s velocity.</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">PlayerInput.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+    <span class="hljs-keyword">var</span> topSpeed = <span class="hljs-number">15</span>,
+        body = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>);
+    <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Left)) {
+        <span class="hljs-comment">// Give the player acceleration</span>
+        body.velocity.x -= delta * topSpeed;
+        <span class="hljs-keyword">if</span> (body.velocity.x &lt; -topSpeed) {
+            body.velocity.x = -topSpeed;
+        }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Right)) {
+        body.velocity.x += delta * topSpeed;
+        <span class="hljs-keyword">if</span> (body.velocity.x &gt; topSpeed) {
+            body.velocity.x = topSpeed;
+        }
+    } <span class="hljs-keyword">else</span> {
+        body.velocity.x = <span class="hljs-number">0</span>;
+    }
+};</code></pre>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/falling-player.jpg" />
+
+
+
+            <h2 id="different-platforms">Different Platforms</h2>
+
+            <p>Now that the Earth is pulling the player toward it, we might want to try dropping the player off of some platforms. First, let’s do a little bit of refactoring to make it easier to make different platform types. Make a <code>js/factory.js</code> file and put in the following:</p>
+
+            <p><em class="caption">factory.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    Helper = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Helper,
+    Sprite = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.GFX.Sprite,
+    TiledSprite = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.GFX.TiledSprite,
+    RectPhysicsBody =
+        <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Components.Physics.RectPhysicsBody;
+
+<span class="hljs-keyword">var</span> Factory = {
+    createPlayer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> {</span>
+    },
+    createGrass: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> {</span>
+    }
+};
+
+module.exports = Factory;</code></pre>
+
+            <p>Now just move the <code>createPlayer</code> and <code>createGrass</code> functions out of <code>main.js</code> and into <code>factory.js</code>. Then replace the references in <code>main.js</code> to their <code>factory.js</code> counterparts:</p>
+
+            <p><em class="caption">factory.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> Factory = {
+    createPlayer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> {</span>
+        <span class="hljs-keyword">var</span> player = World.createEntity(),
+        ...
+        <span class="hljs-keyword">return</span> player;
+    },
+    createGrass: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> {</span>
+        <span class="hljs-keyword">var</span> grass = World.createEntity(),
+        ...
+        <span class="hljs-keyword">return</span> grass;
+    }
+};</code></pre>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> World = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).World,
+    SpriteSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Render.Sprite,
+    Platformer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Systems.Behavior.Physics.Platformer,
+    PlayerInput = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./player-input.js'</span>),
+    Factory = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./factory.js'</span>);
+
+World.init({
+    ...
+});
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> layer = World.createLayer(),
+        grass = Factory.createGrass(<span class="hljs-number">0</span>, <span class="hljs-number">568</span>, <span class="hljs-number">800</span>, <span class="hljs-number">32</span>),
+        player = Factory.createPlayer(<span class="hljs-number">300</span>, <span class="hljs-number">450</span>),
+        playerInput = <span class="hljs-keyword">new</span> PlayerInput(player),
+        platformer = <span class="hljs-keyword">new</span> Platformer( ... ),
+        sprite = <span class="hljs-keyword">new</span> SpriteSystem();
+
+    platformer.addEntity(player);
+    platformer.addEntity(grass);
+    sprite.addEntity(player);
+    sprite.addEntity(grass);
+
+    layer.addSystem(playerInput);
+    layer.addSystem(platformer);
+    layer.addSystem(sprite);
+
+    World.pushLayer(layer);
+}</code></pre>
+
+            <p>Rather than have the player land on some floating grass, we’ll put in a steel beam.</p>
+
+            <p><em class="caption">factory.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">...
+createSteel: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> {</span>
+    <span class="hljs-keyword">var</span> steel = World.createEntity(),
+        sprite = <span class="hljs-keyword">new</span> TiledSprite({
+            frameName: <span class="hljs-string">'steel'</span>,
+            x: x,
+            y: y,
+            width: width,
+            height: height
+        });
+
+    Helper.extend(sprite, <span class="hljs-keyword">new</span> RectPhysicsBody({
+        solid: <span class="hljs-literal">true</span>,
+        immovable: <span class="hljs-literal">true</span>,
+        friction: <span class="hljs-number">25</span> <span class="hljs-comment">// Make it just a little slippery</span>
+    }));
+    steel.addComponent(sprite);
+    steel.addComponentAs(sprite, <span class="hljs-string">'RectPhysicsBody'</span>);
+
+    <span class="hljs-keyword">return</span> steel;
+}
+...</code></pre>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> layer = World.createLayer(),
+    steel = Factory.createSteel(<span class="hljs-number">375</span>, <span class="hljs-number">500</span>, <span class="hljs-number">122</span>, <span class="hljs-number">32</span>),
+    ...
+platformerSystem.addEntity(steel);
+spriteSystem.addEntity(steel);
+...</code></pre>
+
+            <p>Now go ahead and try walking off of the beam.</p>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/fall-off-platformer.jpg" />
+
+
+
+            <h2 id="jumping">Jumping</h2>
+
+            <p>Jumping is actually pretty easy to pull off. In the previous section, we applied a horizontal velocity to the player to move them, well, horizontally. We can do the same thing vertically to make the player jump.</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">PlayerInput.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+    . . .
+    <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Up)) {
+        body.velocity.y = -<span class="hljs-number">5</span>;
+    }
+};</code></pre>
+
+            <p>For now, the player can jump forever but we’ll fix this later.</p>
+
+
+
+            <h2 id="camera">Camera</h2>
+
+            <p>Now that the player has increased mobility, we should make the camera follow them around. To do this, create a <code>js/player-camera.js</code> file with the following:</p>
+
+            <p><em class="caption">player-camera.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> Camera = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Camera,
+    Helper = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).Helper;
+
+<span class="hljs-keyword">var</span> PlayerCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(player)</span> {</span>
+    <span class="hljs-keyword">this</span>.playerBody = player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>);
+
+    <span class="hljs-comment">// Easy reference for half of the screen size</span>
+    <span class="hljs-keyword">this</span>.halfWidth = <span class="hljs-number">800</span> / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">this</span>.halfHeight = <span class="hljs-number">600</span> / <span class="hljs-number">2</span>;
+
+    <span class="hljs-comment">// Tweak these until it looks good to you</span>
+    <span class="hljs-keyword">this</span>.xOffset = <span class="hljs-keyword">this</span>.playerBody.width;
+    <span class="hljs-keyword">this</span>.yOffset = <span class="hljs-keyword">this</span>.playerBody.height / <span class="hljs-number">2</span>;
+};
+
+Helper.inherit(PlayerCamera, Camera);
+
+PlayerCamera.prototype.render = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(stage, delta)</span> {</span>
+    <span class="hljs-comment">// Calculate where the camera should be pointing</span>
+    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.playerBody.x - <span class="hljs-keyword">this</span>.halfWidth + <span class="hljs-keyword">this</span>.xOffset,
+        y = <span class="hljs-keyword">this</span>.playerBody.y - <span class="hljs-keyword">this</span>.halfHeight + <span class="hljs-keyword">this</span>.yOffset;
+
+    <span class="hljs-comment">// Think of moving the screen instead of a camera</span>
+    stage.x = -x;
+    stage.y = -y;
+};
+
+module.exports = PlayerCamera;</code></pre>
+
+            <p>Then to use it, we attach it to the layer like so:</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> layer = World.createLayer(),
+    grass = Factory.createGrass(<span class="hljs-number">0</span>, <span class="hljs-number">568</span>, <span class="hljs-number">800</span>, <span class="hljs-number">32</span>),
+    steel = Factory.createSteel(<span class="hljs-number">375</span>, <span class="hljs-number">500</span>, <span class="hljs-number">122</span>, <span class="hljs-number">32</span>),
+    player = Factory.createPlayer(<span class="hljs-number">300</span>, <span class="hljs-number">450</span>),
+    camera = <span class="hljs-keyword">new</span> PlayerCamera(player),
+    ...
+
+layer.camera = camera;
+
+World.pushLayer(layer);</code></pre>
+
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/camera.jpg" />
+
+            <p>This works fine but it’d be best if the camera didn’t slide below the bottom of the screen. To fix this, we just make sure that x is never negative and y is never positive.</p>
+
+            <p><em class="caption">player-camera.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">PlayerCamera.prototype.render = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(stage, delta)</span> {</span>
+    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.playerBody.x - <span class="hljs-keyword">this</span>.halfWidth + <span class="hljs-keyword">this</span>.xOffset,
+        y = <span class="hljs-keyword">this</span>.playerBody.y - <span class="hljs-keyword">this</span>.halfHeight + <span class="hljs-keyword">this</span>.yOffset;
+
+    <span class="hljs-keyword">if</span> (x &gt; <span class="hljs-number">0</span>) {
+        stage.x = -x;
+    } <span class="hljs-keyword">else</span> {
+        stage.x = <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (y &lt; <span class="hljs-number">0</span>) {
+        stage.y = -y;
+    } <span class="hljs-keyword">else</span> {
+        stage.y = <span class="hljs-number">0</span>;
+    }
+};</code></pre>
+            <img class="screenshot" src="/psykick2d/guides/platformer/img/fixed-player-cam.jpg" />
+
+            <h2 id="player-states">Player States</h2>
+
+            <p>Since the camera follows the player to infinity and beyond, now might be a good time to fix that jumping bug. The way we’ll do this is by setting a finite-state machine in the <code>PlayerInput</code> system so we can have states like walking, jumping, and falling. First we’ll say that each state has three stages: enter, exit, and update. Then we can define them like this:</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-keyword">var</span> BehaviorSystem = <span class="hljs-built_in">require</span>(<span class="hljs-string">'psykick2d'</span>).BehaviorSystem,
+
+    ...
+
+    STATES = {
+        STAND: <span class="hljs-number">0</span>,
+        WALK: <span class="hljs-number">1</span>,
+        JUMP: <span class="hljs-number">2</span>,
+        FALL: <span class="hljs-number">3</span>
+    };
+
+…
+
+<span class="hljs-keyword">var</span> PlayerInput = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(player)</span> {</span>
+    BehaviorSystem.call(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.player = player;
+    <span class="hljs-keyword">this</span>.currentState = STATES.STAND;
+    <span class="hljs-keyword">this</span>.nextState = STATES.STAND;
+};
+
+PlayerInput.prototype._states = {};
+PlayerInput.prototype._states[STATES.STAND] = {
+    enter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> body = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>);
+        body.velocity.x = body.velocity.y = <span class="hljs-number">0</span>;
+    },
+    update: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Left) || Keyboard.isKeyDown(Right)) {
+            <span class="hljs-keyword">this</span>.nextState = STATES.WALK;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Up)) {
+            <span class="hljs-keyword">this</span>.nextState = STATES.JUMP;
+        }
+    },
+    exit: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>}
+};</code></pre>
+
+            <p>Then we merely update the main <code>update</code> function :</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">PlayerInput.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.currentState !== <span class="hljs-keyword">this</span>.nextState) {
+        <span class="hljs-comment">// Have to use 'call' so that 'this' works correctly</span>
+        <span class="hljs-keyword">this</span>._states[<span class="hljs-keyword">this</span>.currentState].exit.call(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>._states[<span class="hljs-keyword">this</span>.nextState].enter.call(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>.currentState = <span class="hljs-keyword">this</span>.nextState;
+    }
+
+    <span class="hljs-keyword">this</span>._states[<span class="hljs-keyword">this</span>.currentState].update.call(<span class="hljs-keyword">this</span>);
+};</code></pre>
+
+            <p>If you test it out now, you’ll see that it breaks when we walk or jump. That’s because we still need to define those states:</p>
+
+            <p><em class="caption">player-input.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">...
+
+PlayerInput.prototype._states[STATES.WALK] = {
+    enter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> sprite = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'Sprite'</span>);
+        <span class="hljs-comment">// Flip the sprite depending on if the player </span>
+        <span class="hljs-comment">// is pressing left or right</span>
+        <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Left)) {
+            sprite.pivot.x = <span class="hljs-number">128</span>;
+            sprite.scale.x = -<span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Right)) {
+            sprite.pivot.x = <span class="hljs-number">0</span>;
+            sprite.scale.x = <span class="hljs-number">1</span>;
+        }
+    },
+    update: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+        <span class="hljs-keyword">var</span> body = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>),
+            sprite = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'Sprite'</span>);
+        <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Left)) {
+            body.friction = <span class="hljs-number">0</span>;
+            <span class="hljs-comment">// Were we moving to the right before?</span>
+            <span class="hljs-keyword">if</span> (body.velocity.x &gt; <span class="hljs-number">0</span>) {
+                <span class="hljs-comment">// Flip the sprite</span>
+                sprite.pivot.x = <span class="hljs-number">128</span>;
+                sprite.scale.x = -<span class="hljs-number">1</span>;
+            }
+            body.velocity.x -= delta * <span class="hljs-number">8</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Keyboard.isKeyDown(Keys.Right)) {
+            body.friction = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">if</span> (body.velocity.x &lt; <span class="hljs-number">0</span>) {
+                sprite.pivot.x = <span class="hljs-number">0</span>;
+                sprite.scale.x = <span class="hljs-number">1</span>;
+            }
+
+            body.velocity.x += delta * <span class="hljs-number">8</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.abs(body.velocity.x) &lt;=
+                   CONSTANTS.PLAYER.RUN_SPEED * delta) {
+            <span class="hljs-comment">// If we slowed down enough from friction, come to a stop</span>
+            <span class="hljs-keyword">this</span>.nextState = STATES.STAND;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// Apply friction so the player slows down when </span>
+            <span class="hljs-comment">// they're not pressing anything</span>
+            body.friction = <span class="hljs-number">1</span>;
+        }
+    }
+};
+
+PlayerInput.prototype._states[STATES.JUMP] = {
+    enter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> body = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>);
+        body.velocity.y = -<span class="hljs-number">15</span>;
+    },
+    update: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(delta)</span> {</span>
+        <span class="hljs-comment">// Start falling if they let go of jump</span>
+        <span class="hljs-keyword">if</span> (body.velocity.y &lt; <span class="hljs-number">0</span> &amp;&amp; !Keyboard.isKeyDown(Keys.Up)) {
+            body.velocity.y = <span class="hljs-number">0</span>;
+        }
+
+        <span class="hljs-keyword">if</span> (body.velocity.y &lt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">this</span>.nextState = STATES.FALL;
+        }
+    },
+    exit: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>}
+};
+
+PlayerInput.prototype._states[STATES.FALL] = {
+    enter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>},
+    update: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> body = <span class="hljs-keyword">this</span>.player.getComponent(<span class="hljs-string">'RectPhysicsBody'</span>);
+        <span class="hljs-comment">// If we're not falling, we must be standing</span>
+        <span class="hljs-keyword">if</span> (body.velocity.x === <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">this</span>.nextState = STATES.STAND;
+        }
+    },
+    exit: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>}
+};</code></pre>
+
+            <p>This gives us much tighter control over how the player works in each state and makes it a lot easier to add future states (attacking, dying, etc.)</p>
+
+
+
+            <h2 id="creating-maps">Creating Maps</h2>
+
+            <p>With all of the basic mechanics working, it’s time to expand our level. Rather than throwing in numerous lines for each platform, let’s make a map file. Map files can be designed any number of ways but this one will be broken up based on types entities. Create a <code>maps</code> folder then create <code>maps/level1.json</code> (if you’re doing this without Node.js, you may want to create this as an object attached to your custom namespace instead of making a JSON file)</p>
+
+            <p><em class="caption">level1.json</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs ">{
+    “player”: {
+        “x”: <span class="hljs-number">300</span>,
+        “y”: <span class="hljs-number">450</span>
+    },
+    “grass”: [
+        {
+            “x”: <span class="hljs-number">0</span>,
+            “y”: <span class="hljs-number">568</span>,
+            “width”: <span class="hljs-number">800</span>,
+            “height”: <span class="hljs-number">32</span>
+        }
+    ],
+    “steel”: [
+        {
+            “x”: <span class="hljs-number">375</span>,
+            “y”: <span class="hljs-number">500</span>,
+            “width”: <span class="hljs-number">122</span>,
+            “height”: <span class="hljs-number">32</span>
+        }
+    ]
+}</code></pre>
+
+            <p>For most entity types, we have an array of objects, each used to create a new tile. The only exception is the player, where we only provide it’s position since this is a single-player game.</p>
+
+            <p>Now we just write up a way of “parsing” this map file:</p>
+
+            <p><em class="caption">main.js</em></p>
+
+
+
+            <pre class="prettyprint"><code class="language-javascript hljs "><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> map = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../maps/level1.json'</span>),
+        layer = World.createLayer(),
+        spriteSystem = <span class="hljs-keyword">new</span> SpriteSystem(),
+        physics = <span class="hljs-keyword">new</span> Platformer({
+            width: <span class="hljs-number">10000</span>,
+            height: <span class="hljs-number">10000</span>,
+            gravity: <span class="hljs-number">30</span>
+        }),
+        player = Factory.createPlayer(map.player.x, map.player.y),
+        playerInput = <span class="hljs-keyword">new</span> PlayerInput(player);
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> entityType <span class="hljs-keyword">in</span> map) {
+        <span class="hljs-keyword">if</span> (entityType === <span class="hljs-string">'player'</span>) {
+            <span class="hljs-comment">// Skip the player since we already handled them</span>
+            <span class="hljs-keyword">continue</span>;
+        }
+
+        <span class="hljs-keyword">var</span> entities = map[entityType];
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, len = entities.length; i &lt; len; i++) {
+            <span class="hljs-keyword">var</span> config = entities[i],
+                createEntity = <span class="hljs-literal">null</span>,
+                newEntity;
+            <span class="hljs-comment">// Decide how to create the next entity</span>
+            <span class="hljs-keyword">switch</span>(entityType) {
+                <span class="hljs-keyword">case</span> <span class="hljs-string">'grass'</span>:
+                    createEntity = Factory.createGrass;
+                    <span class="hljs-keyword">break</span>;
+                <span class="hljs-keyword">case</span> <span class="hljs-string">'steel'</span>:
+                    createEntity = Factory.createSteel;
+                    <span class="hljs-keyword">break</span>;
+            }
+
+            <span class="hljs-keyword">if</span> (createEntity !== <span class="hljs-literal">null</span>) {
+                newEntity = createEntity(
+                    config.x,
+                    config.y,
+                    config.width,
+                    config.height
+                );
+                spriteSystem.addEntity(newEntity);
+                physics.addEntity(newEntity);
+            }
+        }
+    }
+
+    layer.addSystem(playerInput);
+    layer.addSystem(physics);
+    layer.addSystem(spriteSystem);
+}</code></pre>
+
+            <p>And now if you run the game you’ll see the exact same thing as before BUT now the world is being populated from the map file. Go ahead and try modifying the map file and create your own level.</p>
+
+
+
+            <h2 id="conclusion">Conclusion</h2>
+
+            <p>You’ve now got all of the key components required to create your own platformer. To really clean it up, you might want to look into adding the <a href="/psykick2d/docs/systems/behavior/animate">Animation system</a> and animating the walk cycle. That is left as an exercise for the reader.</p>
+
+            <p>Questions, comments, complaints? Feel free to send me an email at <a href="mailto:mcluck90@gmail.com">mcluck90@gmail.com</a>. If there’s anything that you feel could be improved or if you’re interested in additional guides, please let me know.</p>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+            <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+            <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+            <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-50785976-3', 'auto');
+                ga('send', 'pageview');
+
+            </script>
+        </div>
+    </div>
+</body>
+</html>
