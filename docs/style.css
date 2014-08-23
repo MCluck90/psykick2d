@@ -57,6 +57,11 @@ body {
     color: #77B9FF;
 }
 
+.private {
+    font-style: italic;
+    font-weight: normal;
+}
+
 /* Types */
 .null {
     color: #F00;
