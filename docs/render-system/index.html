@@ -19,6 +19,19 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Psykick2D</a>
             </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/psykick2d/docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -44,6 +57,8 @@
                                     <li><a href="./components/gfx/color/">Color</a></li>
                                     
                                     <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/text/">Text</a></li>
                                     
                                     <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
                                     
@@ -74,6 +89,12 @@
                                     
                                     <li><a href="./components/shape/">Shape</a></li>
                                     
+                                    <li><a href="./components/shapes/">Shapes</a></li>
+                                    
+                                    <li><a href="./components/physics/">Physics</a></li>
+                                    
+                                    <li><a href="./components/gfx/">GFX</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -84,30 +105,6 @@
                                     <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
                                     
                                     <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Helpers</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
-                                    
-                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Input</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./input/gamepad/">Gamepad</a></li>
-                                    
-                                    <li><a href="./input/keyboard/">Keyboard</a></li>
-                                    
-                                    <li><a href="./input/mouse/">Mouse</a></li>
                                     
                                 </ul>
                             </li>
@@ -133,6 +130,8 @@
                                     
                                     <li><a href="./systems/behavior/animate/">Animate</a></li>
                                     
+                                    <li><a href="./systems/behavior/physics/">Physics</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -146,16 +145,20 @@
                                     
                                     <li><a href="./systems/render/sprite/">Sprite</a></li>
                                     
+                                    <li><a href="./systems/render/text/">Text</a></li>
+                                    
                                 </ul>
                             </li>
                             
                                     
                                     
+                                    <li><a href="./systems/render/">Render</a></li>
+                                    
+                                    <li><a href="./systems/behavior/">Behavior</a></li>
+                                    
                                 </ul>
                             </li>
                             
-                            
-                                <li><a href="./asset-manager/">AssetManager</a></li>
                             
                                 <li><a href="./behavior-system/">BehaviorSystem</a></li>
                             
@@ -167,8 +170,6 @@
                             
                                 <li><a href="./input/">Input</a></li>
                             
-                                <li><a href="./keys/">Keys</a></li>
-                            
                                 <li><a href="./layer/">Layer</a></li>
                             
                                 <li><a href="./render-system/">RenderSystem</a></li>
@@ -176,6 +177,12 @@
                                 <li><a href="./system/">System</a></li>
                             
                                 <li><a href="./world/">World</a></li>
+                            
+                                <li><a href="./systems/">Systems</a></li>
+                            
+                                <li><a href="./data-structures/">DataStructures</a></li>
+                            
+                                <li><a href="./components/">Components</a></li>
                             
                         </ul>
                     </li>
@@ -193,7 +200,8 @@
                     <!-- Component header -->
                     <div class="panel-heading">
                         <h3>RenderSystem</h3>
-                        <em>Controls how entities are displayed</em>
+                        <em>Controls how Entities are displayed.
+Called during the "draw" stage of a frame</em>
                     </div>
                     <div class="panel-body">
                         
@@ -221,9 +229,9 @@
                                 
                                 <tr>
                                     <td>drawOrder</td>
-                                    <td class="default-type">Entity[]</td>
+                                    <td class="default-type">ARRAY</td>
                                     <td>
-                                        Order for entities to be drawn/updated
+                                        
 
                                         
                                     </td>
@@ -233,9 +241,9 @@
                                 
                                 <tr>
                                     <td>objectContainer</td>
-                                    <td class="default-type">PIXI.DisplayObjectContainer</td>
+                                    <td class="default-type"></td>
                                     <td>
-                                        Container for all entities being drawn
+                                        
 
                                         
                                     </td>
@@ -259,11 +267,8 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
-                                    draw(
                                     
-                                        
-                                        <span class="param" class="param">layer</span>
+                                    addEntity(
                                     
                                     )
 
@@ -271,7 +276,75 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Draw all of the entities</em></h4>
+                                <h4><em>Add a new Entity to the collection and make it the last one to be drawn</em></h4>
+                                <table class="table table-striped">
+                                    <tbody>
+                                        
+                                            <tr>
+                                                <td class="param">entity</td>
+                                                <td class="default-type"></td>
+                                                <td>
+                                                    
+
+                                                    
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    
+                                        <span class="default-type">boolean</span>
+                                    
+                                    removeEntity(
+                                    
+                                    )
+
+                                    
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <h4><em>Removes an Entity</em></h4>
+                                <table class="table table-striped">
+                                    <tbody>
+                                        
+                                            <tr>
+                                                <td class="param">entity</td>
+                                                <td class="default-type"></td>
+                                                <td>
+                                                    
+
+                                                    
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    
+                                    draw(
+                                    
+                                    )
+
+                                    
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <h4><em>Draw all of the entities.<br />Should be defined for every RenderSystem</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -306,9 +379,9 @@
                 <td class="indent"></td>
             
             <td>drawOrder</td>
-            <td class="default-type">Entity[]</td>
+            <td class="default-type">ARRAY</td>
             <td>
-                Order for entities to be drawn/updated
+                
                 
             </td>
             <td></td>
@@ -320,9 +393,9 @@
                 <td class="indent"></td>
             
             <td>objectContainer</td>
-            <td class="default-type">PIXI.DisplayObjectContainer</td>
+            <td class="default-type"></td>
             <td>
-                Container for all entities being drawn
+                
                 
             </td>
             <td></td>

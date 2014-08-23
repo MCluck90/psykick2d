@@ -19,6 +19,19 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Psykick2D</a>
             </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/psykick2d/docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -44,6 +57,8 @@
                                     <li><a href="./components/gfx/color/">Color</a></li>
                                     
                                     <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/text/">Text</a></li>
                                     
                                     <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
                                     
@@ -74,6 +89,12 @@
                                     
                                     <li><a href="./components/shape/">Shape</a></li>
                                     
+                                    <li><a href="./components/shapes/">Shapes</a></li>
+                                    
+                                    <li><a href="./components/physics/">Physics</a></li>
+                                    
+                                    <li><a href="./components/gfx/">GFX</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -84,30 +105,6 @@
                                     <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
                                     
                                     <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Helpers</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
-                                    
-                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Input</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./input/gamepad/">Gamepad</a></li>
-                                    
-                                    <li><a href="./input/keyboard/">Keyboard</a></li>
-                                    
-                                    <li><a href="./input/mouse/">Mouse</a></li>
                                     
                                 </ul>
                             </li>
@@ -133,6 +130,8 @@
                                     
                                     <li><a href="./systems/behavior/animate/">Animate</a></li>
                                     
+                                    <li><a href="./systems/behavior/physics/">Physics</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -146,16 +145,20 @@
                                     
                                     <li><a href="./systems/render/sprite/">Sprite</a></li>
                                     
+                                    <li><a href="./systems/render/text/">Text</a></li>
+                                    
                                 </ul>
                             </li>
                             
                                     
                                     
+                                    <li><a href="./systems/render/">Render</a></li>
+                                    
+                                    <li><a href="./systems/behavior/">Behavior</a></li>
+                                    
                                 </ul>
                             </li>
                             
-                            
-                                <li><a href="./asset-manager/">AssetManager</a></li>
                             
                                 <li><a href="./behavior-system/">BehaviorSystem</a></li>
                             
@@ -167,8 +170,6 @@
                             
                                 <li><a href="./input/">Input</a></li>
                             
-                                <li><a href="./keys/">Keys</a></li>
-                            
                                 <li><a href="./layer/">Layer</a></li>
                             
                                 <li><a href="./render-system/">RenderSystem</a></li>
@@ -176,6 +177,12 @@
                                 <li><a href="./system/">System</a></li>
                             
                                 <li><a href="./world/">World</a></li>
+                            
+                                <li><a href="./systems/">Systems</a></li>
+                            
+                                <li><a href="./data-structures/">DataStructures</a></li>
+                            
+                                <li><a href="./components/">Components</a></li>
                             
                         </ul>
                     </li>
@@ -204,7 +211,23 @@
                             <span class="keyword">new</span> <span>Shape</span>(
                             
                                 
+                                
+                                
+                                [
+                                
                                 <span class="param">options</span>
+                                
+                                ]
+                                
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
                             
                             )
                         
@@ -226,7 +249,7 @@
                                 
                                 <tr>
                                     <td class="param">options</td>
-                                    <td class="default-type">Object</td>
+                                    <td class="default-type">object</td>
                                     <td>
                                         
 
@@ -236,65 +259,52 @@
                                 </tr>
                                 
                                 
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>color</td>
-            <td class="default-type">Number|null</td>
-            <td>
-                Hex color value, if applicable
-                
-            </td>
-            <td>null</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>x</td>
-            <td class="default-type">Number</td>
-            <td>
-                X position
-                
-            </td>
-            <td>0</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>y</td>
-            <td class="default-type">Number</td>
-            <td>
-                Y position
-                
-            </td>
-            <td>0</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>rotation</td>
-            <td class="default-type">Number</td>
-            <td>
-                Rotation in radians
-                
-            </td>
-            <td>0</td>
-            
-        </tr>
-        
-        
-    
+                                <tr>
+                                    <td class="param">options.color</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>null</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.x</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>0</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.y</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>0</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.rotation</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td>0</td>
+                                </tr>
                                 
                                 
                             </tbody>
@@ -313,50 +323,74 @@
                             <tbody>
                                 
                                 <tr>
-                                    <td>color</td>
-                                    <td class="default-type">Number|null</td>
+                                    <td>_initializing</td>
+                                    <td class="default-type">boolean</td>
                                     <td>
-                                        Hex color value, if applicable
+                                        
 
                                         
                                     </td>
-                                    <td>null</td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>_color</td>
+                                    <td class="default-type"></td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>color</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td></td>
                                 </tr>
                                 
                                 
                                 <tr>
                                     <td>x</td>
-                                    <td class="default-type">Number</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        X position
+                                        
 
                                         
                                     </td>
-                                    <td>0</td>
+                                    <td></td>
                                 </tr>
                                 
                                 
                                 <tr>
                                     <td>y</td>
-                                    <td class="default-type">Number</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        Y position
+                                        
 
                                         
                                     </td>
-                                    <td>0</td>
+                                    <td></td>
                                 </tr>
                                 
                                 
                                 <tr>
                                     <td>rotation</td>
-                                    <td class="default-type">Number</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        Rotation in radians
+                                        
 
                                         
                                     </td>
-                                    <td>0</td>
+                                    <td></td>
                                 </tr>
                                 
                                 
@@ -377,13 +411,41 @@
             
                 <td class="indent"></td>
             
-            <td>color</td>
-            <td class="default-type">Number|null</td>
+            <td>_initializing</td>
+            <td class="default-type">boolean</td>
             <td>
-                Hex color value, if applicable
+                
                 
             </td>
-            <td>null</td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>_color</td>
+            <td class="default-type"></td>
+            <td>
+                
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>color</td>
+            <td class="default-type">string</td>
+            <td>
+                
+                
+            </td>
+            <td></td>
             
         </tr>
         
@@ -392,12 +454,12 @@
                 <td class="indent"></td>
             
             <td>x</td>
-            <td class="default-type">Number</td>
+            <td class="default-type">number</td>
             <td>
-                X position
+                
                 
             </td>
-            <td>0</td>
+            <td></td>
             
         </tr>
         
@@ -406,12 +468,12 @@
                 <td class="indent"></td>
             
             <td>y</td>
-            <td class="default-type">Number</td>
+            <td class="default-type">number</td>
             <td>
-                Y position
+                
                 
             </td>
-            <td>0</td>
+            <td></td>
             
         </tr>
         
@@ -420,12 +482,12 @@
                 <td class="indent"></td>
             
             <td>rotation</td>
-            <td class="default-type">Number</td>
+            <td class="default-type">number</td>
             <td>
-                Rotation in radians
+                
                 
             </td>
-            <td>0</td>
+            <td></td>
             
         </tr>
         

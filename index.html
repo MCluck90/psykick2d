@@ -1,82 +1,122 @@
 <!DOCTYPE html>
 <html>
-
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Psykick2D</title>
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="Psykick2D: A 2D HTML5 game engine">
     <link rel="canonical" href="http://mcluck90.github.io/">
+    <base href="http://mcluck90.github.io/psykick2d/">
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="/psykick2d/css/pygment_trac.css">
-    <link rel="stylesheet" href="/psykick2d/css/stylesheet.css">
-
+    <!--<link rel="stylesheet" href="/psykick2d/css/stylesheet.css">-->
+    <link rel="stylesheet" href="/psykick2d/docs/bootstrap.min.css">
+    <link rel="stylesheet" href="/psykick2d/docs/style.css">
 </head>
-
-
-    <body>
-
-    <div id="header_wrap" class="outer">
-    <header class="inner">
-        <a id="forkme_banner" href="http://github.com/MCluck90/psykick2d">View on GitHub</a>
-
-        <h1 id="project_title">Psykick2D</h1>
-        <h2 id="project_tagline">See the future of your games</h2>
-        <h3><a href="docs/world">Documentation</a></h3>
-
-        <section id="downloads">
-            <a class="zip_download_link" href="http://github.com/MCluck90/psykick2d/archive/v0.4.2.zip">
-                Download as a .zip file
-            </a>
-            <a class="tar_download_link" href="http://github.com/MCluck90/psykick2d/archive/v0.4.2.tar.gz">
-                Download as a tar.gz file
-            </a>
-        </section>
-    </header>
-</div>
-
-    <div id="main_content_wrap" class="outer">
-        <section id="main_content" class="inner">
-            <h1>
-    <a name="psykick2d" class="anchor" href="#psykick2d"><span class="octicon octicon-link"></span></a>Psykick2D</h1>
-
-<p><a href="https://nodei.co/npm/psykick2d/"><img src="https://nodei.co/npm/psykick2d.png" alt="NPM"></a></p>
-
-<hr><h3>
-    <a name="building-psykick2d" class="anchor" href="#building-psykick2d"><span class="octicon octicon-link"></span></a>Building Psykick2D</h3>
-
-<p>Psykick2D relies on <a href="https://github.com/substack/node-browserify">Browserify</a> to be built for the browser.</p>
-
-<div class="highlight highlight-bash"><pre>npm install -g browserify
-browserify src/index.js &gt; psykick2d.js
-</pre></div>
-
-<p>Or you can use <a href="http://gruntjs.com/">Grunt</a> to build it</p>
-
-<div class="highlight highlight-bash"><pre>grunt build
-</pre></div>
-        </section>
+<body>
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Psykick2D</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="docs/world">API Reference</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-
-    <div id="footer_wrap" class="outer">
-    <footer class="inner">
-        <p class="copyright">Psykick2D maintained by <a href="https://github.com/MCluck90">MCluck90</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-    </footer>
 </div>
+<div class="container" role="main">
+    <div class="row">
+        <p>Psykick2D is an HTML5 game engine built with performance and usability in mind. Rendering is lightning fast with <a href="http://www.pixijs.com">Pixi.js</a>. Psykick2D aims to help your code be easy to work with, highly performant, and easily modified for special needs.</p>
 
-<script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-    try {
-        var pageTracker = _gat._getTracker("UA-50785976-1");
-        pageTracker._trackPageview();
-    } catch(err) {}
-</script>
+        <hr>
 
+        <h2 id="features">Features</h2>
+
+        <ul>
+            <li>Clean separation of concerns with an <strong>Entity-Component</strong> architecture</li>
+            <li>Easily modified <strong>camera</strong> system</li>
+            <li>Built in <strong>collision detection</strong> systems</li>
+            <li>Pre-built platformer <strong>physics</strong> (more coming soon)</li>
+            <li>Audio, images, and <strong>sprite sheets</strong> management</li>
+            <li>Keyboard, mouse, and <strong>gamepad</strong> support</li>
+            <li>Built in <strong>animation</strong></li>
+            <li>Can be used as a Node.js module or loaded directly into the browser</li>
+            <li>Don't need everything? Use the <strong>custom build</strong> system to keep what you need</li>
+        </ul>
+
+        <h2 id="requirements">Requirements</h2>
+
+        <p>Psykick2D requires a modern browser. I develop it in Chrome but have also tested in Firefox without any issues. Attempt in IE at your own risk.</p>
+
+        <h2 id="examples">Examples</h2>
+
+        <p>All of the code and resources for the examples are in the <code>examples</code> folder.</p>
+
+        <ul>
+            <li><a href="http://mcluck90.github.io/psykick2d/pong">Pong</a></li>
+            <li><a href="http://mcluck90.github.io/psykick2d/platformer">Dudley: The Dud Missile - Platformer</a></li>
+        </ul>
+
+        <h2 id="getting-started">Getting Started</h2>
+
+        <h3 id="nodejs">Node.js</h3>
+
+        <p>Just install it like you would any other module:</p>
+
+        <pre class="prettyprint prettyprinted"><code class="language-bash"><span class="pln">npm install psykick2d</span></code></pre>
+
+        <h3 id="browser">Browser</h3>
+
+        <p>If you just want to drop it in your browser and go, use the pre-built version:</p>
+
+        <pre class="prettyprint prettyprinted"><code class="language-bash"><span class="pln">build</span><span class="pun">/</span><span class="pln">psykick2d</span><span class="pun">.</span><span class="pln">js</span></code></pre>
+
+        <h3 id="guides">Guides</h3>
+
+        <p>For more information, check out the Getting Started guides (coming soon) or any one of the included <a href="https://github.com/MCluck90/psykick2d/tree/master/examples">examples</a>.</p>
+
+        <h2 id="how-to-build">How to Build</h2>
+
+        <p>Building is just a simple grunt command: <code>grunt build</code></p>
+
+        <h2 id="bugs">Bugs</h2>
+
+        <p>If you find any bugs, please submit them to the <a href="https://github.com/MCluck90/psykick2d/issues">issue tracker</a>.</p>
+
+        <h2 id="contributing">Contributing</h2>
+
+        <p>If you like Psykick2D and would like to help I'd love to have you! Feel free to tackle any bugs in the <a href="https://github.com/MCluck90/psykick2d/issues">issue tracker</a> or <a href="https://groups.google.com/forum/#!forum/psykick2d">jump on the mailing list</a> and talk about what you want out of the engine, stuff that needs to be fixed, anything. My vision is to make this a game engine by developers, <em>for</em> developers.</p>
+
+        <h2 id="license">License</h2>
+
+        <p>Psykick2D is licensed under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try {
+                var pageTracker = _gat._getTracker("UA-50785976-1");
+                pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+        </div>
+    </div>
     </body>
 </html>

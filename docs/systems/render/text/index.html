@@ -7,7 +7,7 @@
 
     <base href="http://mcluck90.github.io/psykick2d/docs/">
 
-    <title>Psykick2D - Gamepad</title>
+    <title>Psykick2D - Text</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/psykick2d/docs/bootstrap.min.css">
     <link rel="stylesheet" href="/psykick2d/css/pygment_trac.css">
@@ -18,6 +18,19 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Psykick2D</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/psykick2d/docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -44,6 +57,8 @@
                                     <li><a href="./components/gfx/color/">Color</a></li>
                                     
                                     <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/text/">Text</a></li>
                                     
                                     <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
                                     
@@ -74,6 +89,12 @@
                                     
                                     <li><a href="./components/shape/">Shape</a></li>
                                     
+                                    <li><a href="./components/shapes/">Shapes</a></li>
+                                    
+                                    <li><a href="./components/physics/">Physics</a></li>
+                                    
+                                    <li><a href="./components/gfx/">GFX</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -84,30 +105,6 @@
                                     <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
                                     
                                     <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Helpers</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
-                                    
-                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Input</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./input/gamepad/">Gamepad</a></li>
-                                    
-                                    <li><a href="./input/keyboard/">Keyboard</a></li>
-                                    
-                                    <li><a href="./input/mouse/">Mouse</a></li>
                                     
                                 </ul>
                             </li>
@@ -133,6 +130,8 @@
                                     
                                     <li><a href="./systems/behavior/animate/">Animate</a></li>
                                     
+                                    <li><a href="./systems/behavior/physics/">Physics</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -146,16 +145,20 @@
                                     
                                     <li><a href="./systems/render/sprite/">Sprite</a></li>
                                     
+                                    <li><a href="./systems/render/text/">Text</a></li>
+                                    
                                 </ul>
                             </li>
                             
                                     
                                     
+                                    <li><a href="./systems/render/">Render</a></li>
+                                    
+                                    <li><a href="./systems/behavior/">Behavior</a></li>
+                                    
                                 </ul>
                             </li>
                             
-                            
-                                <li><a href="./asset-manager/">AssetManager</a></li>
                             
                                 <li><a href="./behavior-system/">BehaviorSystem</a></li>
                             
@@ -167,8 +170,6 @@
                             
                                 <li><a href="./input/">Input</a></li>
                             
-                                <li><a href="./keys/">Keys</a></li>
-                            
                                 <li><a href="./layer/">Layer</a></li>
                             
                                 <li><a href="./render-system/">RenderSystem</a></li>
@@ -176,6 +177,12 @@
                                 <li><a href="./system/">System</a></li>
                             
                                 <li><a href="./world/">World</a></li>
+                            
+                                <li><a href="./systems/">Systems</a></li>
+                            
+                                <li><a href="./data-structures/">DataStructures</a></li>
+                            
+                                <li><a href="./components/">Components</a></li>
                             
                         </ul>
                     </li>
@@ -187,21 +194,25 @@
                 <ul class="breadcrumb">
                     
                         
-                            <li>Input</li>
+                            <li>Systems</li>
+                        
+                            <li>Render</li>
                         
                     
-                    <li class="active">Gamepad</li>
+                    <li class="active">Text</li>
                 </ul>
                 <!-- /Breadcrumb -->
                 <div class="panel panel-default">
                     <!-- Component header -->
                     <div class="panel-heading">
-                        <h3>Gamepad</h3>
-                        <em>Gamepad input</em>
+                        <h3>Text</h3>
+                        <em>Renders text</em>
                     </div>
                     <div class="panel-body">
                         
-                            <em>static</em> <span>Gamepad</span>
+                            <span class="keyword">new</span> <span>Text</span>(
+                            
+                            )
                         
 
                         
@@ -212,6 +223,31 @@
                 <!-- Component description -->
                 
 
+                
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Properties</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                
+                                <tr>
+                                    <td>requiredComponents</td>
+                                    <td class="default-type">ARRAY</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 
 
                 
@@ -224,8 +260,10 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Boolean</span>
-                                    isSupported(
+                                    
+                                        <span class="default-type">boolean</span>
+                                    
+                                    addEntity(
                                     
                                     )
 
@@ -233,138 +271,15 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Returns true if gamepad support is available</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">Boolean</span>
-                                    isConnected(
-                                    
-                                        
-                                        <span class="param" class="param">index</span>
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Returns true if a given gamepad is connected<br />Defaults to the current selected pad</em></h4>
+                                <h4><em>Adds the PIXI.Text objects to the scene</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
-                                                <td class="param">index</td>
-                                                <td class="default-type">Number</td>
+                                                <td class="param">entity</td>
+                                                <td class="default-type">Entity</td>
                                                 <td>
-                                                    Index of the desired gamepad
-
                                                     
-                                                </td>
-                                                <td>currentPadIndex</td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">Gamepad|null</span>
-                                    current(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Returns the current gamepad if it's connected</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">Gamepad|null</span>
-                                    next(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Moves to the next gamepad in the collection and returns it</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">Gamepad|null</span>
-                                    prev(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Moves to the previous gamepad in the collection and returns it</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">Number</span>
-                                    getButton(
-                                    
-                                        
-                                        <span class="param" class="param">buttonID</span>
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Returns the value for a given button input</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">buttonID</td>
-                                                <td class="default-type">Number</td>
-                                                <td>
-                                                    Gamepad button ID
 
                                                     
                                                 </td>
@@ -380,11 +295,10 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Number</span>
-                                    getAxis(
                                     
-                                        
-                                        <span class="param" class="param">axisID</span>
+                                        <span class="default-type">boolean</span>
+                                    
+                                    removeEntity(
                                     
                                     )
 
@@ -392,42 +306,21 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Returns the value for a given axis</em></h4>
+                                <h4><em>Removes an entity and the matching Text object</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
-                                                <td class="param">axisID</td>
-                                                <td class="default-type">Number</td>
+                                                <td class="param">entity</td>
+                                                <td class="default-type"></td>
                                                 <td>
-                                                    Gamepad axis ID
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
                                             </tr>
                                             
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <span class="default-type">GamepadList|[]</span>
-                                    getGamepads(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Returns all available gamepads</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
                                         
                                     </tbody>
                                 </table>
@@ -442,6 +335,20 @@
     </div>
 
     <script name="propertyList" type="text/x-handlebars-template">
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>requiredComponents</td>
+            <td class="default-type">ARRAY</td>
+            <td>
+                
+                
+            </td>
+            <td></td>
+            
+        </tr>
         
         
     </script>

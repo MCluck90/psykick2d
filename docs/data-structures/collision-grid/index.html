@@ -19,6 +19,19 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Psykick2D</a>
             </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/psykick2d/docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -44,6 +57,8 @@
                                     <li><a href="./components/gfx/color/">Color</a></li>
                                     
                                     <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/text/">Text</a></li>
                                     
                                     <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
                                     
@@ -74,6 +89,12 @@
                                     
                                     <li><a href="./components/shape/">Shape</a></li>
                                     
+                                    <li><a href="./components/shapes/">Shapes</a></li>
+                                    
+                                    <li><a href="./components/physics/">Physics</a></li>
+                                    
+                                    <li><a href="./components/gfx/">GFX</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -84,30 +105,6 @@
                                     <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
                                     
                                     <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Helpers</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
-                                    
-                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Input</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./input/gamepad/">Gamepad</a></li>
-                                    
-                                    <li><a href="./input/keyboard/">Keyboard</a></li>
-                                    
-                                    <li><a href="./input/mouse/">Mouse</a></li>
                                     
                                 </ul>
                             </li>
@@ -133,6 +130,8 @@
                                     
                                     <li><a href="./systems/behavior/animate/">Animate</a></li>
                                     
+                                    <li><a href="./systems/behavior/physics/">Physics</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -146,16 +145,20 @@
                                     
                                     <li><a href="./systems/render/sprite/">Sprite</a></li>
                                     
+                                    <li><a href="./systems/render/text/">Text</a></li>
+                                    
                                 </ul>
                             </li>
                             
                                     
                                     
+                                    <li><a href="./systems/render/">Render</a></li>
+                                    
+                                    <li><a href="./systems/behavior/">Behavior</a></li>
+                                    
                                 </ul>
                             </li>
                             
-                            
-                                <li><a href="./asset-manager/">AssetManager</a></li>
                             
                                 <li><a href="./behavior-system/">BehaviorSystem</a></li>
                             
@@ -167,8 +170,6 @@
                             
                                 <li><a href="./input/">Input</a></li>
                             
-                                <li><a href="./keys/">Keys</a></li>
-                            
                                 <li><a href="./layer/">Layer</a></li>
                             
                                 <li><a href="./render-system/">RenderSystem</a></li>
@@ -176,6 +177,12 @@
                                 <li><a href="./system/">System</a></li>
                             
                                 <li><a href="./world/">World</a></li>
+                            
+                                <li><a href="./systems/">Systems</a></li>
+                            
+                                <li><a href="./data-structures/">DataStructures</a></li>
+                            
+                                <li><a href="./components/">Components</a></li>
                             
                         </ul>
                     </li>
@@ -197,14 +204,31 @@
                     <!-- Component header -->
                     <div class="panel-heading">
                         <h3>CollisionGrid</h3>
-                        <em>A simple grid for finding collisions<br />Best used for tiled game worlds with defined boundaries</em>
+                        <em>A simple grid for finding any collisions
+Best used for tiled game worlds with defined boundaries</em>
                     </div>
                     <div class="panel-body">
                         
                             <span class="keyword">new</span> <span>CollisionGrid</span>(
                             
                                 
+                                
+                                
                                 <span class="param">options</span>
+                                
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
                             
                             )
                         
@@ -226,7 +250,7 @@
                                 
                                 <tr>
                                     <td class="param">options</td>
-                                    <td class="default-type">Object</td>
+                                    <td class="default-type">object</td>
                                     <td>
                                         
 
@@ -236,79 +260,76 @@
                                 </tr>
                                 
                                 
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>width</td>
-            <td class="default-type">Number</td>
-            <td>
-                Width of the game world
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>height</td>
-            <td class="default-type">Number</td>
-            <td>
-                Height of the game world
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>cellWidth</td>
-            <td class="default-type">Number</td>
-            <td>
-                Width of a game cell. May be overridden with cellSize
-                
-            </td>
-            <td>100</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>cellHeight</td>
-            <td class="default-type">Number</td>
-            <td>
-                Height of a game cell. May be overridden with cellSize
-                
-            </td>
-            <td>100</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>cellSize</td>
-            <td class="default-type">Number</td>
-            <td>
-                May be used for both cellWidth and cellHeight
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        
-    
+                                <tr>
+                                    <td class="param">options.width</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Width of the game world
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.height</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Height of the game world
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.cellWidth</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Width of a cell. May use cellSize instead
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.cellHeight</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Height of a cell. May use cellSize instead
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.cellSize</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Set this if you want width and height to be the same
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.componentType</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        Type of component to treat as a rectangle
+
+                                        
+                                    </td>
+                                    <td>&#x27;Rectangle&#x27;</td>
+                                </tr>
                                 
                                 
                             </tbody>
@@ -327,10 +348,10 @@
                             <tbody>
                                 
                                 <tr>
-                                    <td>x</td>
-                                    <td class="default-type">Number</td>
+                                    <td>width</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        X position of the world
+                                        
 
                                         
                                     </td>
@@ -339,10 +360,10 @@
                                 
                                 
                                 <tr>
-                                    <td>y</td>
-                                    <td class="default-type">Number</td>
+                                    <td>height</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        Y position of the world
+                                        
 
                                         
                                     </td>
@@ -351,10 +372,10 @@
                                 
                                 
                                 <tr>
-                                    <td>w</td>
-                                    <td class="default-type">Number</td>
+                                    <td>cellWidth</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        Width of the world
+                                        
 
                                         
                                     </td>
@@ -363,10 +384,10 @@
                                 
                                 
                                 <tr>
-                                    <td>h</td>
-                                    <td class="default-type">Number</td>
+                                    <td>cellHeight</td>
+                                    <td class="default-type">number</td>
                                     <td>
-                                        Height of the world
+                                        
 
                                         
                                     </td>
@@ -375,34 +396,10 @@
                                 
                                 
                                 <tr>
-                                    <td>cellSize</td>
-                                    <td class="default-type">Number</td>
+                                    <td>_grid</td>
+                                    <td class="default-type">Array</td>
                                     <td>
-                                        Size of a cell
-
                                         
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                
-                                
-                                <tr>
-                                    <td>children</td>
-                                    <td class="default-type">QuadTree[]</td>
-                                    <td>
-                                        Each node has 4 children until reaching the minimum size
-
-                                        
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                
-                                
-                                <tr>
-                                    <td>entities</td>
-                                    <td class="default-type">Entity[]</td>
-                                    <td>
-                                        Collection of entities in the cell
 
                                         
                                     </td>
@@ -426,22 +423,16 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
+                                    
                                     addEntity(
                                     
-                                        
-                                        <span class="param" class="param">entity</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">body</span>
-                                    
                                     )
 
                                     
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Adds an entity to the tree</em></h4>
+                                <h4><em>Adds an entity to the grid<br />Entity must have a Rectangle component</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -449,23 +440,11 @@
                                                 <td class="param">entity</td>
                                                 <td class="default-type">Entity</td>
                                                 <td>
-                                                    Entity to add to the tree
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">body</td>
-                                                <td class="default-type">RectPhysicsBody</td>
-                                                <td>
-                                                    Rectangular physics body. Used during recursion
-
-                                                    
-                                                </td>
-                                                <td>entity.getComponent(&#x27;RectPhysicsBody&#x27;)</td>
                                             </tr>
                                             
                                         
@@ -477,22 +456,16 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
+                                    
                                     removeEntity(
                                     
-                                        
-                                        <span class="param" class="param">entity</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">body</span>
-                                    
                                     )
 
                                     
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Removes an entity from the tree</em></h4>
+                                <h4><em>Removes an entity from the grid</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -500,23 +473,11 @@
                                                 <td class="param">entity</td>
                                                 <td class="default-type">Entity</td>
                                                 <td>
-                                                    Entity to remove from the tree
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">body</td>
-                                                <td class="default-type">RectPhysicsBody</td>
-                                                <td>
-                                                    Rectangular physics body. Used during recursion
-
-                                                    
-                                                </td>
-                                                <td>entity.getComponent(&#x27;RectPhysicsBody&#x27;)</td>
                                             </tr>
                                             
                                         
@@ -528,14 +489,8 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
+                                    
                                     moveEntity(
-                                    
-                                        
-                                        <span class="param" class="param">entity</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">deltaPosition</span>
                                     
                                     )
 
@@ -543,7 +498,7 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Moves an Entity and updates it's position in the tree</em></h4>
+                                <h4><em>Moves an Entity and updates it's position in the grid</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -551,7 +506,7 @@
                                                 <td class="param">entity</td>
                                                 <td class="default-type">Entity</td>
                                                 <td>
-                                                    Entity that will be moved
+                                                    
 
                                                     
                                                 </td>
@@ -561,47 +516,14 @@
                                         
                                             <tr>
                                                 <td class="param">deltaPosition</td>
-                                                <td class="default-type">Object</td>
+                                                <td class="default-type"></td>
                                                 <td>
-                                                    Position changes
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
                                             </tr>
-                                            
-                                                
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>x</td>
-            <td class="default-type">Number</td>
-            <td>
-                X position change
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>y</td>
-            <td class="default-type">Number</td>
-            <td>
-                Y position change
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        
-    
                                             
                                         
                                     </tbody>
@@ -612,14 +534,10 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Entity[]</span>
+                                    
+                                        <span class="default-type">Entity[]</span>
+                                    
                                     getCollisions(
-                                    
-                                        
-                                        <span class="param" class="param">entity</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">body</span>
                                     
                                     )
 
@@ -627,7 +545,7 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Returns all entities the given entity is colliding with</em></h4>
+                                <h4><em>Gets the collisions for a given Entity</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -635,23 +553,11 @@
                                                 <td class="param">entity</td>
                                                 <td class="default-type">Entity</td>
                                                 <td>
-                                                    Entity to check collisions against
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">body</td>
-                                                <td class="default-type">RectPhysicsBody</td>
-                                                <td>
-                                                    Physics body from Entity. Used during recursion
-
-                                                    
-                                                </td>
-                                                <td>entity.getComponent(&#x27;RectPhysicsBody&#x27;)</td>
                                             </tr>
                                             
                                         
@@ -673,10 +579,10 @@
             
                 <td class="indent"></td>
             
-            <td>x</td>
-            <td class="default-type">Number</td>
+            <td>width</td>
+            <td class="default-type">number</td>
             <td>
-                X position of the world
+                
                 
             </td>
             <td></td>
@@ -687,10 +593,10 @@
             
                 <td class="indent"></td>
             
-            <td>y</td>
-            <td class="default-type">Number</td>
+            <td>height</td>
+            <td class="default-type">number</td>
             <td>
-                Y position of the world
+                
                 
             </td>
             <td></td>
@@ -701,10 +607,10 @@
             
                 <td class="indent"></td>
             
-            <td>w</td>
-            <td class="default-type">Number</td>
+            <td>cellWidth</td>
+            <td class="default-type">number</td>
             <td>
-                Width of the world
+                
                 
             </td>
             <td></td>
@@ -715,10 +621,10 @@
             
                 <td class="indent"></td>
             
-            <td>h</td>
-            <td class="default-type">Number</td>
+            <td>cellHeight</td>
+            <td class="default-type">number</td>
             <td>
-                Height of the world
+                
                 
             </td>
             <td></td>
@@ -729,38 +635,10 @@
             
                 <td class="indent"></td>
             
-            <td>cellSize</td>
-            <td class="default-type">Number</td>
+            <td>_grid</td>
+            <td class="default-type">Array</td>
             <td>
-                Size of a cell
                 
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>children</td>
-            <td class="default-type">QuadTree[]</td>
-            <td>
-                Each node has 4 children until reaching the minimum size
-                
-            </td>
-            <td></td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>entities</td>
-            <td class="default-type">Entity[]</td>
-            <td>
-                Collection of entities in the cell
                 
             </td>
             <td></td>

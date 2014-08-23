@@ -19,6 +19,19 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Psykick2D</a>
             </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/psykick2d/docs/world">API Reference</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/psykick2d/guides/platformer">Platformer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -44,6 +57,8 @@
                                     <li><a href="./components/gfx/color/">Color</a></li>
                                     
                                     <li><a href="./components/gfx/sprite/">Sprite</a></li>
+                                    
+                                    <li><a href="./components/gfx/text/">Text</a></li>
                                     
                                     <li><a href="./components/gfx/tiled-sprite/">TiledSprite</a></li>
                                     
@@ -74,6 +89,12 @@
                                     
                                     <li><a href="./components/shape/">Shape</a></li>
                                     
+                                    <li><a href="./components/shapes/">Shapes</a></li>
+                                    
+                                    <li><a href="./components/physics/">Physics</a></li>
+                                    
+                                    <li><a href="./components/gfx/">GFX</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -84,30 +105,6 @@
                                     <li><a href="./data-structures/collision-grid/">CollisionGrid</a></li>
                                     
                                     <li><a href="./data-structures/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Helpers</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./helpers/collision-grid/">CollisionGrid</a></li>
-                                    
-                                    <li><a href="./helpers/quad-tree/">QuadTree</a></li>
-                                    
-                                </ul>
-                            </li>
-                            
-                            <li><label class="tree-toggler nav-header">Input</label>
-                                <ul class="nav nav-list tree">
-                                    
-                                    
-                                    <li><a href="./input/gamepad/">Gamepad</a></li>
-                                    
-                                    <li><a href="./input/keyboard/">Keyboard</a></li>
-                                    
-                                    <li><a href="./input/mouse/">Mouse</a></li>
                                     
                                 </ul>
                             </li>
@@ -133,6 +130,8 @@
                                     
                                     <li><a href="./systems/behavior/animate/">Animate</a></li>
                                     
+                                    <li><a href="./systems/behavior/physics/">Physics</a></li>
+                                    
                                 </ul>
                             </li>
                             
@@ -146,16 +145,20 @@
                                     
                                     <li><a href="./systems/render/sprite/">Sprite</a></li>
                                     
+                                    <li><a href="./systems/render/text/">Text</a></li>
+                                    
                                 </ul>
                             </li>
                             
                                     
                                     
+                                    <li><a href="./systems/render/">Render</a></li>
+                                    
+                                    <li><a href="./systems/behavior/">Behavior</a></li>
+                                    
                                 </ul>
                             </li>
                             
-                            
-                                <li><a href="./asset-manager/">AssetManager</a></li>
                             
                                 <li><a href="./behavior-system/">BehaviorSystem</a></li>
                             
@@ -167,8 +170,6 @@
                             
                                 <li><a href="./input/">Input</a></li>
                             
-                                <li><a href="./keys/">Keys</a></li>
-                            
                                 <li><a href="./layer/">Layer</a></li>
                             
                                 <li><a href="./render-system/">RenderSystem</a></li>
@@ -176,6 +177,12 @@
                                 <li><a href="./system/">System</a></li>
                             
                                 <li><a href="./world/">World</a></li>
+                            
+                                <li><a href="./systems/">Systems</a></li>
+                            
+                                <li><a href="./data-structures/">DataStructures</a></li>
+                            
+                                <li><a href="./components/">Components</a></li>
                             
                         </ul>
                     </li>
@@ -193,7 +200,7 @@
                     <!-- Component header -->
                     <div class="panel-heading">
                         <h3>Helper</h3>
-                        <em>A collection of helper methods</em>
+                        <em></em>
                     </div>
                     <div class="panel-body">
                         
@@ -220,14 +227,10 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
+                                    
+                                        <span class="default-type">boolean</span>
+                                    
                                     has(
-                                    
-                                        
-                                        <span class="param" class="param">obj</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">key</span>
                                     
                                     )
 
@@ -235,7 +238,7 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Determine if an object has a local property</em></h4>
+                                <h4><em>Determine if an object has a property (not on the prototype chain)</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -243,7 +246,7 @@
                                                 <td class="param">obj</td>
                                                 <td class="default-type">Object</td>
                                                 <td>
-                                                    Object to check
+                                                    
 
                                                     
                                                 </td>
@@ -253,9 +256,9 @@
                                         
                                             <tr>
                                                 <td class="param">key</td>
-                                                <td class="default-type">*</td>
+                                                <td class="default-type"></td>
                                                 <td>
-                                                    Property to check for
+                                                    
 
                                                     
                                                 </td>
@@ -271,42 +274,26 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Object</span>
+                                    
+                                        <span class="default-type">Object</span>
+                                    
                                     defaults(
                                     
-                                        
-                                        <span class="param" class="param">obj</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">...</span>
-                                    
                                     )
 
                                     
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Creates an object with default values filled in</em></h4>
+                                <h4><em>Adds default properties to an object</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
                                                 <td class="param">obj</td>
-                                                <td class="default-type">Object</td>
+                                                <td class="default-type"></td>
                                                 <td>
-                                                    Object to start with
-
                                                     
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">...</td>
-                                                <td class="default-type">Object...</td>
-                                                <td>
-                                                    Any number of objects to use as defaults
 
                                                     
                                                 </td>
@@ -322,42 +309,26 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Object</span>
+                                    
+                                        <span class="default-type">T</span>
+                                    
                                     extend(
                                     
-                                        
-                                        <span class="param" class="param">obj</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">...</span>
-                                    
                                     )
 
                                     
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Adds or replaces properties on an object without making a new instance</em></h4>
+                                <h4><em>Adds or replaces properties on an object</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
                                                 <td class="param">obj</td>
-                                                <td class="default-type">Object</td>
+                                                <td class="default-type"></td>
                                                 <td>
-                                                    Object to extend
-
                                                     
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">...</td>
-                                                <td class="default-type">Object...</td>
-                                                <td>
-                                                    Any number of objects to copy properties from
 
                                                     
                                                 </td>
@@ -373,14 +344,8 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type"></span>
+                                    
                                     inherit(
-                                    
-                                        
-                                        <span class="param" class="param">Derived</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">Base</span>
                                     
                                     )
 
@@ -388,7 +353,7 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Performs prototypical inheritance</em></h4>
+                                <h4><em>Does very basic inheritance for a class</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
@@ -396,7 +361,7 @@
                                                 <td class="param">Derived</td>
                                                 <td class="default-type">Function</td>
                                                 <td>
-                                                    Class which is inheriting from another
+                                                    Class to do the inheriting
 
                                                     
                                                 </td>
@@ -424,32 +389,26 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Boolean</span>
+                                    
+                                        <span class="default-type">boolean</span>
+                                    
                                     isKeyDown(
-                                    
-                                        
-                                        <span class="param" class="param">keyCode</span>
-                                    
-                                        , 
-                                        <span class="param" class="param">modifiers</span>
                                     
                                     )
 
                                     
-                                        <span class="deprecated">[Deprecated: Use Input.Keyboard.isKeyDown]</span>
-                                    
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Returns true if a given key is currently pressed</em></h4>
+                                <h4><em>Returns if a given key is pressed</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
                                                 <td class="param">keyCode</td>
-                                                <td class="default-type">Number</td>
+                                                <td class="default-type">number</td>
                                                 <td>
-                                                    Key code. Usually obtained from @Keys
+                                                    Key code. Usually obtained from Keys
 
                                                     
                                                 </td>
@@ -461,59 +420,48 @@
                                                 <td class="param">modifiers</td>
                                                 <td class="default-type">Object</td>
                                                 <td>
-                                                    Collection of modifiers to check for
+                                                    
 
                                                     
                                                 </td>
                                                 <td></td>
                                             </tr>
                                             
-                                                
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>shift</td>
-            <td class="default-type">Boolean</td>
-            <td>
-                Is the Shift key being held?
-                
-            </td>
-            <td>false</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>ctrl</td>
-            <td class="default-type">Boolean</td>
-            <td>
-                Is the Control key being held?
-                
-            </td>
-            <td>false</td>
-            
-        </tr>
-        
-        <tr>
-            
-                <td class="indent"></td>
-            
-            <td>alt</td>
-            <td class="default-type">Boolean</td>
-            <td>
-                Is the Alt key being held?
-                
-            </td>
-            <td>false</td>
-            
-        </tr>
-        
-        
-    
+                                        
+                                            <tr>
+                                                <td class="param">modifiers.shift</td>
+                                                <td class="default-type">boolean</td>
+                                                <td>
+                                                    If true, will check if shift was held at the time
+
+                                                    
+                                                </td>
+                                                <td>false</td>
+                                            </tr>
+                                            
+                                        
+                                            <tr>
+                                                <td class="param">modifiers.ctrl</td>
+                                                <td class="default-type">boolean</td>
+                                                <td>
+                                                    If true, will check if control was held at the time
+
+                                                    
+                                                </td>
+                                                <td>false</td>
+                                            </tr>
+                                            
+                                        
+                                            <tr>
+                                                <td class="param">modifiers.alt</td>
+                                                <td class="default-type">boolean</td>
+                                                <td>
+                                                    If true, will check if alt was held at the time
+
+                                                    
+                                                </td>
+                                                <td>false</td>
+                                            </tr>
                                             
                                         
                                     </tbody>
@@ -524,11 +472,10 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Boolean</span>
-                                    isObject(
                                     
-                                        
-                                        <span class="param" class="param">obj</span>
+                                        <span class="default-type">boolean</span>
+                                    
+                                    isObject(
                                     
                                     )
 
@@ -542,7 +489,7 @@
                                         
                                             <tr>
                                                 <td class="param">obj</td>
-                                                <td class="default-type">*</td>
+                                                <td class="default-type"></td>
                                                 <td>
                                                     
 
@@ -560,13 +507,48 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Number[]</span>
-                                    getKeysDown(
+                                    
+                                        <span class="default-type">boolean</span>
+                                    
+                                    isArray(
                                     
                                     )
 
                                     
-                                        <span class="deprecated">[Deprecated: Use Input.Keyboard.getKeysDown]</span>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <h4><em>Determines if the arguments in an array</em></h4>
+                                <table class="table table-striped">
+                                    <tbody>
+                                        
+                                            <tr>
+                                                <td class="param">obj</td>
+                                                <td class="default-type"></td>
+                                                <td>
+                                                    
+
+                                                    
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    
+                                        <span class="default-type">Array</span>
+                                    
+                                    getKeysDown(
+                                    
+                                    )
+
                                     
                                 </h3>
                             </div>
@@ -583,11 +565,8 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    <span class="default-type">Number</span>
-                                    sign(
                                     
-                                        
-                                        <span class="param" class="param">x</span>
+                                    sign(
                                     
                                     )
 
@@ -595,15 +574,15 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
-                                <h4><em>Returns the sign of a number (1, -1, or 0)</em></h4>
+                                <h4><em>Returns 1 if x is positive<br />-1 if x is negative<br />0 if x is 0</em></h4>
                                 <table class="table table-striped">
                                     <tbody>
                                         
                                             <tr>
                                                 <td class="param">x</td>
-                                                <td class="default-type">Number</td>
+                                                <td class="default-type">number</td>
                                                 <td>
-                                                    Number to check
+                                                    
 
                                                     
                                                 </td>

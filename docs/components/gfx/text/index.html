@@ -7,7 +7,7 @@
 
     <base href="http://mcluck90.github.io/psykick2d/docs/">
 
-    <title>Psykick2D - Platformer</title>
+    <title>Psykick2D - Text</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/psykick2d/docs/bootstrap.min.css">
     <link rel="stylesheet" href="/psykick2d/css/pygment_trac.css">
@@ -194,31 +194,39 @@
                 <ul class="breadcrumb">
                     
                         
-                            <li>Systems</li>
+                            <li>Components</li>
                         
-                            <li>Behavior</li>
-                        
-                            <li>Physics</li>
+                            <li>GFX</li>
                         
                     
-                    <li class="active">Platformer</li>
+                    <li class="active">Text</li>
                 </ul>
                 <!-- /Breadcrumb -->
                 <div class="panel panel-default">
                     <!-- Component header -->
                     <div class="panel-heading">
-                        <h3>Platformer</h3>
-                        <em>Handles basic platformer physics</em>
+                        <h3>Text</h3>
+                        <em>Use for containing text information</em>
                     </div>
                     <div class="panel-body">
                         
-                            <span class="keyword">new</span> <span>Platformer</span>(
+                            <span class="keyword">new</span> <span>Text</span>(
                             
                                 
                                 
                                 
                                 <span class="param">options</span>
                                 
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
+                                
+                            
                                 
                             
                                 
@@ -265,7 +273,7 @@
                                     <td class="param">options.x</td>
                                     <td class="default-type">number</td>
                                     <td>
-                                        X position of the collidable zone
+                                        X position
 
                                         
                                     </td>
@@ -277,7 +285,7 @@
                                     <td class="param">options.y</td>
                                     <td class="default-type">number</td>
                                     <td>
-                                        Y position of the collidable zone
+                                        Y position
 
                                         
                                     </td>
@@ -286,10 +294,58 @@
                                 
                                 
                                 <tr>
-                                    <td class="param">options.width</td>
-                                    <td class="default-type">number</td>
+                                    <td class="param">options.text</td>
+                                    <td class="default-type">string</td>
                                     <td>
-                                        Width of the collidable zone
+                                        Text
+
+                                        
+                                    </td>
+                                    <td>&#x27;&#x27;</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.style.font</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        Font style
+
+                                        
+                                    </td>
+                                    <td>&#x27;bold 24px Arial&#x27;</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.style.fill</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        Fill style
+
+                                        
+                                    </td>
+                                    <td>&#x27;black&#x27;</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.style.align</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        Alignment
+
+                                        
+                                    </td>
+                                    <td>&#x27;left&#x27;</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.style.stroke</td>
+                                    <td class="default-type"></td>
+                                    <td>
+                                        Fill style for the stroke
 
                                         
                                     </td>
@@ -298,26 +354,38 @@
                                 
                                 
                                 <tr>
-                                    <td class="param">options.height</td>
+                                    <td class="param">options.style.strokeThickness</td>
                                     <td class="default-type">number</td>
                                     <td>
-                                        Height of collidable
+                                        Thickness of the stroke
 
                                         
                                     </td>
-                                    <td></td>
+                                    <td>0</td>
                                 </tr>
                                 
                                 
                                 <tr>
-                                    <td class="param">options.gravity</td>
-                                    <td class="default-type">number</td>
+                                    <td class="param">options.style.wordWrap</td>
+                                    <td class="default-type">boolean</td>
                                     <td>
-                                        Force of gravity
+                                        If true, words will wrap around
 
                                         
                                     </td>
-                                    <td>9.8</td>
+                                    <td>false</td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td class="param">options.style.wordWrapWidth</td>
+                                    <td class="default-type">number</td>
+                                    <td>
+                                        The width at which the text will wrap
+
+                                        
+                                    </td>
+                                    <td>100</td>
                                 </tr>
                                 
                                 
@@ -337,8 +405,8 @@
                             <tbody>
                                 
                                 <tr>
-                                    <td>requiredComponents</td>
-                                    <td class="default-type">ARRAY</td>
+                                    <td>NAME</td>
+                                    <td class="default-type">string</td>
                                     <td>
                                         
 
@@ -349,7 +417,19 @@
                                 
                                 
                                 <tr>
-                                    <td>gravity</td>
+                                    <td>_text</td>
+                                    <td class="default-type">string</td>
+                                    <td>
+                                        
+
+                                        
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <td>x</td>
                                     <td class="default-type">number</td>
                                     <td>
                                         
@@ -361,8 +441,8 @@
                                 
                                 
                                 <tr>
-                                    <td>collisionStructure</td>
-                                    <td class="default-type">QuadTree</td>
+                                    <td>y</td>
+                                    <td class="default-type">number</td>
                                     <td>
                                         
 
@@ -373,8 +453,8 @@
                                 
                                 
                                 <tr>
-                                    <td>_collisionHandlers</td>
-                                    <td class="default-type">ARRAY</td>
+                                    <td>text</td>
+                                    <td class="default-type"></td>
                                     <td>
                                         
 
@@ -391,229 +471,6 @@
                 
 
                 
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Methods</h3>
-                    </div>
-                    <div class="panel-body">
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                        <span class="default-type">boolean</span>
-                                    
-                                    addEntity(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Adds an entity to the collision system</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">entity</td>
-                                                <td class="default-type">Entity</td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                        <span class="default-type">boolean</span>
-                                    
-                                    removeEntity(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Removes an entity from the collision system</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">entity</td>
-                                                <td class="default-type"></td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                    addCollisionListener(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Adds a listener for when a collision occurs</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">callback</td>
-                                                <td class="default-type"></td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                    removeCollisionListener(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Removes a collision listener</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">callback</td>
-                                                <td class="default-type"></td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                    _emit(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Alerts listeners about a collision</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">a</td>
-                                                <td class="default-type">Entity</td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                            <tr>
-                                                <td class="param">b</td>
-                                                <td class="default-type">Entity</td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    
-                                    update(
-                                    
-                                    )
-
-                                    
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <h4><em>Deals with all of the collisions</em></h4>
-                                <table class="table table-striped">
-                                    <tbody>
-                                        
-                                            <tr>
-                                                <td class="param">delta</td>
-                                                <td class="default-type">number</td>
-                                                <td>
-                                                    
-
-                                                    
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-                
             </div>
         </div>
     </div>
@@ -624,8 +481,8 @@
             
                 <td class="indent"></td>
             
-            <td>requiredComponents</td>
-            <td class="default-type">ARRAY</td>
+            <td>NAME</td>
+            <td class="default-type">string</td>
             <td>
                 
                 
@@ -638,7 +495,21 @@
             
                 <td class="indent"></td>
             
-            <td>gravity</td>
+            <td>_text</td>
+            <td class="default-type">string</td>
+            <td>
+                
+                
+            </td>
+            <td></td>
+            
+        </tr>
+        
+        <tr>
+            
+                <td class="indent"></td>
+            
+            <td>x</td>
             <td class="default-type">number</td>
             <td>
                 
@@ -652,8 +523,8 @@
             
                 <td class="indent"></td>
             
-            <td>collisionStructure</td>
-            <td class="default-type">QuadTree</td>
+            <td>y</td>
+            <td class="default-type">number</td>
             <td>
                 
                 
@@ -666,8 +537,8 @@
             
                 <td class="indent"></td>
             
-            <td>_collisionHandlers</td>
-            <td class="default-type">ARRAY</td>
+            <td>text</td>
+            <td class="default-type"></td>
             <td>
                 
                 
