@@ -47,7 +47,9 @@ build/psykick2d.js
 
 ### Guides
 
-For more information, check out the Getting Started guides (coming soon) or any one of the included [examples][4].
+For more information, check out the [Getting Started guides][8] or any 
+one 
+of the included [examples][4].
 
 ## How to Build
 
@@ -73,3 +75,4 @@ Psykick2D is licensed under the [MIT License][7].
   [5]: https://github.com/MCluck90/psykick2d/issues
   [6]: https://groups.google.com/forum/#!forum/psykick2d
   [7]: http://opensource.org/licenses/MIT
+  [8]: http://mcluck90.github.io/psykick2d/guides/platformer
