@@ -943,12 +943,12 @@ CollisionGrid.prototype.removeEntity = function(entity) {
         maxX = ~~( (rect.x + Math.abs(rect.width)) / this.cellWidth ),
         minY = ~~(rect.y / this.cellHeight),
         maxY = ~~( (rect.y + Math.abs(rect.height)) / this.cellHeight );
-    for (var x = minX; x < maxX; x++) {
+    for (var x = minX; x <= maxX; x++) {
         var column = this._grid[x];
         if (!column) {
             continue;
         }
-        for (var y = minY; y < maxY; y++) {
+        for (var y = minY; y <= maxY; y++) {
             if (!column[y]) {
                 continue;
             }
